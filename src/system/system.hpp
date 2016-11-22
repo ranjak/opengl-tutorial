@@ -8,6 +8,7 @@
 
 struct System
 {
+  ~System();
 
   std::unique_ptr<Window> window;
   MainLoop mainLoop;

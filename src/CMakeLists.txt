@@ -5,7 +5,7 @@ set(SRC_SYSTEM
   system/mainloop.cpp
   system/log.cpp
   system/system.cpp
-  system/glfw/glfwwindow.cpp
+  system/glfw/windowglfw.cpp
 )
 
 set(INCLUDE_SYSTEM
@@ -13,7 +13,7 @@ set(INCLUDE_SYSTEM
   system/log.hpp
   system/system.hpp
   system/window.hpp
-  system/glfw/glfwwindow.hpp
+  system/glfw/windowglfw.hpp
 )
 
 source_group(system FILES ${SRC_SYSTEM} ${INCLUDE_SYSTEM})
@@ -23,9 +23,12 @@ add_executable(ogl-app WIN32
   ${INCLUDE_SYSTEM}
 )
 
-include_directories(
+target_include_directories(ogl-app PRIVATE
   system
   ${GLM_INCLUDE_DIRS}
 )
 
+target_link_libraries(ogl-app
+  glfw
+)
 

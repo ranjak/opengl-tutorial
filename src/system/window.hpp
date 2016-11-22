@@ -4,7 +4,9 @@
 class Window
 {
 public:
-  virtual ~Window() {}
+  virtual ~Window() = 0;
 };
+
+inline Window::~Window() {}
 
 #endif // WINDOW_HPP

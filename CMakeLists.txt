@@ -7,6 +7,7 @@ set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake" ${CMAKE_MODULE_PATH})
 # Dependencies
 
 find_package(glm REQUIRED)
+find_package(glfw3 REQUIRED)
 
 # Configuration
 
