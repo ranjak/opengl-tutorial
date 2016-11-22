@@ -1,38 +1,42 @@
 #ifndef MAINLOOP_HPP
 #define MAINLOOP_HPP
 
-#include <cstdint>
+#include "window.hpp"
+#include "system.hpp"
 #include <string>
 #include <memory>
-#include <chrono>
 
 
 class MainLoop
 {
 public:
-  static const std::chrono::milliseconds TIMESTEP;
+  static const ogl::time TIMESTEP;
 
   static void requestExit();
 
   MainLoop();
   MainLoop(const MainLoop &) = delete;
   MainLoop& operator=(const MainLoop &) = delete;
+  ~MainLoop();
+
+  bool init(int width=640, int height=480, const std::string& title="OpenGL Window");
 
   void run();
 
   void setExit();
 
 private:
-  void updateStats(std::chrono::milliseconds frameTime);
+  void updateStats(ogl::time frameTime);
   void logStats();
 
 private:
   static MainLoop *instance;
 
+  std::unique_ptr<Window> mMainWindow;
   bool mExitRequested;
 
-  std::chrono::milliseconds mMaxFrameTime;
-  std::chrono::milliseconds mAccuFrameTimes;
+  ogl::time mMaxFrameTime;
+  ogl::time mAccuFrameTimes;
   int mNumFrameTimes;
 };
 

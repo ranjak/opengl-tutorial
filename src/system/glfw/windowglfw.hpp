@@ -11,10 +11,13 @@ class WindowGLFW : public Window
 public:
   static void setGLversion(int major, int minor);
 
-  WindowGLFW(int width=640, int height=480, std::string title="Window");
+  WindowGLFW(int width=640, int height=480, const std::string& title="Window");
+
+  void setCloseCallback(void (*callback)(Window*)) override;
 
 private:
   std::unique_ptr<GLFWwindow, void (*)(GLFWwindow*)> mWindow;
+  void (*mCloseCallback)(Window*);
 };
 
 #endif // WINDOWGLFW_H

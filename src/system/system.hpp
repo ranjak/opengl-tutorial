@@ -1,27 +1,24 @@
 #ifndef SYSTEM_HPP
 #define SYSTEM_HPP
 
-#include "mainloop.hpp"
-#include "window.hpp"
-#include <memory>
 #include <chrono>
+
+namespace ogl {
+using time = std::chrono::milliseconds;
+}
 
 struct System
 {
-  ~System();
-
-  std::unique_ptr<Window> window;
-  MainLoop mainLoop;
-
-  static System& instance() { return *sysInstance; }
-
   static bool init();
 
-  static std::chrono::milliseconds now();
+  static ogl::time now();
+
+  static void pollEvents();
+
+  static void cleanup();
 
 private:
-  System();
-  static std::unique_ptr<System> sysInstance;
+  static bool wasInit;
   static std::chrono::time_point<std::chrono::steady_clock> initTime;
 };
 

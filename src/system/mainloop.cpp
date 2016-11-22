@@ -1,12 +1,13 @@
 #include "mainloop.hpp"
 #include "log.hpp"
 #include "system.hpp"
+#include "glfw/windowglfw.hpp"
 #include <algorithm>
 
 
 MainLoop *MainLoop::instance = nullptr;
 
-const std::chrono::milliseconds MainLoop::TIMESTEP(10);
+const ogl::time MainLoop::TIMESTEP(10);
 
 void MainLoop::requestExit()
 {
@@ -14,6 +15,7 @@ void MainLoop::requestExit()
 }
 
 MainLoop::MainLoop() :
+  mMainWindow(),
   mExitRequested(false),
   mMaxFrameTime(0),
   mAccuFrameTimes(0),
@@ -25,22 +27,44 @@ MainLoop::MainLoop() :
     instance = this;
 }
 
+MainLoop::~MainLoop()
+{
+  System::cleanup();
+}
+
+bool MainLoop::init(int width, int height, const std::string& title)
+{
+  if (!System::init()) {
+    return false;
+  }
+
+  mMainWindow.reset(new WindowGLFW(width, height, title));
+  if (!mMainWindow) {
+    Log::error("MainLoop: Could not create main window");
+    return false;
+  }
+
+  mMainWindow->setCloseCallback([](Window*) { MainLoop::requestExit(); });
+
+  return true;
+}
+
 void MainLoop::run()
 {
   using namespace std::chrono_literals;
 
   // Simulated game time. Increases by a fixed amount at every game update.
-  std::chrono::milliseconds gameTime(0);
+  ogl::time gameTime(0);
   // Time at which the main loop was started.
-  std::chrono::milliseconds startTime = System::now();
+  ogl::time startTime = System::now();
 
   while (!mExitRequested) {
 
-    std::chrono::milliseconds realTimeElasped = System::now() - startTime;
+    ogl::time realTimeElasped = System::now() - startTime;
 
     while (realTimeElasped > gameTime && !mExitRequested) {
 
-      //mInput->handle();
+      System::pollEvents();
 
       if (mExitRequested)
         break;
@@ -54,7 +78,7 @@ void MainLoop::run()
    // mDisplay.render(mGame);
 
     // Framerate statistics
-    std::chrono::milliseconds frameTime = System::now() - realTimeElasped - startTime;
+    ogl::time frameTime = System::now() - realTimeElasped - startTime;
     updateStats(frameTime);
 
     if (mAccuFrameTimes >= 500ms)
@@ -67,7 +91,7 @@ void MainLoop::setExit()
   mExitRequested = true;
 }
 
-void MainLoop::updateStats(std::chrono::milliseconds frameTime)
+void MainLoop::updateStats(ogl::time frameTime)
 {
   mMaxFrameTime = std::max(mMaxFrameTime, frameTime);
   mAccuFrameTimes += frameTime;

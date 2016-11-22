@@ -4,13 +4,13 @@
 #include <GLFW/glfw3.h>
 #include <cassert>
 
-std::unique_ptr<System> System::sysInstance = nullptr;
+bool System::wasInit = false;
 std::chrono::time_point<std::chrono::steady_clock> System::initTime;
 
 
 bool System::init()
 {
-  if (sysInstance) {
+  if (wasInit) {
     Log::error("System already initialized.");
     return false;
   }
@@ -28,26 +28,29 @@ bool System::init()
 
   WindowGLFW::setGLversion(3, 3);
 
-  sysInstance.reset(new System);
-  sysInstance->mainLoop.run();
-
+  wasInit = true;
   return true;
 }
 
-std::chrono::milliseconds System::now()
+ogl::time System::now()
 {
-  assert(sysInstance);
+  assert(wasInit);
 
-  return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - initTime);
+  return std::chrono::duration_cast<ogl::time>(std::chrono::steady_clock::now() - initTime);
 }
 
-System::System() :
-  window(new WindowGLFW),
-  mainLoop()
+void System::pollEvents()
 {
+  assert(wasInit);
+
+  glfwPollEvents();
 }
 
-System::~System()
+void System::cleanup()
 {
+  if (!wasInit) {
+    return;
+  }
+
   glfwTerminate();
 }

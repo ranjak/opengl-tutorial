@@ -1,9 +1,11 @@
-#include "system.hpp"
+#include "mainloop.hpp"
 
 
 int main()
 {
-  System::init();
+  MainLoop loop;
+  loop.init();
+  loop.run();
 
   return 0;
 }
