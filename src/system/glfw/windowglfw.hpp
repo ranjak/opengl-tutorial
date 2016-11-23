@@ -15,6 +15,12 @@ public:
 
   void setCloseCallback(void (*callback)(Window*)) override;
 
+  void makeContextCurrent() override;
+
+  void setSwapInterval(int interval) override;
+
+  void swapBuffers() override;
+
 private:
   std::unique_ptr<GLFWwindow, void (*)(GLFWwindow*)> mWindow;
   void (*mCloseCallback)(Window*);

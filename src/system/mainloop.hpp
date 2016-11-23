@@ -2,6 +2,7 @@
 #define MAINLOOP_HPP
 
 #include "window.hpp"
+#include "renderer.hpp"
 #include "system.hpp"
 #include <string>
 #include <memory>
@@ -33,11 +34,12 @@ private:
   static MainLoop *instance;
 
   std::unique_ptr<Window> mMainWindow;
+  std::unique_ptr<Renderer> mRenderer;
   bool mExitRequested;
 
   ogl::time mMaxFrameTime;
   ogl::time mAccuFrameTimes;
-  int mNumFrameTimes;
+  int mNumFrames;
 };
 
 

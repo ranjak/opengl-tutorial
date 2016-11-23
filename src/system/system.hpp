@@ -3,8 +3,9 @@
 
 #include <chrono>
 
-namespace ogl {
-using time = std::chrono::milliseconds;
+namespace ogl
+{
+using time = std::chrono::microseconds;
 }
 
 struct System

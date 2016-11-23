@@ -16,15 +16,27 @@ set(INCLUDE_SYSTEM
   system/glfw/windowglfw.hpp
 )
 
+set(SRC_RENDERER
+  renderer/renderer.cpp
+)
+
+set(INCLUDE_RENDERER
+  renderer/renderer.hpp
+  renderer/primitives.hpp
+)
+
 source_group(system FILES ${SRC_SYSTEM} ${INCLUDE_SYSTEM})
 
 add_executable(ogl-app WIN32
   ${SRC_SYSTEM}
   ${INCLUDE_SYSTEM}
+  ${SRC_RENDERER}
+  ${INCLUDE_RENDERER}
 )
 
 target_include_directories(ogl-app PRIVATE
   system
+  renderer
   ${GLM_INCLUDE_DIRS}
 )
 

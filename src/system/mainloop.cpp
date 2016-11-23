@@ -7,7 +7,9 @@
 
 MainLoop *MainLoop::instance = nullptr;
 
-const ogl::time MainLoop::TIMESTEP(10);
+using namespace std::chrono_literals;
+
+const ogl::time MainLoop::TIMESTEP(10ms);
 
 void MainLoop::requestExit()
 {
@@ -16,10 +18,11 @@ void MainLoop::requestExit()
 
 MainLoop::MainLoop() :
   mMainWindow(),
+  mRenderer(),
   mExitRequested(false),
   mMaxFrameTime(0),
   mAccuFrameTimes(0),
-  mNumFrameTimes(0)
+  mNumFrames(0)
 {
   if (instance)
     Log::error("MainLoop: Cannot create a new instance (there can be only one).");
@@ -45,14 +48,19 @@ bool MainLoop::init(int width, int height, const std::string& title)
   }
 
   mMainWindow->setCloseCallback([](Window*) { MainLoop::requestExit(); });
+  mMainWindow->setSwapInterval(1);
+
+  mRenderer.reset(new Renderer(mMainWindow.get()));
+  if (!mRenderer) {
+    Log::error("MainLoop: Could not create renderer");
+    return false;
+  }
 
   return true;
 }
 
 void MainLoop::run()
 {
-  using namespace std::chrono_literals;
-
   // Simulated game time. Increases by a fixed amount at every game update.
   ogl::time gameTime(0);
   // Time at which the main loop was started.
@@ -75,7 +83,7 @@ void MainLoop::run()
     if (mExitRequested)
         break;
 
-   // mDisplay.render(mGame);
+    mRenderer->render();
 
     // Framerate statistics
     ogl::time frameTime = System::now() - realTimeElasped - startTime;
@@ -95,20 +103,18 @@ void MainLoop::updateStats(ogl::time frameTime)
 {
   mMaxFrameTime = std::max(mMaxFrameTime, frameTime);
   mAccuFrameTimes += frameTime;
-  mNumFrameTimes++;
+  mNumFrames++;
 }
 
 void MainLoop::logStats()
 {
-  using namespace std::chrono_literals;
+  double avgFrame = mAccuFrameTimes.count() / static_cast<double>(mNumFrames);
+  double fps = ogl::time::period::den / avgFrame;
 
-  double avgFrame = mAccuFrameTimes.count() / static_cast<double>(mNumFrameTimes);
-  double fps = 1000.0 / avgFrame;
+  rlzLog(Log::INFO, "FPS: " << fps << ", Avg frame: " << avgFrame << " us, Max frame: " << mMaxFrameTime.count() << " us");
 
-  rlzLog(Log::INFO, "FPS: " << fps << ", Avg frame: " << avgFrame << " ms, Max frame: " << mMaxFrameTime.count() << " ms");
-
-  mMaxFrameTime = 0ms;
-  mAccuFrameTimes = 0ms;
-  mNumFrameTimes = 0;
+  mMaxFrameTime = ogl::time::zero();
+  mAccuFrameTimes = ogl::time::zero();
+  mNumFrames = 0;
 }
 
