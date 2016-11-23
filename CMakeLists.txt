@@ -4,10 +4,9 @@ cmake_minimum_required(VERSION 2.8)
 
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake" ${CMAKE_MODULE_PATH})
 
-# Dependencies
+# Find and/or build dependencies
 
-find_package(glm REQUIRED)
-find_package(glfw3 REQUIRED)
+include(dependencies)
 
 # Configuration
 

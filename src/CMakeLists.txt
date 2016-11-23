@@ -42,5 +42,6 @@ target_include_directories(ogl-app PRIVATE
 
 target_link_libraries(ogl-app
   glfw
+  glad
 )
 
