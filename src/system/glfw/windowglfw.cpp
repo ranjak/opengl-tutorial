@@ -10,7 +10,8 @@ void WindowGLFW::setGLversion(int major, int minor)
 
 WindowGLFW::WindowGLFW(int width, int height, const std::string& title) :
   mWindow(glfwCreateWindow(width, height, title.c_str(), nullptr, nullptr), glfwDestroyWindow),
-  mCloseCallback(nullptr)
+  mCloseCallback(nullptr),
+  mFBResizeCallback(nullptr)
 {
   if (!mWindow) {
     Log::error("WindowGLFW: Window creation failed");
@@ -32,6 +33,19 @@ void WindowGLFW::setCloseCallback(void (*callback)(Window*))
   });
 }
 
+void WindowGLFW::setFramebufferResizeCallback(void (*callback)(Window*, int, int))
+{
+  mFBResizeCallback = callback;
+
+  glfwSetFramebufferSizeCallback(mWindow.get(), [](GLFWwindow* win, int w, int h)
+  {
+    WindowGLFW* thisWindow = static_cast<WindowGLFW*>(glfwGetWindowUserPointer(win));
+    if (thisWindow->mFBResizeCallback) {
+      thisWindow->mFBResizeCallback(thisWindow, w, h);
+    }
+  });
+}
+
 void WindowGLFW::makeContextCurrent()
 {
   glfwMakeContextCurrent(mWindow.get());
@@ -46,4 +60,20 @@ void WindowGLFW::setSwapInterval(int interval)
 void WindowGLFW::swapBuffers()
 {
   glfwSwapBuffers(mWindow.get());
+}
+
+std::pair<int, int> WindowGLFW::getSize()
+{
+  std::pair<int, int> size;
+  glfwGetWindowSize(mWindow.get(), &size.first, &size.second);
+
+  return size;
+}
+
+std::pair<int, int> WindowGLFW::getFramebufferSize()
+{
+  std::pair<int, int> size;
+  glfwGetFramebufferSize(mWindow.get(), &size.first, &size.second);
+
+  return size;
 }

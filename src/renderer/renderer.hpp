@@ -7,8 +7,11 @@ class Renderer
 {
 public:
   Renderer(Window* window);
+  ~Renderer();
 
   void render();
+
+  void addTriangle();
 
 private:
   Window* mWindow;
