@@ -18,11 +18,15 @@ set(INCLUDE_SYSTEM
 
 set(SRC_RENDERER
   renderer/renderer.cpp
+  renderer/shader.cpp
+  renderer/util.cpp
 )
 
 set(INCLUDE_RENDERER
   renderer/renderer.hpp
   renderer/primitives.hpp
+  renderer/shader.hpp
+  renderer/util.hpp
 )
 
 source_group(system FILES ${SRC_SYSTEM} ${INCLUDE_SYSTEM})

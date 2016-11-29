@@ -1,6 +1,9 @@
 #include "renderer.hpp"
 #include "window.hpp"
 #include "primitives.hpp"
+#include "shader.hpp"
+#include "log.hpp"
+#include "util.hpp"
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
@@ -29,7 +32,8 @@ GLADloadproc myglGetProcAddress = [](const char* proc)
  * Temporary tutorial stuff
  */
 GLuint bufferObject = 0;
-//GLuint program = 0;
+GLuint program = 0;
+GLuint vao = 0;
 
 } // namespace
 
@@ -46,6 +50,8 @@ Renderer::Renderer(Window* window) :
 
     initDone = true;
   }
+
+  glGenVertexArrays(1, &vao);
 
   std::pair<int, int> framebuffer = mWindow->getFramebufferSize();
   glViewport(0, 0, framebuffer.first, framebuffer.second);
@@ -67,18 +73,28 @@ void Renderer::render()
 
   glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
   glClear(GL_COLOR_BUFFER_BIT);
-/*
+
+  glBindVertexArray(vao);
+
   glUseProgram(program);
+  OGL_CHECK_ERROR();
 
   glBindBuffer(GL_ARRAY_BUFFER, bufferObject);
-  glEnableVertexAttribArray(0);
+  OGL_CHECK_ERROR();
   glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, 0);
+  OGL_CHECK_ERROR();
+  glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+  glEnableVertexAttribArray(0);
+  OGL_CHECK_ERROR();
 
   glDrawArrays(GL_TRIANGLES, 0, 3);
+  OGL_CHECK_ERROR();
 
   glDisableVertexAttribArray(0);
   glUseProgram(0);
-*/
+  OGL_CHECK_ERROR();
+
   mWindow->swapBuffers();
 }
 
@@ -91,4 +107,11 @@ void Renderer::addTriangle()
   glBindBuffer(GL_ARRAY_BUFFER, bufferObject);
   glBufferData(GL_ARRAY_BUFFER, sizeof(ogl::triangle), ogl::triangle, GL_STATIC_DRAW);
   glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+  program = ogl::makePorgram({
+                     ogl::loadShader(GL_FRAGMENT_SHADER, "shaders/fragment.glsl"),
+                     ogl::loadShader(GL_VERTEX_SHADER, "shaders/vertex.glsl")
+                   });
+
+  // TODO delete shaders
 }

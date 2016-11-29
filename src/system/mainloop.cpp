@@ -56,6 +56,7 @@ bool MainLoop::init(int width, int height, const std::string& title)
     return false;
   }
 
+  mRenderer->addTriangle();
   return true;
 }
 
