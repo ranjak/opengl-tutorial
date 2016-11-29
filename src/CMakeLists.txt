@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.0)
 
 set(SRC_SYSTEM
   system/main.cpp
@@ -45,6 +45,7 @@ target_include_directories(ogl-app PRIVATE
 )
 
 target_link_libraries(ogl-app
+  glm
   glfw
   glad
 )
