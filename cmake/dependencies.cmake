@@ -1,23 +1,74 @@
 # OpenGL app dependencies
 
-find_package(glfw3 REQUIRED)
+# Use GLFW for window, OpenGL context and input management
+option(OGLTUTOR_SYSTEM_GLFW "Use the system-provided GLFW library." ON)
 
 # Use glm for 3D math functionality
-
 option(OGLTUTOR_SYSTEM_GLM "Use the system-provided glm library." ON)
+
+# Use glad for OpenGL extension loading
+option(OGLTUTOR_SYSTEM_GLAD "Set to ON if the Glad OpenGL extension loader is installed on your system. Set to OFF to use the bundled Glad." OFF)
+
+
+# If we are going to build dependencies, make them static
+set(BUILD_SHARED_LIBS OFF)
+
+# Git is needed to manage dependencies
+if (NOT (OGLTUTOR_SYSTEM_GLFW AND OGLTUTOR_SYSTEM_GLM AND OGLTUTOR_SYSTEM_GLAD))
+  find_program(GIT git)
+  if (NOT GIT)
+    message(FATAL_ERROR "Git is required to download glad, but was not found on the system.")
+  endif()
+endif()
+
+
+if (OGLTUTOR_SYSTEM_GLFW)
+
+  message(STATUS "Using system-provided GLFW")
+  find_package(glfw3 REQUIRED)
+
+else(OGLTUTOR_SYSTEM_GLFW)
+
+  message(STATUS "Building GLFW from git")
+  if (NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/glfw")
+
+    execute_process(COMMAND "${GIT}" clone "https://github.com/glfw/glfw"
+      WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty"
+    )
+  else()
+    execute_process(COMMAND "${GIT}" pull
+      WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/glfw"
+    )
+  endif()
+
+  execute_process(COMMAND "${GIT}" checkout latest
+    WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/glfw"
+  )
+
+  set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
+  set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+  set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+  set(GLFW_INSTALL OFF CACHE BOOL "" FORCE)
+
+  if (OGLTUTOR_STATIC)
+    set(USE_MSVC_RUNTIME_LIBRARY_DLL OFF)
+  else()
+    set(USE_MSVC_RUNTIME_LIBRARY_DLL ON)
+  endif()
+
+  add_subdirectory("3rdparty/glfw" ${CMAKE_CURRENT_BINARY_DIR}/glfw)
+
+endif(OGLTUTOR_SYSTEM_GLFW)
+
 
 if (OGLTUTOR_SYSTEM_GLM)
 
+  message(STATUS "Using system-provided glm")
   find_package(glm REQUIRED)
 
 else(OGLTUTOR_SYSTEM_GLM)
 
-  # Grab glm from its git repository
-  find_program(GIT git)
-  if (NOT GIT)
-    message(FATAL_ERROR "Git is required to download glm, but was not found on the system.")
-  endif()
-
+  message(STATUS "Using glm from git")
   if (NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/glm")
 
     execute_process(COMMAND "${GIT}" clone "https://github.com/g-truc/glm"
@@ -34,17 +85,9 @@ else(OGLTUTOR_SYSTEM_GLM)
 endif(OGLTUTOR_SYSTEM_GLM)
 
 
-# Use glad for OpenGL extension loading
-
-option(OGLTUTOR_SYSTEM_GLAD "Set to ON if the Glad OpenGL extension loader is installed on your system. Set to OFF to use the bundled Glad." OFF)
-
 if (NOT OGLTUTOR_SYSTEM_GLAD)
 
-  find_program(GIT git)
-  if (NOT GIT)
-    message(FATAL_ERROR "Git is required to download glad, but was not found on the system.")
-  endif()
-
+  message(STATUS "Using glad from git")
   execute_process(COMMAND "${GIT}" submodule update --init -- 3rdparty/glad
     WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
   )
@@ -60,6 +103,6 @@ if (NOT OGLTUTOR_SYSTEM_GLAD)
 
 else(NOT OGLTUTOR_SYSTEM_GLAD)
 
-  message(FATAL_ERROR "Using system Glad is not supported yet.")
+  message(FATAL_ERROR "Using system Glad is not supported yet")
 
 endif(NOT OGLTUTOR_SYSTEM_GLAD)

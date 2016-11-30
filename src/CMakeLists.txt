@@ -41,7 +41,6 @@ add_executable(ogl-app WIN32
 target_include_directories(ogl-app PRIVATE
   system
   renderer
-  ${GLM_INCLUDE_DIRS}
 )
 
 target_link_libraries(ogl-app
