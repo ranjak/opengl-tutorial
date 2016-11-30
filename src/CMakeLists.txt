@@ -38,6 +38,11 @@ add_executable(ogl-app WIN32
   ${INCLUDE_RENDERER}
 )
 
+# GLFW shouldn't include gl.h since we're using a loader (glad)
+target_compile_definitions(ogl-app PRIVATE
+  -DGLFW_INCLUDE_NONE
+)
+
 target_include_directories(ogl-app PRIVATE
   system
   renderer
