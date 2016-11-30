@@ -1,8 +1,8 @@
 #include "shader.hpp"
 #include "log.hpp"
+#include "sysutils.hpp"
 #include <fstream>
 #include <cerrno>
-#include <cstring>
 #include <sstream>
 #include <memory>
 
@@ -14,7 +14,7 @@ GLuint loadShader(GLenum shaderType, const std::string& filename)
   std::ifstream shaderFile(filename);
 
   if (!shaderFile.is_open()) {
-    rlzLog(Log::ERROR, "loadShader: couldn't open shader file \""<<filename<<"\": "<<std::strerror(errno));
+    rlzLog(Log::ERROR, "loadShader: couldn't open shader file \""<<filename<<"\": "<<cppStrerror(errno));
     return 0;
   }
 
