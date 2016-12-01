@@ -1,5 +1,7 @@
 # OpenGL Tutorial
 
+[![Build Status](https://travis-ci.org/ranjak/opengl-tutorial.svg?branch=master)](https://travis-ci.org/ranjak/opengl-tutorial)
+
 A cross-platform C++ OpenGL sample application.
 
 ## Building from source
