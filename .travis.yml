@@ -1,0 +1,7 @@
+language: cpp
+addons:
+  apt:
+    packages:
+      xorg-dev
+compiler: gcc
+script: cmake -DOGLTUTOR_STATIC=ON
