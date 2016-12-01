@@ -1,13 +1,24 @@
 # OpenGL app dependencies
 
+# Check whether libraries are installed on the system to set initial option values
+if (NOT DEFINED OGLTUTOR_SYSTEM_GLFW)
+  find_package(glfw3 QUIET)
+endif()
+if (NOT DEFINED OGLTUTOR_SYSTEM_GLM)
+  find_package(glm QUIET)
+endif()
+if (NOT DEFINED OGLTUTOR_SYSTEM_GLAD)
+  find_package(glad QUIET)
+endif()
+
 # Use GLFW for window, OpenGL context and input management
-option(OGLTUTOR_SYSTEM_GLFW "Use the system-provided GLFW library." ON)
+option(OGLTUTOR_SYSTEM_GLFW "Use the system-provided GLFW library." ${glfw3_FOUND})
 
 # Use glm for 3D math functionality
-option(OGLTUTOR_SYSTEM_GLM "Use the system-provided glm library." ON)
+option(OGLTUTOR_SYSTEM_GLM "Use the system-provided glm library." ${glm_FOUND})
 
 # Use glad for OpenGL extension loading
-option(OGLTUTOR_SYSTEM_GLAD "Set to ON if the Glad OpenGL extension loader is installed on your system. Set to OFF to use the bundled Glad." OFF)
+option(OGLTUTOR_SYSTEM_GLAD "Set to ON if the Glad OpenGL extension loader is installed on your system. Set to OFF to use the bundled Glad." ${glad_FOUND})
 
 
 # If we are going to build dependencies, make them static
@@ -17,7 +28,7 @@ set(BUILD_SHARED_LIBS OFF)
 if (NOT (OGLTUTOR_SYSTEM_GLFW AND OGLTUTOR_SYSTEM_GLM AND OGLTUTOR_SYSTEM_GLAD))
   find_program(GIT git)
   if (NOT GIT)
-    message(FATAL_ERROR "Git is required to download glad, but was not found on the system.")
+    message(FATAL_ERROR "Git is required to manage dependencies, but was not found on the system.")
   endif()
 endif()
 

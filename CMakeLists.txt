@@ -13,25 +13,28 @@ if (OGLTUTOR_STATIC)
   if (UNIX OR MINGW)
     list(APPEND CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++")
   elseif (MSVC)
-        foreach (flag CMAKE_C_FLAGS
-                      CMAKE_C_FLAGS_DEBUG
-                      CMAKE_C_FLAGS_RELEASE
-                      CMAKE_C_FLAGS_MINSIZEREL
-                      CMAKE_C_FLAGS_RELWITHDEBINFO
-                      CMAKE_CXX_FLAGS
-                      CMAKE_CXX_FLAGS_DEBUG
-                      CMAKE_CXX_FLAGS_RELEASE
-                      CMAKE_CXX_FLAGS_MINSIZEREL
-                      CMAKE_CXX_FLAGS_RELWITHDEBINFO)
+    # Use /MT (static runtime) instead of /MD project-wide
+    foreach (flag
+        CMAKE_C_FLAGS
+        CMAKE_C_FLAGS_DEBUG
+        CMAKE_C_FLAGS_RELEASE
+        CMAKE_C_FLAGS_MINSIZEREL
+        CMAKE_C_FLAGS_RELWITHDEBINFO
+        CMAKE_CXX_FLAGS
+        CMAKE_CXX_FLAGS_DEBUG
+        CMAKE_CXX_FLAGS_RELEASE
+        CMAKE_CXX_FLAGS_MINSIZEREL
+        CMAKE_CXX_FLAGS_RELWITHDEBINFO
+        )
 
-            if (${flag} MATCHES "/MD")
-                string(REGEX REPLACE "/MD" "/MT" ${flag} "${${flag}}")
-            endif()
-            if (${flag} MATCHES "/MDd")
-                string(REGEX REPLACE "/MDd" "/MTd" ${flag} "${${flag}}")
-            endif()
+      if (${flag} MATCHES "/MD")
+        string(REGEX REPLACE "/MD" "/MT" ${flag} "${${flag}}")
+      endif()
+      if (${flag} MATCHES "/MDd")
+        string(REGEX REPLACE "/MDd" "/MTd" ${flag} "${${flag}}")
+      endif()
 
-        endforeach()
+    endforeach()
   endif()
   
 endif(OGLTUTOR_STATIC)
@@ -51,7 +54,7 @@ if (NOT MSVC)
 endif()
 
 if (NOT CMAKE_BUILD_TYPE MATCHES [Dd]ebug)
-    add_definitions(-DNDEBUG)
+  add_definitions(-DNDEBUG)
 endif()
 
 add_subdirectory(src)
