@@ -6,6 +6,7 @@
 #include "util.hpp"
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <cassert>
 
 namespace
 {
@@ -34,6 +35,8 @@ GLADloadproc myglGetProcAddress = [](const char* proc)
 GLuint bufferObject = 0;
 GLuint program = 0;
 GLuint vao = 0;
+
+GLint windowHeightUniformLoc = 0;
 
 } // namespace
 
@@ -79,6 +82,8 @@ void Renderer::render()
   glUseProgram(program);
   OGL_CHECK_ERROR();
 
+  glUniform1i(windowHeightUniformLoc, mWindow->getFramebufferSize().second);
+
   glBindBuffer(GL_ARRAY_BUFFER, bufferObject);
   OGL_CHECK_ERROR();
   glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, 0);
@@ -112,6 +117,9 @@ void Renderer::addTriangle()
                      ogl::loadShader(GL_FRAGMENT_SHADER, "shaders/fragment.glsl"),
                      ogl::loadShader(GL_VERTEX_SHADER, "shaders/vertex.glsl")
                    });
+
+  windowHeightUniformLoc = glGetUniformLocation(program, "windowHeight");
+  assert(windowHeightUniformLoc != -1);
 
   // TODO delete shaders
 }
