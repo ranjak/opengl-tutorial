@@ -16,3 +16,5 @@ script:
 - cd build
 - CC=gcc-6 CXX=g++-6 cmake -DOGLTUTOR_STATIC=ON ..
 - make
+notifications:
+  email: false
