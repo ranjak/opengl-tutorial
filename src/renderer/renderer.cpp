@@ -114,8 +114,8 @@ void Renderer::addTriangle()
   glBindBuffer(GL_ARRAY_BUFFER, 0);
 
   program = ogl::makePorgram({
-                     ogl::loadShader(GL_FRAGMENT_SHADER, "shaders/fragment.glsl"),
-                     ogl::loadShader(GL_VERTEX_SHADER, "shaders/vertex.glsl")
+                     ogl::Shader(GL_FRAGMENT_SHADER, "shaders/fragment.glsl"),
+                     ogl::Shader(GL_VERTEX_SHADER, "shaders/vertex.glsl")
                    });
 
   windowHeightUniformLoc = glGetUniformLocation(program, "windowHeight");

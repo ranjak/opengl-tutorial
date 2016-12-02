@@ -8,9 +8,19 @@
 namespace ogl
 {
 
-GLuint loadShader(GLenum shaderType, const std::string &filename);
+class Shader
+{
+public:
+  Shader(GLenum shaderType, const std::string &filename);
+  ~Shader();
 
-GLuint makePorgram(std::initializer_list<GLuint> shaders);
+  GLuint getHandle() const { return mHandle; }
+
+private:
+  GLuint mHandle;
+};
+
+GLuint makePorgram(std::initializer_list<Shader> shaders);
 
 } // namespace ogl
 

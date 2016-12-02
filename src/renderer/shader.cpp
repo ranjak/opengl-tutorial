@@ -6,7 +6,62 @@
 #include <sstream>
 #include <memory>
 
+namespace
+{
+GLuint loadShader(GLenum shaderType, const std::string &filename);
+} // namespace
+
 namespace ogl
+{
+
+Shader::Shader(GLenum shaderType, const std::string &filename) :
+  mHandle(loadShader(shaderType, filename))
+{
+  dbgLog("Loaded shader from file "<<filename<<", handle="<<mHandle);
+}
+
+Shader::~Shader()
+{
+  if (mHandle > 0) {
+    glDeleteShader(mHandle);
+    dbgLog("Deleted shader "<<mHandle);
+  }
+}
+
+
+GLuint makePorgram(std::initializer_list<Shader> shaders)
+{
+  GLuint program = glCreateProgram();
+
+  if (program == 0) {
+    return 0;
+  }
+
+  for (auto it=shaders.begin(); it != shaders.end(); ++it) {
+    glAttachShader(program, it->getHandle());
+  }
+
+  glLinkProgram(program);
+
+  GLint status;
+  glGetProgramiv(program, GL_LINK_STATUS, &status);
+  if (status == GL_FALSE)
+  {
+    GLint infoLogLength;
+    glGetProgramiv(program, GL_INFO_LOG_LENGTH, &infoLogLength);
+
+    std::unique_ptr<GLchar[]> strInfoLog(new GLchar[infoLogLength]);
+    glGetProgramInfoLog(program, infoLogLength, nullptr, strInfoLog.get());
+
+    Log::error(std::string("makeProgram: linking failed: ")+strInfoLog.get());
+  }
+
+  return program;
+}
+
+} // namespace ogl
+
+namespace
 {
 
 GLuint loadShader(GLenum shaderType, const std::string& filename)
@@ -14,7 +69,7 @@ GLuint loadShader(GLenum shaderType, const std::string& filename)
   std::ifstream shaderFile(filename);
 
   if (!shaderFile.is_open()) {
-    rlzLog(Log::ERROR, "loadShader: couldn't open shader file \""<<filename<<"\": "<<cppStrerror(errno));
+    rlzLog(Log::ERROR, "loadShader: couldn't open shader file \""<<filename<<"\": "<<ogl::cppStrerror(errno));
     return 0;
   }
 
@@ -54,34 +109,4 @@ GLuint loadShader(GLenum shaderType, const std::string& filename)
   return shader;
 }
 
-GLuint makePorgram(std::initializer_list<GLuint> shaders)
-{
-  GLuint program = glCreateProgram();
-
-  if (program == 0) {
-    return 0;
-  }
-
-  for (auto it=shaders.begin(); it != shaders.end(); ++it) {
-    glAttachShader(program, *it);
-  }
-
-  glLinkProgram(program);
-
-  GLint status;
-  glGetProgramiv(program, GL_LINK_STATUS, &status);
-  if (status == GL_FALSE)
-  {
-    GLint infoLogLength;
-    glGetProgramiv(program, GL_INFO_LOG_LENGTH, &infoLogLength);
-
-    std::unique_ptr<GLchar[]> strInfoLog(new GLchar[infoLogLength]);
-    glGetProgramInfoLog(program, infoLogLength, nullptr, strInfoLog.get());
-
-    Log::error(std::string("makeProgram: linking failed: ")+strInfoLog.get());
-  }
-
-  return program;
-}
-
-} // namespace ogl
+} // namespace
