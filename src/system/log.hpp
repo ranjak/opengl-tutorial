@@ -12,7 +12,7 @@
          Log::getGlobal().log(Log::DBG, s); \
     } while (0)
 #else
-# define glog(severity, msg);
+# define dbgLog(msg);
 #endif
 
 // Log still enabled in release mode
