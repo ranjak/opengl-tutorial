@@ -9,10 +9,9 @@ before_build:
 - ps: $IE=new-object -com internetexplorer.application
 - ps: $IE.navigate2("https://cvs.khronos.org")
 
-- cmd: if %platform%=="x64" set cmake_gen="Visual Studio 14 2015 Win64"
-- cmd: if %platform%=="x86" set cmake_gen="Visual Studio 14 2015"
-
-- cmd: cmake -G"%cmake_gen%" -DCMAKE_BUILD_TYPE="%configuration%" -DPYTHON_EXECUTABLE="C:/Python35/python.exe"
+- cmd: if "%platform%"=="x64" set cmake_gen=Visual Studio 14 2015 Win64
+- cmd: if "%platform%"=="x86" set cmake_gen=Visual Studio 14 2015
+- cmd: cmake -G "%cmake_gen%" -DCMAKE_BUILD_TYPE="%configuration%" -DPYTHON_EXECUTABLE="C:/Python35/python.exe"
 build:
   project: ALL_BUILD.vcxproj
   verbosity: minimal
