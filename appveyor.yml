@@ -15,3 +15,4 @@ before_build:
 build:
   project: ALL_BUILD.vcxproj
   verbosity: minimal
+  parallel: true
