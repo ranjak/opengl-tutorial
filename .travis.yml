@@ -2,19 +2,51 @@ language: cpp
 compiler: gcc
 addons:
   apt:
-    sources:
+    sources: &required_sources
     - ubuntu-toolchain-r-test
     - george-edison55-precise-backports
-    packages:
-    - gcc-6
-    - g++-6
-    - xorg-dev
+    packages: &required_packages
     - cmake
     - cmake-data
+matrix:
+  include:
+    # 64-bit Release
+    - env: CC=gcc-6 CXX=g++-6 CONFIGURATION=Release
+      addons:
+        apt:
+          sources:
+          - *required_sources
+          packages:
+          - *required_packages
+          - gcc-6
+          - g++-6
+          - libx11-dev
+          - libxrandr-dev
+          - libxinerama-dev
+          - libxxf86vm-dev
+          - libxcursor-dev
+          - x11proto-kb-dev
+    # 32-bit Release
+    - env: CC="gcc-6 -m32" CXX="g++-6 -m32" CONFIGURATION=Release
+      addons:
+        apt:
+          sources:
+          - *required_sources
+          packages:
+          - *required_packages
+          - gcc-6-multilib
+          - g++-6-multilib
+          - libc6-dev:i386
+          - libx11-dev:i386
+          - libxrandr-dev:i386
+          - libxinerama-dev:i386
+          - libxxf86vm-dev:i386
+          - libxcursor-dev:i386
+          - x11proto-kb-dev:i386
 script:
 - mkdir build
 - cd build
-- CC=gcc-6 CXX=g++-6 cmake -DOGLTUTOR_STATIC=ON ..
+- cmake -DCMAKE_BUILD_TYPE=$CONFIGURATION -DOGLTUTOR_STATIC=ON ..
 - make -j2
 notifications:
   email: false
