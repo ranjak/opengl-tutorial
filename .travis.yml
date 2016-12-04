@@ -1,5 +1,4 @@
 language: cpp
-compiler: gcc
 addons:
   apt:
     sources: &required_sources
@@ -38,6 +37,8 @@ matrix:
           - g++-6-multilib
           - libc6-dev:i386
           - libx11-dev:i386
+          - libxext-dev:i386
+          - libxfixes-dev:i386
           - libxrandr-dev:i386
           - libxinerama-dev:i386
           - libxxf86vm-dev:i386
