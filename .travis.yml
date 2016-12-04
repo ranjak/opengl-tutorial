@@ -10,7 +10,8 @@ addons:
 matrix:
   include:
     # 64-bit Release
-    - env: CC=gcc-6 CXX=g++-6 CONFIGURATION=Release
+    # We can't set CC and CXX directly as Travis overrides them.
+    - env: ACTUAL_CC=gcc-6 ACTUAL_CXX=g++-6 CONFIGURATION=Release
       addons:
         apt:
           sources:
@@ -26,7 +27,7 @@ matrix:
           - libxcursor-dev
           - x11proto-kb-dev
     # 32-bit Release
-    - env: CC="gcc-6 -m32" CXX="g++-6 -m32" CONFIGURATION=Release
+    - env: ACTUAL_CC="gcc-6 -m32" ACTUAL_CXX="g++-6 -m32" CONFIGURATION=Release
       addons:
         apt:
           sources:
@@ -36,6 +37,7 @@ matrix:
           - gcc-6-multilib
           - g++-6-multilib
           - libc6-dev:i386
+          - libgl1-mesa-dev:i386
           - libx11-dev:i386
           - libxext-dev:i386
           - libxfixes-dev:i386
@@ -47,7 +49,7 @@ matrix:
 script:
 - mkdir build
 - cd build
-- cmake -DCMAKE_BUILD_TYPE=$CONFIGURATION -DOGLTUTOR_STATIC=ON ..
+- CC="$ACTUAL_CC" CXX="$ACTUAL_CXX" cmake -DCMAKE_BUILD_TYPE=$CONFIGURATION -DOGLTUTOR_STATIC=ON ..
 - make -j2
 notifications:
   email: false
