@@ -36,6 +36,10 @@ matrix:
           - *required_packages
           - gcc-6-multilib
           - g++-6-multilib
+          - libc6-dev:i386
+          - libglapi-mesa:i386
+          - libgl1-mesa-glx:i386
+          - libgl1-mesa-dev:i386
           - libx11-dev:i386
           - libxext-dev:i386
           - libxfixes-dev:i386
