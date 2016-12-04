@@ -36,6 +36,14 @@ matrix:
           - *required_packages
           - gcc-6-multilib
           - g++-6-multilib
+          - libx11-dev:i386
+          - libxext-dev:i386
+          - libxfixes-dev:i386
+          - libxrandr-dev:i386
+          - libxinerama-dev:i386
+          - libxxf86vm-dev:i386
+          - libxcursor-dev:i386
+          - x11proto-kb-dev:i386
 script:
 - mkdir build
 - cd build
