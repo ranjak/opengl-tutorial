@@ -36,8 +36,6 @@ GLuint bufferObject = 0;
 GLuint program = 0;
 GLuint vao = 0;
 
-GLint windowHeightUniformLoc = 0;
-
 } // namespace
 
 Renderer::Renderer(Window* window) :
@@ -82,23 +80,24 @@ void Renderer::render()
   glUseProgram(program);
   OGL_CHECK_ERROR();
 
-  glUniform1i(windowHeightUniformLoc, mWindow->getFramebufferSize().second);
-
   glBindBuffer(GL_ARRAY_BUFFER, bufferObject);
-  OGL_CHECK_ERROR();
+  // Geometry
   glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, 0);
-  OGL_CHECK_ERROR();
+  // Colors
+  glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 0, reinterpret_cast<void*>(3*sizeof(ogl::coloredTriangle[0])));
   glBindBuffer(GL_ARRAY_BUFFER, 0);
+  OGL_CHECK_ERROR();
 
   glEnableVertexAttribArray(0);
+  glEnableVertexAttribArray(1);
   OGL_CHECK_ERROR();
 
   glDrawArrays(GL_TRIANGLES, 0, 3);
   OGL_CHECK_ERROR();
 
   glDisableVertexAttribArray(0);
+  glDisableVertexAttribArray(1);
   glUseProgram(0);
-  OGL_CHECK_ERROR();
 
   mWindow->swapBuffers();
 }
@@ -110,16 +109,11 @@ void Renderer::addTriangle()
   glGenBuffers(1, &bufferObject);
 
   glBindBuffer(GL_ARRAY_BUFFER, bufferObject);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(ogl::triangle), ogl::triangle, GL_STATIC_DRAW);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(ogl::coloredTriangle), ogl::coloredTriangle, GL_STATIC_DRAW);
   glBindBuffer(GL_ARRAY_BUFFER, 0);
 
   program = ogl::makePorgram({
-                     ogl::Shader(GL_FRAGMENT_SHADER, "shaders/fragment.glsl"),
-                     ogl::Shader(GL_VERTEX_SHADER, "shaders/vertex.glsl")
+                     ogl::Shader(GL_VERTEX_SHADER, "shaders/colored-triangle.vert"),
+                     ogl::Shader(GL_FRAGMENT_SHADER, "shaders/colored-triangle.frag")
                    });
-
-  windowHeightUniformLoc = glGetUniformLocation(program, "windowHeight");
-  assert(windowHeightUniformLoc != -1);
-
-  // TODO delete shaders
 }

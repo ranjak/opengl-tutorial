@@ -31,14 +31,23 @@ set(INCLUDE_RENDERER
   renderer/util.hpp
 )
 
+set(SHADERS
+  ../shaders/vertex.glsl
+  ../shaders/fragment.glsl
+  ../shaders/colored-triangle.vert
+  ../shaders/colored-triangle.frag
+)
+
 source_group(system FILES ${SRC_SYSTEM} ${INCLUDE_SYSTEM})
 source_group(renderer FILES ${SRC_RENDERER} ${INCLUDE_RENDERER})
+source_group(shaders FILES ${SHADERS})
 
 add_executable(ogl-app WIN32
   ${SRC_SYSTEM}
   ${INCLUDE_SYSTEM}
   ${SRC_RENDERER}
   ${INCLUDE_RENDERER}
+  ${SHADERS}
 )
 
 # GLFW shouldn't include gl.h since we're using a loader (glad)
