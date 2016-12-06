@@ -90,3 +90,9 @@ target_link_libraries(ogl-app
   glad
 )
 
+# Install targets
+
+# Binaries
+install(TARGETS ogl-app RUNTIME DESTINATION ".")
+# Resources
+install(DIRECTORY ../shaders DESTINATION "." USE_SOURCE_PERMISSIONS)

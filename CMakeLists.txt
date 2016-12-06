@@ -58,3 +58,6 @@ if (NOT CMAKE_BUILD_TYPE MATCHES [Dd]ebug)
 endif()
 
 add_subdirectory(src)
+
+# Packaging with CPack
+include(package)
