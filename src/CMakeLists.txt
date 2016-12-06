@@ -29,6 +29,16 @@ set(INCLUDE_RENDERER
   renderer/primitives.hpp
   renderer/shader.hpp
   renderer/util.hpp
+  renderer/transform.hpp
+)
+
+set(SRC_TUTORIAL
+  tutorial/rotatingtriangle.cpp
+)
+
+set(INCLUDE_TUTORIAL
+  tutorial/tutorial.hpp
+  tutorial/rotatingtriangle.hpp
 )
 
 set(SHADERS
@@ -40,6 +50,7 @@ set(SHADERS
 
 source_group(system FILES ${SRC_SYSTEM} ${INCLUDE_SYSTEM})
 source_group(renderer FILES ${SRC_RENDERER} ${INCLUDE_RENDERER})
+source_group(tutorial FILES ${SRC_TUTORIAL} ${INCLUDE_TUTORIAL})
 source_group(shaders FILES ${SHADERS})
 
 add_executable(ogl-app WIN32
@@ -47,6 +58,8 @@ add_executable(ogl-app WIN32
   ${INCLUDE_SYSTEM}
   ${SRC_RENDERER}
   ${INCLUDE_RENDERER}
+  ${SRC_TUTORIAL}
+  ${INCLUDE_TUTORIAL}
   ${SHADERS}
 )
 
@@ -68,6 +81,7 @@ endif(MSVC)
 target_include_directories(ogl-app PRIVATE
   system
   renderer
+  tutorial
 )
 
 target_link_libraries(ogl-app

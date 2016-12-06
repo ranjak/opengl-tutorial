@@ -1,6 +1,7 @@
 #include "mainloop.hpp"
 #include "log.hpp"
 #include "system.hpp"
+#include "rotatingtriangle.hpp"
 #include "glfw/windowglfw.hpp"
 #include <algorithm>
 
@@ -19,6 +20,7 @@ void MainLoop::requestExit()
 MainLoop::MainLoop() :
   mMainWindow(),
   mRenderer(),
+  mTutorial(),
   mExitRequested(false),
   mMaxFrameTime(0),
   mAccuFrameTimes(0),
@@ -56,7 +58,9 @@ bool MainLoop::init(int width, int height, const std::string& title)
     return false;
   }
 
-  mRenderer->addTriangle();
+  mTutorial.reset(new RotatingTriangle());
+  mTutorial->init();
+
   return true;
 }
 
@@ -84,7 +88,7 @@ void MainLoop::run()
     if (mExitRequested)
         break;
 
-    mRenderer->render();
+    mRenderer->render(*mTutorial);
 
     // Framerate statistics
     ogl::time frameTime = System::now() - realTimeElasped - startTime;

@@ -4,6 +4,7 @@
 #include "window.hpp"
 #include "renderer.hpp"
 #include "system.hpp"
+#include "tutorial.hpp"
 #include <string>
 #include <memory>
 
@@ -35,6 +36,7 @@ private:
 
   std::unique_ptr<Window> mMainWindow;
   std::unique_ptr<Renderer> mRenderer;
+  std::unique_ptr<Tutorial> mTutorial;
   bool mExitRequested;
 
   ogl::time mMaxFrameTime;
