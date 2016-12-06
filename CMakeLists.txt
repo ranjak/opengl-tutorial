@@ -4,6 +4,13 @@ cmake_minimum_required(VERSION 3.0)
 
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake" ${CMAKE_MODULE_PATH})
 
+# Easy way to detect 32/64bit build target
+if (CMAKE_SIZEOF_VOID_P EQUAL 8)
+  set(OGLTUTOR_TARGET_ARCH "x86-64")
+else ()
+  set(OGLTUTOR_TARGET_ARCH "x86-32")
+endif()
+
 # Global options
 
 option(OGLTUTOR_STATIC "Build opengl-tutorial statically (on Unix, it will still be dynamically linked to glibc and window manager libs)" OFF)

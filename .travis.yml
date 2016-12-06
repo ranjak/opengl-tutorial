@@ -1,53 +1,50 @@
 language: cpp
 addons:
   apt:
-    sources: &required_sources
+    sources: &1
     - ubuntu-toolchain-r-test
     - george-edison55-precise-backports
-    packages: &required_packages
+    packages: &2
     - cmake
     - cmake-data
 matrix:
   include:
-    # 64-bit Release
-    # We can't set CC and CXX directly as Travis overrides them.
-    - env: ACTUAL_CC=gcc-6 ACTUAL_CXX=g++-6 CONFIGURATION=Release
-      addons:
-        apt:
-          sources:
-          - *required_sources
-          packages:
-          - *required_packages
-          - gcc-6
-          - g++-6
-          - libx11-dev
-          - libxrandr-dev
-          - libxinerama-dev
-          - libxxf86vm-dev
-          - libxcursor-dev
-          - x11proto-kb-dev
-    # 32-bit Release
-    - env: ACTUAL_CC="gcc-6 -m32" ACTUAL_CXX="g++-6 -m32" CONFIGURATION=Release
-      addons:
-        apt:
-          sources:
-          - *required_sources
-          packages:
-          - *required_packages
-          - gcc-6-multilib
-          - g++-6-multilib
-          - libc6-dev:i386
-          - libglapi-mesa:i386
-          - libgl1-mesa-glx:i386
-          - libgl1-mesa-dev:i386
-          - libx11-dev:i386
-          - libxext-dev:i386
-          - libxfixes-dev:i386
-          - libxrandr-dev:i386
-          - libxinerama-dev:i386
-          - libxxf86vm-dev:i386
-          - libxcursor-dev:i386
-          - x11proto-kb-dev:i386
+  - env: ACTUAL_CC=gcc-6 ACTUAL_CXX=g++-6 CONFIGURATION=Release
+    addons:
+      apt:
+        sources:
+        - *1
+        packages:
+        - *2
+        - gcc-6
+        - g++-6
+        - libx11-dev
+        - libxrandr-dev
+        - libxinerama-dev
+        - libxxf86vm-dev
+        - libxcursor-dev
+        - x11proto-kb-dev
+  - env: ACTUAL_CC="gcc-6 -m32" ACTUAL_CXX="g++-6 -m32" CONFIGURATION=Release
+    addons:
+      apt:
+        sources:
+        - *1
+        packages:
+        - *2
+        - gcc-6-multilib
+        - g++-6-multilib
+        - libc6-dev:i386
+        - libglapi-mesa:i386
+        - libgl1-mesa-glx:i386
+        - libgl1-mesa-dev:i386
+        - libx11-dev:i386
+        - libxext-dev:i386
+        - libxfixes-dev:i386
+        - libxrandr-dev:i386
+        - libxinerama-dev:i386
+        - libxxf86vm-dev:i386
+        - libxcursor-dev:i386
+        - x11proto-kb-dev:i386
 script:
 - mkdir build
 - cd build
@@ -55,3 +52,17 @@ script:
 - make -j2
 notifications:
   email: false
+before_deploy:
+- cd "${TRAVIS_BUILD_DIR}/build"
+- make package
+deploy:
+  provider: releases
+  api_key:
+    secure: mBtiHt0JQcmRphVwasgTS//vq8qbb0E/Q7c4Fh1VcIt7iGHcv9q/m8YyaKItiKmBilSU7JyJQqetPRgJaFaZ7a1kdFljVH8WaxrKuIepODClXiKibL/o2Gzz1PZZXEWO4P8r9K7cyYCtZNI2yaZt0N13krYsxA5EpqsSE9DVaKNu1eQBudQOkwIODrvR8PFlwIlIeMrTP4+lq4c83rgqsBdsUERsIydEAuoLfQ2PIdYTR7MgmIXZUPOeI0pOErcEz98IMwwtg5U/XYFgfkN08clMx/n7HFoHGZNsJJLWK0nrNNHWOAF6/SkPuoofeZoxE81H4q4Dds9dRFHqAjYt5Eq2j3OKeaAv+zLdU8MGENpJIRYDa/4PJivUO4NeWOf7lHo3aDbdudAMYsoa1XCk620dC08NK4538Y5fkQ1YfRJI+P8sSvCG7iRYNQavkB3yo5IIP+agzTwZcEhSIZxFpzuwBzH16345Xf+VFdCgFYYFSR0Q2JDpZa+pEC8w/bDMEibVSj0kE/yfTIWXkGnDIHpdaB5DTTLmzOnAc71K8xUpt0SWxXzmwhjVhQgkgeml1kI3EDciqcGe4DlaWgytwhmIvzGudcgpZOcK8cZaT3FKLIUmz4riMO9UJpWTph2Eewy+pM9IyKxW36iw/+yYd4kN/1+ObZnEZCJHsTJKKmo=
+  file_glob: true
+  file: "${TRAVIS_BUILD_DIR}/build/opengl-tutorial*.tar.gz"
+  skip_cleanup: true
+  on:
+    repo: ranjak/opengl-tutorial
+    tags: true
+
