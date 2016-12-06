@@ -2,6 +2,7 @@
 #include "window.hpp"
 #include "log.hpp"
 #include "tutorial.hpp"
+#include "sysutils.hpp"
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <cassert>
@@ -27,6 +28,14 @@ GLADloadproc myglGetProcAddress = [](const char* proc)
   return make_void_ptr(glfwGetProcAddress(proc));
 };
 
+void resizeFramebuffer(int w, int h)
+{
+  // Keep a square (1:1) aspect ratio
+  int size = ogl::min(w, h);
+
+  glViewport(w/2 - size/2, h/2 - size/2, size, size);
+}
+
 /*
  * Temporary tutorial stuff
  */
@@ -51,11 +60,11 @@ Renderer::Renderer(Window* window) :
   glGenVertexArrays(1, &vao);
 
   std::pair<int, int> framebuffer = mWindow->getFramebufferSize();
-  glViewport(0, 0, framebuffer.first, framebuffer.second);
+  resizeFramebuffer(framebuffer.first, framebuffer.second);
 
   mWindow->setFramebufferResizeCallback([](Window* /*win*/, int w, int h)
   {
-    glViewport(0, 0, w, h);
+    resizeFramebuffer(w, h);
   });
 }
 
