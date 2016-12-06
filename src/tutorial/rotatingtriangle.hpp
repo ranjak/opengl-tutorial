@@ -7,11 +7,11 @@
 class RotatingTriangle : public Tutorial
 {
 public:
-  void init();
+  void init() override;
 
-  void update();
+  void update(ogl::seconds delta) override;
 
-  void render();
+  void render() override;
 
 private:
   GLuint mProgram;

@@ -6,6 +6,8 @@
 namespace ogl
 {
 using time = std::chrono::microseconds;
+
+using seconds = std::chrono::duration<float, std::chrono::seconds::period>;
 }
 
 struct System

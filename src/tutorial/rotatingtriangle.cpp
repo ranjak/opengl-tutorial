@@ -2,13 +2,21 @@
 #include "shader.hpp"
 #include "primitives.hpp"
 #include "util.hpp"
+#include "transform.hpp"
+#include <glm/vec2.hpp>
+
+namespace
+{
+// Rotation speed
+float degPerSecond = 90.0f;
+} // namespace
 
 void RotatingTriangle::init()
 {
   glGenBuffers(1, &mBuffer);
 
   glBindBuffer(GL_ARRAY_BUFFER, mBuffer);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(ogl::coloredTriangle), ogl::coloredTriangle, GL_STATIC_DRAW);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(ogl::coloredTriangle), ogl::coloredTriangle, GL_STREAM_DRAW);
   glBindBuffer(GL_ARRAY_BUFFER, 0);
 
   mProgram = ogl::makePorgram({
@@ -17,9 +25,16 @@ void RotatingTriangle::init()
                               });
 }
 
-void RotatingTriangle::update()
+void RotatingTriangle::update(ogl::seconds delta)
 {
+  for (int i=0; i<3; ++i) {
+    ogl::rotateZ(ogl::coloredTriangle[i], glm::vec2(0.f, 0.f), degPerSecond * delta.count());
+  }
 
+  glBindBuffer(GL_ARRAY_BUFFER, mBuffer);
+  glBufferSubData(GL_ARRAY_BUFFER, 0, 3*sizeof(ogl::coloredTriangle[0]), ogl::coloredTriangle);
+  OGL_CHECK_ERROR();
+  glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
 void RotatingTriangle::render()
@@ -44,5 +59,6 @@ void RotatingTriangle::render()
 
   glDisableVertexAttribArray(0);
   glDisableVertexAttribArray(1);
+  glBindBuffer(GL_ARRAY_BUFFER, 0);
   glUseProgram(0);
 }

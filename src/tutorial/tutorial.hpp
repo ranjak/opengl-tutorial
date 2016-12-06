@@ -1,6 +1,7 @@
 #ifndef TUTORIAL_HPP
 #define TUTORIAL_HPP
 
+#include "system.hpp"
 
 class Tutorial
 {
@@ -9,7 +10,7 @@ public:
 
   virtual void init() {}
 
-  virtual void update() {}
+  virtual void update(ogl::seconds /*delta*/) {}
 
   virtual void render() {}
 };

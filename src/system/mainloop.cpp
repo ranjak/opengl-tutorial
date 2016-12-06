@@ -82,6 +82,8 @@ void MainLoop::run()
       if (mExitRequested)
         break;
 
+      mTutorial->update(TIMESTEP);
+
       gameTime += TIMESTEP;
     }
 
