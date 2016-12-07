@@ -24,7 +24,7 @@ deploy:
   description: ''
   auth_token:
     secure: ZR3cvimDV4CSFZDh4D6Wfar/Es4FOemnXXF5SoHPn917W65rbt73yrfy9omHgoJE
-  artifact: ogl-*-Release
+  artifact: /ogl.*Release/
   draft: false
   prerelease: false
   force_update: true
