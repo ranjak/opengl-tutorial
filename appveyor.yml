@@ -11,8 +11,21 @@ before_build:
 
 - cmd: if "%platform%"=="x64" set cmake_gen=Visual Studio 14 2015 Win64
 - cmd: if "%platform%"=="x86" set cmake_gen=Visual Studio 14 2015
-- cmd: cmake -G "%cmake_gen%" -DCMAKE_BUILD_TYPE="%configuration%" -DPYTHON_EXECUTABLE="C:/Python35/python.exe"
+- cmd: cmake -G "%cmake_gen%" -DCMAKE_BUILD_TYPE="%configuration%" -DOGLTUTOR_STATIC=ON -DPYTHON_EXECUTABLE="C:/Python35/python.exe"
 build:
-  project: ALL_BUILD.vcxproj
+  project: PACKAGE.vcxproj
   verbosity: minimal
   parallel: true
+artifacts:
+  - path: 'opengl-tutorial*.zip'
+    name: ogl-$(platform)-$(configuration)
+deploy:
+  provider: GitHub
+  description: ''
+  auth_token:
+    secure: ZR3cvimDV4CSFZDh4D6Wfar/Es4FOemnXXF5SoHPn917W65rbt73yrfy9omHgoJE
+  artifact: ogl-*-Release
+  draft: false
+  prerelease: false
+  on:
+    appveyor_repo_tag: true        # deploy on tag push only
