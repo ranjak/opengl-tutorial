@@ -82,7 +82,7 @@ else(OGLTUTOR_SYSTEM_GLM)
   message(STATUS "Using glm from git")
   if (NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/glm")
 
-    execute_process(COMMAND "${GIT}" clone "https://github.com/g-truc/glm"
+    execute_process(COMMAND "${GIT}" clone "https://github.com/ranjak/glm"
       WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty"
     )
   else()
@@ -90,6 +90,8 @@ else(OGLTUTOR_SYSTEM_GLM)
       WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/glm"
     )
   endif()
+
+  set(GLM_INSTALL_ENABLE OFF CACHE BOOL "" FORCE)
 
   add_subdirectory("3rdparty/glm" ${CMAKE_CURRENT_BINARY_DIR}/glm)
 
