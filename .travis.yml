@@ -55,13 +55,15 @@ notifications:
 before_deploy:
 - cd "${TRAVIS_BUILD_DIR}/build"
 - make package
+- export FILE_TO_UPLOAD=$(ls *.tar.gz)
 deploy:
   provider: releases
   api_key:
     secure: mBtiHt0JQcmRphVwasgTS//vq8qbb0E/Q7c4Fh1VcIt7iGHcv9q/m8YyaKItiKmBilSU7JyJQqetPRgJaFaZ7a1kdFljVH8WaxrKuIepODClXiKibL/o2Gzz1PZZXEWO4P8r9K7cyYCtZNI2yaZt0N13krYsxA5EpqsSE9DVaKNu1eQBudQOkwIODrvR8PFlwIlIeMrTP4+lq4c83rgqsBdsUERsIydEAuoLfQ2PIdYTR7MgmIXZUPOeI0pOErcEz98IMwwtg5U/XYFgfkN08clMx/n7HFoHGZNsJJLWK0nrNNHWOAF6/SkPuoofeZoxE81H4q4Dds9dRFHqAjYt5Eq2j3OKeaAv+zLdU8MGENpJIRYDa/4PJivUO4NeWOf7lHo3aDbdudAMYsoa1XCk620dC08NK4538Y5fkQ1YfRJI+P8sSvCG7iRYNQavkB3yo5IIP+agzTwZcEhSIZxFpzuwBzH16345Xf+VFdCgFYYFSR0Q2JDpZa+pEC8w/bDMEibVSj0kE/yfTIWXkGnDIHpdaB5DTTLmzOnAc71K8xUpt0SWxXzmwhjVhQgkgeml1kI3EDciqcGe4DlaWgytwhmIvzGudcgpZOcK8cZaT3FKLIUmz4riMO9UJpWTph2Eewy+pM9IyKxW36iw/+yYd4kN/1+ObZnEZCJHsTJKKmo=
   file_glob: true
-  file: "build/opengl-tutorial*.tar.gz"
+  file: "${TRAVIS_BUILD_DIR}/build/${FILE_TO_UPLOAD}"
   skip_cleanup: true
+  overwrite: true
   on:
     repo: ranjak/opengl-tutorial
     tags: true
