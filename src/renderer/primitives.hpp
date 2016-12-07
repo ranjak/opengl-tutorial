@@ -5,6 +5,8 @@
 
 namespace ogl
 {
+namespace
+{
 
 const glm::vec4 triangle[] = {
   {0.75f,  0.75f,  0.0f, 1.0f},
@@ -21,6 +23,7 @@ glm::vec4 coloredTriangle[] = {
   { 0.0f,    0.0f, 1.0f, 1.0f}
 };
 
+} // namespace
 } // namespace ogl
 
 #endif // PRIMITIVES_HPP
