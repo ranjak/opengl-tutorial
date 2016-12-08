@@ -35,12 +35,14 @@ set(INCLUDE_RENDERER
 set(SRC_TUTORIAL
   tutorial/rotatingtriangle.cpp
   tutorial/movingtriangle.cpp
+  tutorial/movingtriangleshader.cpp
 )
 
 set(INCLUDE_TUTORIAL
   tutorial/tutorial.hpp
   tutorial/rotatingtriangle.hpp
   tutorial/movingtriangle.hpp
+  tutorial/movingtriangleshader.hpp
 )
 
 set(SHADERS
@@ -49,6 +51,7 @@ set(SHADERS
   ../shaders/colored-triangle.vert
   ../shaders/colored-triangle.frag
   ../shaders/positionoffset.vert
+  ../shaders/positionoffset-calc.vert
 )
 
 source_group(system FILES ${SRC_SYSTEM} ${INCLUDE_SYSTEM})

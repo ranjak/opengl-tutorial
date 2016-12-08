@@ -1,7 +1,7 @@
 #include "mainloop.hpp"
 #include "log.hpp"
 #include "system.hpp"
-#include "movingtriangle.hpp"
+#include "movingtriangleshader.hpp"
 #include "glfw/windowglfw.hpp"
 #include <algorithm>
 
@@ -58,7 +58,7 @@ bool MainLoop::init(int width, int height, const std::string& title)
     return false;
   }
 
-  mTutorial.reset(new MovingTriangle());
+  mTutorial.reset(new MovingTriangleShader());
   mTutorial->init();
 
   return true;
