@@ -31,12 +31,13 @@ void MovingTriangleShader::init()
 
   mProgram = ogl::makePorgram({
     ogl::Shader(GL_VERTEX_SHADER, "shaders/positionoffset-calc.vert"),
-    ogl::Shader(GL_FRAGMENT_SHADER, "shaders/colored-triangle.frag")
+    ogl::Shader(GL_FRAGMENT_SHADER, "shaders/colored-triangle-calc.frag")
                               });
 
   mTimeUniform = glGetUniformLocation(mProgram, "currentTime");
   GLint piUniform = glGetUniformLocation(mProgram, "pi");
   GLint loopUniform = glGetUniformLocation(mProgram, "loopDuration");
+  GLint fragLoopUniform = glGetUniformLocation(mProgram, "fadeLoopDuration");
 
   if (mTimeUniform < 0) {
     Log::error("MovingTriangleShader: time uniform has no location");
@@ -52,6 +53,7 @@ void MovingTriangleShader::init()
   glUseProgram(mProgram);
   glUniform1f(piUniform, ogl::PIf);
   glUniform1f(loopUniform, revolutionTime.count());
+  glUniform1f(fragLoopUniform, revolutionTime.count() / 2.0f);
   glUseProgram(0);
 }
 

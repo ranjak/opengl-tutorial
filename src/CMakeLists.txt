@@ -52,6 +52,7 @@ set(SHADERS
   ../shaders/colored-triangle.frag
   ../shaders/positionoffset.vert
   ../shaders/positionoffset-calc.vert
+  ../shaders/colored-triangle-calc.frag
 )
 
 source_group(system FILES ${SRC_SYSTEM} ${INCLUDE_SYSTEM})
