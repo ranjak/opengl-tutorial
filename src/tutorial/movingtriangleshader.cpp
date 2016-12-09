@@ -81,6 +81,10 @@ void MovingTriangleShader::render()
 
   glDrawArrays(GL_TRIANGLES, 0, 3);
 
+  // Draw a second triangle opposite to the first
+  glUniform1f(mTimeUniform, mTime.count() + revolutionTime.count() / 2.0f);
+  glDrawArrays(GL_TRIANGLES, 0, 3);
+
   glDisableVertexAttribArray(0);
   glDisableVertexAttribArray(1);
   glBindBuffer(GL_ARRAY_BUFFER, 0);

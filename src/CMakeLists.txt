@@ -36,6 +36,7 @@ set(SRC_TUTORIAL
   tutorial/rotatingtriangle.cpp
   tutorial/movingtriangle.cpp
   tutorial/movingtriangleshader.cpp
+  tutorial/orthographicprism.cpp
 )
 
 set(INCLUDE_TUTORIAL
@@ -43,6 +44,7 @@ set(INCLUDE_TUTORIAL
   tutorial/rotatingtriangle.hpp
   tutorial/movingtriangle.hpp
   tutorial/movingtriangleshader.hpp
+  tutorial/orthographicprism.hpp
 )
 
 set(SHADERS
