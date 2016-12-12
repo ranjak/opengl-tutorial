@@ -19,11 +19,9 @@ void main(void)
 
   clipPos.xy = cameraPos.xy * frustumScale;
 
-  clipPos.z = ((cameraPos.z-zNear)*(2/(zFar-zNear)) - 1.0)*(cameraPos.z/dProjPlane);
-/*
-  clipPos.z = cameraPos.z * (zNear + zFar) / (zNear - zFar);
+  clipPos.z = cameraPos.z * (-zNear - zFar) / (zNear - zFar);
   clipPos.z += 2 * zNear * zFar / (zNear - zFar);
-*/
+
   clipPos.w = cameraPos.z / dProjPlane;
 
   gl_Position = clipPos;
