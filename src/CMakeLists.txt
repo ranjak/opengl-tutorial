@@ -38,6 +38,7 @@ set(SRC_TUTORIAL
   tutorial/movingtriangleshader.cpp
   tutorial/orthographicprism.cpp
   tutorial/manualperspective.cpp
+  tutorial/matrixperspective.cpp
 )
 
 set(INCLUDE_TUTORIAL
@@ -47,6 +48,7 @@ set(INCLUDE_TUTORIAL
   tutorial/movingtriangleshader.hpp
   tutorial/orthographicprism.hpp
   tutorial/manualperspective.hpp
+  tutorial/matrixperspective.hpp
 )
 
 set(SHADERS
@@ -58,6 +60,7 @@ set(SHADERS
   ../shaders/positionoffset-calc.vert
   ../shaders/colored-triangle-calc.frag
   ../shaders/manualperspective.vert
+  ../shaders/matrixperspective.vert
 )
 
 source_group(system FILES ${SRC_SYSTEM} ${INCLUDE_SYSTEM})
