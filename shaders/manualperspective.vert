@@ -10,6 +10,8 @@ uniform float frustumScale;
 
 smooth out vec4 vertexColor;
 
+const float dProjPlane = -1.0;
+
 void main(void)
 {
   vec4 cameraPos = position + vec4(offset.x, offset.y, 0.0, 0.0);
@@ -17,10 +19,12 @@ void main(void)
 
   clipPos.xy = cameraPos.xy * frustumScale;
 
+  clipPos.z = ((cameraPos.z-zNear)*(2/(zFar-zNear)) - 1.0)*(cameraPos.z/dProjPlane);
+/*
   clipPos.z = cameraPos.z * (zNear + zFar) / (zNear - zFar);
   clipPos.z += 2 * zNear * zFar / (zNear - zFar);
-
-  clipPos.w = -cameraPos.z;
+*/
+  clipPos.w = cameraPos.z / dProjPlane;
 
   gl_Position = clipPos;
   vertexColor = color;

@@ -24,8 +24,8 @@ void ManualPerspective::init()
   glUseProgram(mProgram);
 
   glUniform2f(offsetUniform, 0.5f, 0.5f);
-  glUniform1f(zNearUniform, 1.0f);
-  glUniform1f(zFarUniform, 3.0f);
+  glUniform1f(zNearUniform, -1.0f);
+  glUniform1f(zFarUniform, -3.0f);
   glUniform1f(frustumUniform, 1.0f);
 
   OGL_CHECK_ERROR();
