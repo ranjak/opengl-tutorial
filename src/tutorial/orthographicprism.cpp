@@ -2,7 +2,11 @@
 #include "primitives.hpp"
 #include "shader.hpp"
 
-void OrthographicPrism::init()
+
+OrthographicPrism::OrthographicPrism(Window* win) :
+  Tutorial(win),
+  mProgram(0),
+  mBuffer(0)
 {
   glGenBuffers(1, &mBuffer);
 

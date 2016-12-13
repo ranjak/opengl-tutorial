@@ -31,6 +31,7 @@ Tutorial::Tutorial(Window* window) :
   mWindow(window),
   mVao(0)
 {
+  mWindow->setTutorial(this);
   mWindow->makeContextCurrent();
 
   // Load OpenGL extensions only once.
@@ -44,11 +45,16 @@ Tutorial::Tutorial(Window* window) :
 
   glGenVertexArrays(1, &mVao);
 
+}
+
+void Tutorial::init()
+{
   std::pair<int, int> framebuffer = mWindow->getFramebufferSize();
   framebufferSizeChanged(framebuffer.first, framebuffer.second);
 
   mWindow->setFramebufferResizeCallback([](Window* win, int w, int h)
   {
+    win->makeContextCurrent();
     win->getTutorial()->framebufferSizeChanged(w, h);
   });
 }

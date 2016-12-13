@@ -7,9 +7,7 @@
 class RotatingTriangle : public Tutorial
 {
 public:
-  RotatingTriangle(Window* win) : Tutorial(win) {}
-
-  void init() override;
+  RotatingTriangle(Window* win);
 
   void update(ogl::seconds delta) override;
 

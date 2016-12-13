@@ -3,7 +3,11 @@
 #include "shader.hpp"
 #include "util.hpp"
 
-void ManualPerspective::init()
+
+ManualPerspective::ManualPerspective(Window* win) :
+  Tutorial(win),
+  mProgram(0),
+  mBuffer(0)
 {
   glGenBuffers(1, &mBuffer);
 

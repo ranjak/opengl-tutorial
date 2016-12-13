@@ -12,12 +12,13 @@ public:
 
   virtual ~Tutorial() = 0;
 
-  virtual void init() {}
+  void init();
 
   virtual void update(ogl::seconds /*delta*/) {}
 
   void render();
 
+private:
   virtual void renderInternal() = 0;
 
   virtual void framebufferSizeChanged(int w, int h);

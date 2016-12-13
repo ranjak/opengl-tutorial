@@ -7,15 +7,17 @@
 class MatrixPerspective : public Tutorial
 {
 public:
-  MatrixPerspective(Window* win) : Tutorial(win) {}
+  MatrixPerspective(Window* win);
 
-  void init() override;
-
+private:
   void renderInternal() override;
+
+  void framebufferSizeChanged(int w, int h) override;
 
 private:
   GLuint mProgram;
   GLuint mBuffer;
+  GLint mProjMatUniform;
 };
 
 #endif // MATRIXPERSPECTIVE_HPP

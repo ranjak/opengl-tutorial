@@ -19,11 +19,6 @@ MovingTriangle::MovingTriangle(Window* win) :
   mOffsetUniform(-1),
   mTime(0.0f)
 {
-
-}
-
-void MovingTriangle::init()
-{
   glGenBuffers(1, &mBuffer);
 
   glBindBuffer(GL_ARRAY_BUFFER, mBuffer);

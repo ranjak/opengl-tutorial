@@ -7,9 +7,7 @@
 class OrthographicPrism : public Tutorial
 {
 public:
-  OrthographicPrism(Window* win) : Tutorial(win) {}
-
-  void init() override;
+  OrthographicPrism(Window* win);
 
   void renderInternal() override;
 

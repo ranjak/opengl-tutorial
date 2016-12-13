@@ -10,8 +10,6 @@ class MovingTriangle : public Tutorial
 public:
   MovingTriangle(Window* win);
 
-  void init() override;
-
   void update(ogl::seconds delta) override;
 
   void renderInternal() override;

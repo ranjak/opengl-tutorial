@@ -11,7 +11,10 @@ namespace
 float degPerSecond = 90.0f;
 } // namespace
 
-void RotatingTriangle::init()
+RotatingTriangle::RotatingTriangle(Window* win) :
+  Tutorial(win),
+  mProgram(0),
+  mBuffer(0)
 {
   glGenBuffers(1, &mBuffer);
 

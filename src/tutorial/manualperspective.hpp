@@ -7,9 +7,7 @@
 class ManualPerspective : public Tutorial
 {
 public:
-  ManualPerspective(Window* win) : Tutorial(win) {}
-
-  void init() override;
+  ManualPerspective(Window* win);
 
   void renderInternal() override;
 

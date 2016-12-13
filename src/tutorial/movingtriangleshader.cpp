@@ -19,11 +19,6 @@ MovingTriangleShader::MovingTriangleShader(Window* win) :
   mTimeUniform(-1),
   mTime(0.0f)
 {
-
-}
-
-void MovingTriangleShader::init()
-{
   glGenBuffers(1, &mBuffer);
 
   glBindBuffer(GL_ARRAY_BUFFER, mBuffer);

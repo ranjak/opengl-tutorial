@@ -10,8 +10,6 @@ class MovingTriangleShader : public Tutorial
 public:
   MovingTriangleShader(Window* win);
 
-  void init() override;
-
   void update(ogl::seconds delta) override;
 
   void renderInternal() override;

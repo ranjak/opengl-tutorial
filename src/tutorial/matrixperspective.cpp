@@ -8,11 +8,11 @@
 namespace
 {
 
-glm::mat4 makeProjectionMat(float zNear, float zFar, float aspectRatio)
+glm::mat4 makeProjectionMat(float zNear, float zFar, float frustumScale, float aspectRatio)
 {
   return glm::mat4 {
-    aspectRatio, 0.0, 0.0, 0.0,
-    0.0, 1.0, 0.0, 0.0,
+    frustumScale / aspectRatio, 0.0, 0.0, 0.0,
+    0.0, frustumScale, 0.0, 0.0,
     0.0, 0.0, (-zNear - zFar)/(zNear - zFar), -1.0,
     0.0, 0.0,  2*zNear*zFar/(zNear - zFar), 0.0
   };
@@ -20,7 +20,11 @@ glm::mat4 makeProjectionMat(float zNear, float zFar, float aspectRatio)
 
 } // namespace
 
-void MatrixPerspective::init()
+MatrixPerspective::MatrixPerspective(Window* win) :
+  Tutorial(win),
+  mProgram(0),
+  mBuffer(0),
+  mProjMatUniform(-1)
 {
   glGenBuffers(1, &mBuffer);
 
@@ -34,12 +38,11 @@ void MatrixPerspective::init()
                               });
 
   GLint offsetUniform = glGetUniformLocation(mProgram, "offset");
-  GLint projMatUniform = glGetUniformLocation(mProgram, "projectionMatrix");
+  mProjMatUniform = glGetUniformLocation(mProgram, "projectionMatrix");
 
   glUseProgram(mProgram);
 
   glUniform2f(offsetUniform, 0.5f, 0.5f);
-  glUniformMatrix4fv(projMatUniform, 1, GL_FALSE, glm::value_ptr(makeProjectionMat(-1.0f, -3.0f, 1.0f)));
 
   OGL_CHECK_ERROR();
   glUseProgram(0);
@@ -69,4 +72,13 @@ void MatrixPerspective::renderInternal()
   glDisableVertexAttribArray(1);
   glBindBuffer(GL_ARRAY_BUFFER, 0);
   glUseProgram(0);
+}
+
+void MatrixPerspective::framebufferSizeChanged(int w, int h)
+{
+  glUseProgram(mProgram);
+  glUniformMatrix4fv(mProjMatUniform, 1, GL_FALSE, glm::value_ptr(makeProjectionMat(-1.0f, -3.0f, 1.0, static_cast<float>(w)/h)));
+  glUseProgram(0);
+
+  glViewport(0, 0, w, h);
 }
