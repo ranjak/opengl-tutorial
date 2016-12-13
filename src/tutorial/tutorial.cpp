@@ -1,11 +1,8 @@
-#include "renderer.hpp"
-#include "window.hpp"
-#include "log.hpp"
 #include "tutorial.hpp"
 #include "sysutils.hpp"
+#include "window.hpp"
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include <cassert>
 
 namespace
 {
@@ -28,23 +25,11 @@ GLADloadproc myglGetProcAddress = [](const char* proc)
   return make_void_ptr(glfwGetProcAddress(proc));
 };
 
-void resizeFramebuffer(int w, int h)
-{
-  // Keep a square (1:1) aspect ratio
-  int size = ogl::min(w, h);
-
-  glViewport(w/2 - size/2, h/2 - size/2, size, size);
-}
-
-/*
- * Temporary tutorial stuff
- */
-GLuint vao = 0;
-
 } // namespace
 
-Renderer::Renderer(Window* window) :
-  mWindow(window)
+Tutorial::Tutorial(Window* window) :
+  mWindow(window),
+  mVao(0)
 {
   mWindow->makeContextCurrent();
 
@@ -57,32 +42,35 @@ Renderer::Renderer(Window* window) :
     initDone = true;
   }
 
-  glGenVertexArrays(1, &vao);
+  glGenVertexArrays(1, &mVao);
 
   std::pair<int, int> framebuffer = mWindow->getFramebufferSize();
-  resizeFramebuffer(framebuffer.first, framebuffer.second);
+  framebufferSizeChanged(framebuffer.first, framebuffer.second);
 
-  mWindow->setFramebufferResizeCallback([](Window* /*win*/, int w, int h)
+  mWindow->setFramebufferResizeCallback([](Window* win, int w, int h)
   {
-    resizeFramebuffer(w, h);
+    win->getTutorial()->framebufferSizeChanged(w, h);
   });
 }
 
-Renderer::~Renderer()
-{
-
-}
-
-void Renderer::render(Tutorial& tutorial)
+void Tutorial::render()
 {
   mWindow->makeContextCurrent();
 
   glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
   glClear(GL_COLOR_BUFFER_BIT);
 
-  glBindVertexArray(vao);
+  glBindVertexArray(mVao);
 
-  tutorial.render();
+  renderInternal();
 
   mWindow->swapBuffers();
+}
+
+void Tutorial::framebufferSizeChanged(int w, int h)
+{
+  // Keep a square (1:1) aspect ratio
+  int size = ogl::min(w, h);
+
+  glViewport(w/2 - size/2, h/2 - size/2, size, size);
 }

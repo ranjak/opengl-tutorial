@@ -12,7 +12,8 @@ namespace
 ogl::seconds revolutionTime(5.0f);
 }
 
-MovingTriangleShader::MovingTriangleShader() :
+MovingTriangleShader::MovingTriangleShader(Window* win) :
+  Tutorial(win),
   mProgram(0),
   mBuffer(0),
   mTimeUniform(-1),
@@ -62,7 +63,7 @@ void MovingTriangleShader::update(ogl::seconds delta)
   mTime = static_cast<ogl::seconds>(std::fmod(mTime.count() + delta.count(), revolutionTime.count()));
 }
 
-void MovingTriangleShader::render()
+void MovingTriangleShader::renderInternal()
 {
   glUseProgram(mProgram);
 

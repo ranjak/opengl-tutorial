@@ -7,10 +7,11 @@
 class ManualPerspective : public Tutorial
 {
 public:
-public:
+  ManualPerspective(Window* win) : Tutorial(win) {}
+
   void init() override;
 
-  void render() override;
+  void renderInternal() override;
 
 private:
   GLuint mProgram;

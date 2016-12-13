@@ -36,7 +36,7 @@ void ManualPerspective::init()
   glFrontFace(GL_CW);
 }
 
-void ManualPerspective::render()
+void ManualPerspective::renderInternal()
 {
   glUseProgram(mProgram);
 

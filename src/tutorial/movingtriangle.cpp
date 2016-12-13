@@ -12,7 +12,8 @@ namespace
 ogl::seconds revolutionTime(5.0f);
 }
 
-MovingTriangle::MovingTriangle() :
+MovingTriangle::MovingTriangle(Window* win) :
+  Tutorial(win),
   mProgram(0),
   mBuffer(0),
   mOffsetUniform(-1),
@@ -54,7 +55,7 @@ void MovingTriangle::update(ogl::seconds delta)
   glUseProgram(0);
 }
 
-void MovingTriangle::render()
+void MovingTriangle::renderInternal()
 {
   glUseProgram(mProgram);
 

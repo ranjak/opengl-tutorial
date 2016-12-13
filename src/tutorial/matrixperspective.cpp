@@ -8,11 +8,11 @@
 namespace
 {
 
-glm::mat4 makeProjectionMat(float zNear, float zFar, float frustumScale)
+glm::mat4 makeProjectionMat(float zNear, float zFar, float aspectRatio)
 {
   return glm::mat4 {
-    frustumScale, 0.0, 0.0, 0.0,
-    0.0, frustumScale, 0.0, 0.0,
+    aspectRatio, 0.0, 0.0, 0.0,
+    0.0, 1.0, 0.0, 0.0,
     0.0, 0.0, (-zNear - zFar)/(zNear - zFar), -1.0,
     0.0, 0.0,  2*zNear*zFar/(zNear - zFar), 0.0
   };
@@ -49,7 +49,7 @@ void MatrixPerspective::init()
   glFrontFace(GL_CW);
 }
 
-void MatrixPerspective::render()
+void MatrixPerspective::renderInternal()
 {
   glUseProgram(mProgram);
 

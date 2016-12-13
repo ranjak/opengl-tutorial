@@ -19,13 +19,11 @@ set(INCLUDE_SYSTEM
 )
 
 set(SRC_RENDERER
-  renderer/renderer.cpp
   renderer/shader.cpp
   renderer/util.cpp
 )
 
 set(INCLUDE_RENDERER
-  renderer/renderer.hpp
   renderer/primitives.hpp
   renderer/shader.hpp
   renderer/util.hpp
@@ -33,6 +31,7 @@ set(INCLUDE_RENDERER
 )
 
 set(SRC_TUTORIAL
+  tutorial/tutorial.cpp
   tutorial/rotatingtriangle.cpp
   tutorial/movingtriangle.cpp
   tutorial/movingtriangleshader.cpp

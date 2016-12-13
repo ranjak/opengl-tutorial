@@ -19,7 +19,6 @@ void MainLoop::requestExit()
 
 MainLoop::MainLoop() :
   mMainWindow(),
-  mRenderer(),
   mTutorial(),
   mExitRequested(false),
   mMaxFrameTime(0),
@@ -52,13 +51,7 @@ bool MainLoop::init(int width, int height, const std::string& title)
   mMainWindow->setCloseCallback([](Window*) { MainLoop::requestExit(); });
   mMainWindow->setSwapInterval(1);
 
-  mRenderer.reset(new Renderer(mMainWindow.get()));
-  if (!mRenderer) {
-    Log::error("MainLoop: Could not create renderer");
-    return false;
-  }
-
-  mTutorial.reset(new MatrixPerspective());
+  mTutorial.reset(new MatrixPerspective(mMainWindow.get()));
   mTutorial->init();
 
   return true;
@@ -90,7 +83,7 @@ void MainLoop::run()
     if (mExitRequested)
         break;
 
-    mRenderer->render(*mTutorial);
+    mTutorial->render();
 
     // Framerate statistics
     ogl::time frameTime = System::now() - realTimeElasped - startTime;

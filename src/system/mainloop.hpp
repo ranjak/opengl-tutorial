@@ -2,7 +2,6 @@
 #define MAINLOOP_HPP
 
 #include "window.hpp"
-#include "renderer.hpp"
 #include "system.hpp"
 #include "tutorial.hpp"
 #include <string>
@@ -35,7 +34,6 @@ private:
   static MainLoop *instance;
 
   std::unique_ptr<Window> mMainWindow;
-  std::unique_ptr<Renderer> mRenderer;
   std::unique_ptr<Tutorial> mTutorial;
   bool mExitRequested;
 

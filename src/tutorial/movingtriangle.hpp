@@ -8,13 +8,13 @@
 class MovingTriangle : public Tutorial
 {
 public:
-  MovingTriangle();
+  MovingTriangle(Window* win);
 
   void init() override;
 
   void update(ogl::seconds delta) override;
 
-  void render() override;
+  void renderInternal() override;
 
 private:
   GLuint mProgram;

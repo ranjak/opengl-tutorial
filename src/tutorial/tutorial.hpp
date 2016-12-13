@@ -3,16 +3,28 @@
 
 #include "system.hpp"
 
+class Window;
+
 class Tutorial
 {
 public:
+  Tutorial(Window* window);
+
   virtual ~Tutorial() = 0;
 
   virtual void init() {}
 
   virtual void update(ogl::seconds /*delta*/) {}
 
-  virtual void render() {}
+  void render();
+
+  virtual void renderInternal() = 0;
+
+  virtual void framebufferSizeChanged(int w, int h);
+
+protected:
+  Window* mWindow;
+  unsigned int mVao;
 };
 
 inline Tutorial::~Tutorial() {}

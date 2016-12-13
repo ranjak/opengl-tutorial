@@ -25,7 +25,7 @@ void OrthographicPrism::init()
   glFrontFace(GL_CW);
 }
 
-void OrthographicPrism::render()
+void OrthographicPrism::renderInternal()
 {
   glUseProgram(mProgram);
 

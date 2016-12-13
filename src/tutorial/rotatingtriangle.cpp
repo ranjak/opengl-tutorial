@@ -37,7 +37,7 @@ void RotatingTriangle::update(ogl::seconds delta)
   glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-void RotatingTriangle::render()
+void RotatingTriangle::renderInternal()
 {
   glUseProgram(mProgram);
   OGL_CHECK_ERROR();

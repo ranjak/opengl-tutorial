@@ -1,7 +1,10 @@
 #ifndef WINDOW_HPP
 #define WINDOW_HPP
 
+#include "log.hpp"
 #include <utility>
+
+class Tutorial;
 
 class Window
 {
@@ -21,6 +24,21 @@ public:
   virtual std::pair<int, int> getSize() = 0;
 
   virtual std::pair<int, int> getFramebufferSize() = 0;
+
+  void setTutorial(Tutorial* tutorial)
+  {
+    if (mTutorial) {
+      Log::error("Window: Tutorial can be set only once.");
+    }
+    else {
+      mTutorial = tutorial;
+    }
+  }
+
+  Tutorial* getTutorial() { return mTutorial; }
+
+private:
+  Tutorial* mTutorial = nullptr;
 };
 
 inline Window::~Window() {}
