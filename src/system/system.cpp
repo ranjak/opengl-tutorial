@@ -27,6 +27,7 @@ bool System::init()
   }
 
   WindowGLFW::setGLversion(3, 3);
+  glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
   wasInit = true;
   return true;
