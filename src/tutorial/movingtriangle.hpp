@@ -17,6 +17,7 @@ public:
 private:
   GLuint mProgram;
   GLuint mBuffer;
+  GLuint mVao;
   GLint mOffsetUniform;
   ogl::seconds mTime;
 };

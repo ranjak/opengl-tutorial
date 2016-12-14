@@ -14,6 +14,7 @@ public:
 private:
   GLuint mProgram;
   GLuint mBuffer;
+  GLuint mVao;
 };
 
 #endif // ORTHOGRAPHICPRISM_HPP

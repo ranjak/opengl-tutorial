@@ -16,6 +16,7 @@ MovingTriangleShader::MovingTriangleShader(Window* win) :
   Tutorial(win),
   mProgram(0),
   mBuffer(0),
+  mVao(0),
   mTimeUniform(-1),
   mTime(0.0f)
 {
@@ -51,6 +52,8 @@ MovingTriangleShader::MovingTriangleShader(Window* win) :
   glUniform1f(loopUniform, revolutionTime.count());
   glUniform1f(fragLoopUniform, revolutionTime.count() / 2.0f);
   glUseProgram(0);
+
+  glGenVertexArrays(1, &mVao);
 }
 
 void MovingTriangleShader::update(ogl::seconds delta)
@@ -64,6 +67,8 @@ void MovingTriangleShader::renderInternal()
 
   // Update time
   glUniform1f(mTimeUniform, mTime.count());
+
+  glBindVertexArray(mVao);
 
   glBindBuffer(GL_ARRAY_BUFFER, mBuffer);
   // Geometry

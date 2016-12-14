@@ -1,7 +1,7 @@
 #include "mainloop.hpp"
 #include "log.hpp"
 #include "system.hpp"
-#include "matrixperspective.hpp"
+#include "indexeddrawing.hpp"
 #include "glfw/windowglfw.hpp"
 #include <algorithm>
 
@@ -51,7 +51,7 @@ bool MainLoop::init(int width, int height, const std::string& title)
   mMainWindow->setCloseCallback([](Window*) { MainLoop::requestExit(); });
   mMainWindow->setSwapInterval(1);
 
-  mTutorial.reset(new MatrixPerspective(mMainWindow.get()));
+  mTutorial.reset(new IndexedDrawing(mMainWindow.get()));
   mTutorial->init();
 
   return true;

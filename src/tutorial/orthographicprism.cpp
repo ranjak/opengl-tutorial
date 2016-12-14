@@ -6,7 +6,8 @@
 OrthographicPrism::OrthographicPrism(Window* win) :
   Tutorial(win),
   mProgram(0),
-  mBuffer(0)
+  mBuffer(0),
+  mVao(0)
 {
   glGenBuffers(1, &mBuffer);
 
@@ -27,11 +28,15 @@ OrthographicPrism::OrthographicPrism(Window* win) :
   glEnable(GL_CULL_FACE);
   glCullFace(GL_BACK);
   glFrontFace(GL_CW);
+
+  glGenVertexArrays(1, &mVao);
 }
 
 void OrthographicPrism::renderInternal()
 {
   glUseProgram(mProgram);
+
+  glBindVertexArray(mVao);
 
   glBindBuffer(GL_ARRAY_BUFFER, mBuffer);
   // Geometry

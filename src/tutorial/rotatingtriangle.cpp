@@ -14,7 +14,8 @@ float degPerSecond = 90.0f;
 RotatingTriangle::RotatingTriangle(Window* win) :
   Tutorial(win),
   mProgram(0),
-  mBuffer(0)
+  mBuffer(0),
+  mVao(0)
 {
   glGenBuffers(1, &mBuffer);
 
@@ -26,6 +27,7 @@ RotatingTriangle::RotatingTriangle(Window* win) :
     ogl::Shader(GL_VERTEX_SHADER, "shaders/colored-triangle.vert"),
     ogl::Shader(GL_FRAGMENT_SHADER, "shaders/colored-triangle.frag")
                               });
+  glGenVertexArrays(1, &mVao);
 }
 
 void RotatingTriangle::update(ogl::seconds delta)
@@ -44,6 +46,8 @@ void RotatingTriangle::renderInternal()
 {
   glUseProgram(mProgram);
   OGL_CHECK_ERROR();
+
+  glBindVertexArray(mVao);
 
   glBindBuffer(GL_ARRAY_BUFFER, mBuffer);
   // Geometry

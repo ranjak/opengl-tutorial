@@ -16,6 +16,7 @@ public:
 private:
   GLuint mProgram;
   GLuint mBuffer;
+  GLuint mVao;
 };
 
 #endif // ROTATINGTRIANGLE_HPP

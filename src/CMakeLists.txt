@@ -21,6 +21,7 @@ set(INCLUDE_SYSTEM
 set(SRC_RENDERER
   renderer/shader.cpp
   renderer/util.cpp
+  renderer/transform.cpp
 )
 
 set(INCLUDE_RENDERER
@@ -38,6 +39,7 @@ set(SRC_TUTORIAL
   tutorial/orthographicprism.cpp
   tutorial/manualperspective.cpp
   tutorial/matrixperspective.cpp
+  tutorial/indexeddrawing.cpp
 )
 
 set(INCLUDE_TUTORIAL
@@ -48,6 +50,11 @@ set(INCLUDE_TUTORIAL
   tutorial/orthographicprism.hpp
   tutorial/manualperspective.hpp
   tutorial/matrixperspective.hpp
+  tutorial/indexeddrawing.hpp
+)
+
+set(TUTORIAL_PRIMITIVES
+  tutorial/primitives/indexedwedges.hpp
 )
 
 set(SHADERS
@@ -60,6 +67,7 @@ set(SHADERS
   ../shaders/colored-triangle-calc.frag
   ../shaders/manualperspective.vert
   ../shaders/matrixperspective.vert
+  ../shaders/matrixperspective-vec3offset.vert
 )
 
 source_group(system FILES ${SRC_SYSTEM} ${INCLUDE_SYSTEM})
@@ -74,6 +82,7 @@ add_executable(ogl-app WIN32
   ${INCLUDE_RENDERER}
   ${SRC_TUTORIAL}
   ${INCLUDE_TUTORIAL}
+  ${TUTORIAL_PRIMITIVES}
   ${SHADERS}
 )
 

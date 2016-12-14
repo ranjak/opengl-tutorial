@@ -28,8 +28,7 @@ GLADloadproc myglGetProcAddress = [](const char* proc)
 } // namespace
 
 Tutorial::Tutorial(Window* window) :
-  mWindow(window),
-  mVao(0)
+  mWindow(window)
 {
   mWindow->setTutorial(this);
   mWindow->makeContextCurrent();
@@ -42,9 +41,6 @@ Tutorial::Tutorial(Window* window) :
 
     initDone = true;
   }
-
-  glGenVertexArrays(1, &mVao);
-
 }
 
 void Tutorial::init()
@@ -65,8 +61,6 @@ void Tutorial::render()
 
   glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
   glClear(GL_COLOR_BUFFER_BIT);
-
-  glBindVertexArray(mVao);
 
   renderInternal();
 

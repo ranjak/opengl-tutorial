@@ -1,6 +1,7 @@
 #ifndef TRANSFORM_HPP
 #define TRANSFORM_HPP
 
+#include <glm/fwd.hpp>
 #include <cmath>
 
 namespace ogl
@@ -31,6 +32,8 @@ void rotateZ(T& point, const U& center, V degrees)
   point.x = center.x + vecRot.x;
   point.y = center.y + vecRot.y;
 }
+
+glm::mat4 makeProjectionMat(float zNear, float zFar, float frustumScale, float aspectRatio);
 
 } // namespace ogl
 

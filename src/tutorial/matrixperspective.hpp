@@ -17,6 +17,7 @@ private:
 private:
   GLuint mProgram;
   GLuint mBuffer;
+  GLuint mVao;
   GLint mProjMatUniform;
 };
 

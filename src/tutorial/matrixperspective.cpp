@@ -2,28 +2,16 @@
 #include "primitives.hpp"
 #include "shader.hpp"
 #include "util.hpp"
+#include "transform.hpp"
 #include <glm/mat4x4.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-namespace
-{
-
-glm::mat4 makeProjectionMat(float zNear, float zFar, float frustumScale, float aspectRatio)
-{
-  return glm::mat4 {
-    frustumScale / aspectRatio, 0.0, 0.0, 0.0,
-    0.0, frustumScale, 0.0, 0.0,
-    0.0, 0.0, (-zNear - zFar)/(zNear - zFar), -1.0,
-    0.0, 0.0,  2*zNear*zFar/(zNear - zFar), 0.0
-  };
-}
-
-} // namespace
 
 MatrixPerspective::MatrixPerspective(Window* win) :
   Tutorial(win),
   mProgram(0),
   mBuffer(0),
+  mVao(0),
   mProjMatUniform(-1)
 {
   glGenBuffers(1, &mBuffer);
@@ -50,11 +38,15 @@ MatrixPerspective::MatrixPerspective(Window* win) :
   glEnable(GL_CULL_FACE);
   glCullFace(GL_BACK);
   glFrontFace(GL_CW);
+
+  glGenVertexArrays(1, &mVao);
 }
 
 void MatrixPerspective::renderInternal()
 {
   glUseProgram(mProgram);
+
+  glBindVertexArray(mVao);
 
   glBindBuffer(GL_ARRAY_BUFFER, mBuffer);
   // Geometry
@@ -77,7 +69,7 @@ void MatrixPerspective::renderInternal()
 void MatrixPerspective::framebufferSizeChanged(int w, int h)
 {
   glUseProgram(mProgram);
-  glUniformMatrix4fv(mProjMatUniform, 1, GL_FALSE, glm::value_ptr(makeProjectionMat(-1.0f, -3.0f, 1.0, static_cast<float>(w)/h)));
+  glUniformMatrix4fv(mProjMatUniform, 1, GL_FALSE, glm::value_ptr(ogl::makeProjectionMat(-1.0f, -3.0f, 1.0, static_cast<float>(w)/h)));
   glUseProgram(0);
 
   glViewport(0, 0, w, h);

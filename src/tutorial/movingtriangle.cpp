@@ -16,6 +16,7 @@ MovingTriangle::MovingTriangle(Window* win) :
   Tutorial(win),
   mProgram(0),
   mBuffer(0),
+  mVao(0),
   mOffsetUniform(-1),
   mTime(0.0f)
 {
@@ -34,6 +35,8 @@ MovingTriangle::MovingTriangle(Window* win) :
   if (mOffsetUniform < 0) {
     Log::error("MovingTriangle: offset uniform has no location");
   }
+
+  glGenVertexArrays(1, &mVao);
 }
 
 void MovingTriangle::update(ogl::seconds delta)
@@ -53,6 +56,8 @@ void MovingTriangle::update(ogl::seconds delta)
 void MovingTriangle::renderInternal()
 {
   glUseProgram(mProgram);
+
+  glBindVertexArray(mVao);
 
   glBindBuffer(GL_ARRAY_BUFFER, mBuffer);
   // Geometry

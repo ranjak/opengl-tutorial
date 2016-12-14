@@ -25,7 +25,6 @@ private:
 
 protected:
   Window* mWindow;
-  unsigned int mVao;
 };
 
 inline Tutorial::~Tutorial() {}
