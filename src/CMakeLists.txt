@@ -40,6 +40,7 @@ set(SRC_TUTORIAL
   tutorial/manualperspective.cpp
   tutorial/matrixperspective.cpp
   tutorial/indexeddrawing.cpp
+  tutorial/basevertex.cpp
 )
 
 set(INCLUDE_TUTORIAL
@@ -51,6 +52,7 @@ set(INCLUDE_TUTORIAL
   tutorial/manualperspective.hpp
   tutorial/matrixperspective.hpp
   tutorial/indexeddrawing.hpp
+  tutorial/basevertex.hpp
 )
 
 set(TUTORIAL_PRIMITIVES
