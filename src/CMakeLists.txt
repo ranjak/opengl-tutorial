@@ -42,6 +42,7 @@ set(SRC_TUTORIAL
   tutorial/indexeddrawing.cpp
   tutorial/basevertex.cpp
   tutorial/depthbuffering.cpp
+  tutorial/depthclamping.cpp
 )
 
 set(INCLUDE_TUTORIAL
@@ -55,6 +56,7 @@ set(INCLUDE_TUTORIAL
   tutorial/indexeddrawing.hpp
   tutorial/basevertex.hpp
   tutorial/depthbuffering.hpp
+  tutorial/depthclamping.hpp
 )
 
 set(TUTORIAL_PRIMITIVES

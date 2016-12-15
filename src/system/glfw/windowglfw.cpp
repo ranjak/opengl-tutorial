@@ -1,6 +1,23 @@
 #include "windowglfw.hpp"
 #include "log.hpp"
+#include <algorithm>
 
+namespace
+{
+Window::KeyAction toKeyAction(int glfwAction)
+{
+  switch (glfwAction) {
+  case GLFW_PRESS:
+    return Window::KEYDOWN;
+  case GLFW_RELEASE:
+    return Window::KEYUP;
+  case GLFW_REPEAT:
+    return Window::KEYREPEAT;
+  default:
+    return Window::KEYACT_UNKNOWN;
+  }
+}
+} // namespace
 
 void WindowGLFW::setGLversion(int major, int minor)
 {
@@ -11,13 +28,22 @@ void WindowGLFW::setGLversion(int major, int minor)
 WindowGLFW::WindowGLFW(int width, int height, const std::string& title) :
   mWindow(glfwCreateWindow(width, height, title.c_str(), nullptr, nullptr), glfwDestroyWindow),
   mCloseCallback(nullptr),
-  mFBResizeCallback(nullptr)
+  mFBResizeCallback(nullptr),
+  mKeyCallbacks()
 {
   if (!mWindow) {
     Log::error("WindowGLFW: Window creation failed");
   }
 
   glfwSetWindowUserPointer(mWindow.get(), this);
+
+  glfwSetKeyCallback(mWindow.get(), [](GLFWwindow* win, int key, int scan, int action, int /*mod*/) {
+    WindowGLFW* thisWin = static_cast<WindowGLFW*>(glfwGetWindowUserPointer(win));
+
+    for (KeyCallback callback : thisWin->mKeyCallbacks) {
+      callback(thisWin, key, scan, toKeyAction(action));
+    }
+  });
 }
 
 void WindowGLFW::setCloseCallback(void (*callback)(Window*))
@@ -76,4 +102,11 @@ std::pair<int, int> WindowGLFW::getFramebufferSize()
   glfwGetFramebufferSize(mWindow.get(), &size.first, &size.second);
 
   return size;
+}
+
+void WindowGLFW::addKeyCallback(KeyCallback callback)
+{
+  if (std::find(mKeyCallbacks.begin(), mKeyCallbacks.end(), callback) == mKeyCallbacks.end()) {
+    mKeyCallbacks.push_back(callback);
+  }
 }

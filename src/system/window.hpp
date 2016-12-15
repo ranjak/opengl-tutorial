@@ -9,6 +9,10 @@ class Tutorial;
 class Window
 {
 public:
+  enum KeyAction { KEYDOWN, KEYUP, KEYREPEAT, KEYACT_UNKNOWN };
+  using KeyCallback = void (*)(Window*, int key, int scancode, KeyAction);
+
+public:
   virtual ~Window() = 0;
 
   virtual void setCloseCallback(void (*callback)(Window*)) = 0;
@@ -24,6 +28,8 @@ public:
   virtual std::pair<int, int> getSize() = 0;
 
   virtual std::pair<int, int> getFramebufferSize() = 0;
+
+  virtual void addKeyCallback(KeyCallback callback) = 0;
 
   void setTutorial(Tutorial* tutorial)
   {

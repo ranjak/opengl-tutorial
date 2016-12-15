@@ -5,6 +5,7 @@
 #include <GLFW/glfw3.h>
 #include <string>
 #include <memory>
+#include <vector>
 
 class WindowGLFW : public Window
 {
@@ -27,10 +28,17 @@ public:
 
   std::pair<int, int> getFramebufferSize() override;
 
+  void addKeyCallback(KeyCallback callback);
+
+private:
+  void onKeyEvent(GLFWwindow* window, int key, int scancode, int action, int mods);
+
 private:
   std::unique_ptr<GLFWwindow, void (*)(GLFWwindow*)> mWindow;
   void (*mCloseCallback)(Window*);
   void (*mFBResizeCallback)(Window*, int, int);
+
+  std::vector<KeyCallback> mKeyCallbacks;
 };
 
 #endif // WINDOWGLFW_H
