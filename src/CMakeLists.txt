@@ -41,6 +41,7 @@ set(SRC_TUTORIAL
   tutorial/matrixperspective.cpp
   tutorial/indexeddrawing.cpp
   tutorial/basevertex.cpp
+  tutorial/depthbuffering.cpp
 )
 
 set(INCLUDE_TUTORIAL
@@ -53,6 +54,7 @@ set(INCLUDE_TUTORIAL
   tutorial/matrixperspective.hpp
   tutorial/indexeddrawing.hpp
   tutorial/basevertex.hpp
+  tutorial/depthbuffering.hpp
 )
 
 set(TUTORIAL_PRIMITIVES

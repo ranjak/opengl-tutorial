@@ -9,9 +9,10 @@ class BaseVertex : public Tutorial
 public:
   BaseVertex(Window* window);
 
-private:
+protected:
   void renderInternal() override;
 
+private:
   void framebufferSizeChanged(int w, int h) override;
 
   void initShaders();
