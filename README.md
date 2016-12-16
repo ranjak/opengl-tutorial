@@ -2,7 +2,8 @@
 
 [![Build Status](https://travis-ci.org/ranjak/opengl-tutorial.svg?branch=master)](https://travis-ci.org/ranjak/opengl-tutorial) [![Build status](https://ci.appveyor.com/api/projects/status/i2ooeqgtm354s8rq?svg=true)](https://ci.appveyor.com/project/ranjak/opengl-tutorial)
 
-A cross-platform C++ OpenGL sample application.
+A cross-platform C++ OpenGL sample application.  
+Based on [Jason L. McKesson's OpenGL tutorial series](http://alfonse.bitbucket.org/oldtut/index.html).
 
 ## Building from source
 

@@ -61,6 +61,15 @@ set(INCLUDE_TUTORIAL
 
 set(TUTORIAL_PRIMITIVES
   tutorial/primitives/indexedwedges.hpp
+  tutorial/primitives/pointyshape.hpp
+)
+
+set(SRC_TUTORIAL_POSITIONING
+  tutorial/positioning/translation.cpp
+)
+
+set(INCLUDE_TUTORIAL_POSITIONING
+  tutorial/positioning/translation.hpp
 )
 
 set(SHADERS
@@ -74,6 +83,7 @@ set(SHADERS
   ../shaders/manualperspective.vert
   ../shaders/matrixperspective.vert
   ../shaders/matrixperspective-vec3offset.vert
+  ../shaders/modeltoclip.vert
 )
 
 source_group(system FILES ${SRC_SYSTEM} ${INCLUDE_SYSTEM})
@@ -88,6 +98,8 @@ add_executable(ogl-app WIN32
   ${INCLUDE_RENDERER}
   ${SRC_TUTORIAL}
   ${INCLUDE_TUTORIAL}
+  ${SRC_TUTORIAL_POSITIONING}
+  ${INCLUDE_TUTORIAL_POSITIONING}
   ${TUTORIAL_PRIMITIVES}
   ${SHADERS}
 )

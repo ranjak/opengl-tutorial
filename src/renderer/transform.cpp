@@ -14,4 +14,9 @@ glm::mat4 makeProjectionMat(float zNear, float zFar, float frustumScale, float a
   };
 }
 
+glm::mat4 makeProjectionMatFov(float zNear, float zFar, float fovAngleV, float aspectRatio)
+{
+  return makeProjectionMat(zNear, zFar, 1.0f / std::tan(degToRadf(fovAngleV) / 2.0f), aspectRatio);
+}
+
 } // namespace ogl

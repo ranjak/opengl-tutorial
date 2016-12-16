@@ -35,6 +35,8 @@ void rotateZ(T& point, const U& center, V degrees)
 
 glm::mat4 makeProjectionMat(float zNear, float zFar, float frustumScale, float aspectRatio);
 
+glm::mat4 makeProjectionMatFov(float zNear, float zFar, float fovAngleV, float aspectRatio);
+
 } // namespace ogl
 
 #endif // TRANSFORM_HPP
