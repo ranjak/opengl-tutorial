@@ -37,6 +37,10 @@ glm::mat4 makeProjectionMat(float zNear, float zFar, float frustumScale, float a
 
 glm::mat4 makeProjectionMatFov(float zNear, float zFar, float fovAngleV, float aspectRatio);
 
+glm::mat3 rotateZ(float degrees);
+glm::mat3 rotateY(float degrees);
+glm::mat3 rotateX(float degrees);
+
 } // namespace ogl
 
 #endif // TRANSFORM_HPP

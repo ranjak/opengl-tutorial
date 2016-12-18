@@ -62,14 +62,18 @@ set(INCLUDE_TUTORIAL
 set(TUTORIAL_PRIMITIVES
   tutorial/primitives/indexedwedges.hpp
   tutorial/primitives/pointyshape.hpp
+  tutorial/primitives/rectangle.hpp
 )
 
 set(SRC_TUTORIAL_POSITIONING
   tutorial/positioning/translation.cpp
+  tutorial/positioning/hierarchy.cpp
 )
 
 set(INCLUDE_TUTORIAL_POSITIONING
   tutorial/positioning/translation.hpp
+  tutorial/positioning/matrixstack.hpp
+  tutorial/positioning/hierarchy.hpp
 )
 
 set(SHADERS
