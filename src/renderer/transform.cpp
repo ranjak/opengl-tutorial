@@ -20,42 +20,45 @@ glm::mat4 makeProjectionMatFov(float zNear, float zFar, float fovAngleV, float a
   return makeProjectionMat(zNear, zFar, 1.0f / std::tan(degToRadf(fovAngleV) / 2.0f), aspectRatio);
 }
 
-glm::mat3 rotateZ(float degrees)
+glm::mat4 rotateZ(float degrees)
 {
   float rads = degToRadf(degrees);
   float cosa = std::cos(rads);
   float sina = std::sin(rads);
 
-  return glm::mat3 {
-    cosa, sina, 0.0f,
-    -sina, cosa, 0.0f,
-    0.0f, 0.0f, 1.0f
+  return glm::mat4 {
+    cosa, sina, 0.0f, 0.0f,
+    -sina, cosa, 0.0f, 0.0f,
+    0.0f, 0.0f, 1.0f, 0.0f,
+    0.0f, 0.0f, 0.0f, 1.0f
   };
 }
 
-glm::mat3 rotateY(float degrees)
+glm::mat4 rotateY(float degrees)
 {
   float rads = degToRadf(degrees);
   float cosa = std::cos(rads);
   float sina = std::sin(rads);
 
-  return glm::mat3 {
-    cosa, 0.0f, -sina,
-    0.0f, 1.0f, 0.0f,
-    sina, 0.0f, cosa
+  return glm::mat4 {
+    cosa, 0.0f, -sina, 0.0f,
+    0.0f, 1.0f, 0.0f, 0.0f,
+    sina, 0.0f, cosa, 0.0f,
+    0.0f, 0.0f, 0.0f, 1.0f
   };
 }
 
-glm::mat3 rotateX(float degrees)
+glm::mat4 rotateX(float degrees)
 {
   float rads = degToRadf(degrees);
   float cosa = std::cos(rads);
   float sina = std::sin(rads);
 
-  return glm::mat3 {
-    1.0f, 0.0f, 0.0f,
-    0.0f, cosa, sina,
-    0.0f, -sina, cosa
+  return glm::mat4 {
+    1.0f, 0.0f, 0.0f, 0.0f,
+    0.0f, cosa, sina, 0.0f,
+    0.0f, -sina, cosa, 0.0f,
+    0.0f, 0.0f, 0.0f, 1.0f
   };
 }
 
@@ -65,6 +68,16 @@ glm::mat4 translate(const glm::vec3& offset)
   mat[3] = glm::vec4(offset, 1.0);
 
   return mat;
+}
+
+glm::mat4 scale(const glm::vec3& factors)
+{
+  return glm::mat4 {
+    factors.x, 0.0f, 0.0f, 0.0f,
+    0.0f, factors.y, 0.0f, 0.0f,
+    0.0f, 0.0f, factors.z, 0.0f,
+    0.0f, 0.0f, 0.0f, 1.0f
+  };
 }
 
 } // namespace ogl

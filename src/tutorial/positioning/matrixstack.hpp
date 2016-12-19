@@ -30,17 +30,17 @@ public:
 
   void rotateX(float degrees)
   {
-    mCurrentMat = mCurrentMat * glm::mat4(ogl::rotateX(degrees));
+    mCurrentMat = mCurrentMat * ogl::rotateX(degrees);
   }
 
   void rotateY(float degrees)
   {
-    mCurrentMat = mCurrentMat * glm::mat4(ogl::rotateY(degrees));
+    mCurrentMat = mCurrentMat * ogl::rotateY(degrees);
   }
 
   void rotateZ(float degrees)
   {
-    mCurrentMat = mCurrentMat * glm::mat4(ogl::rotateZ(degrees));
+    mCurrentMat = mCurrentMat * ogl::rotateZ(degrees);
   }
 
   void scale(float x, float y, float z)

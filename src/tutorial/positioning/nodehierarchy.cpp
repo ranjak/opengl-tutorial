@@ -77,8 +77,7 @@ void NodeHierarchy::renderInternal()
   glUseProgram(mProgram);
   glBindVertexArray(mVao);
 
-  MatrixStack transform;
-  mArmature.render(transform);
+  mArmature.render(glm::mat4(1.0f));
 
   glBindVertexArray(0);
   glUseProgram(0);

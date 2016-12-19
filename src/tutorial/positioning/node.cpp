@@ -1,8 +1,8 @@
 #include "node.hpp"
-#include "matrixstack.hpp"
 #include "transform.hpp"
 #include "primitives/rectangle.hpp"
 #include <glad/glad.h>
+#include <glm/mat4x4.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
 int Node::transformUniform = -1;
@@ -31,36 +31,32 @@ Node::Node(const std::string& name, const glm::vec3& translation, const glm::vec
   mChildren()
 {}
 
-void Node::render(MatrixStack& matrixStack) const
+void Node::render(glm::mat4 transform) const
 {
-  matrixStack.push();
-
-  matrixStack.translate(translation);
+  transform = transform * ogl::translate(translation);
 
   if (angles.z != 0.0f)
-    matrixStack.rotateZ(angles.z);
+    transform = transform * ogl::rotateZ(angles.z);
   if (angles.y != 0.0f)
-    matrixStack.rotateY(angles.y);
+    transform = transform * ogl::rotateY(angles.y);
   if (angles.x != 0.0f)
-    matrixStack.rotateX(angles.x);
+    transform = transform * ogl::rotateX(angles.x);
 
   if (isVisible) {
-    matrixStack.push();
+    // Scale and model origin are not propagated to children
+    glm::mat4 localTransform(transform);
 
-    matrixStack.translate(geometryOrigin);
+    localTransform = localTransform * ogl::translate(geometryOrigin);
     // Divide by the initial size of the rectange (2.0) to get the actual requested size
-    matrixStack.scale(size / 2.0f);
+    localTransform = localTransform * ogl::scale(size / 2.0f);
 
-    glUniformMatrix4fv(transformUniform, 1, GL_FALSE, glm::value_ptr(matrixStack.top()));
+    glUniformMatrix4fv(transformUniform, 1, GL_FALSE, glm::value_ptr(localTransform));
     glDrawElements(GL_TRIANGLES, rectangle::numIndices, GL_UNSIGNED_SHORT, 0);
-
-    matrixStack.pop();
   }
 
   for (const Node& child : mChildren) {
-    child.render(matrixStack);
+    child.render(transform);
   }
-  matrixStack.pop();
 }
 
 Node& Node::addChild(const Node& child)

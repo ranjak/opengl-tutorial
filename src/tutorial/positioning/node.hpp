@@ -2,10 +2,9 @@
 #define NODE_HPP
 
 #include <glm/vec3.hpp>
+#include <glm/fwd.hpp>
 #include <vector>
 #include <string>
-
-class MatrixStack;
 
 struct Node
 {
@@ -17,7 +16,7 @@ struct Node
 
   static int transformUniform;
 
-  void render(MatrixStack& matrixStack) const;
+  void render(glm::mat4 transform) const;
 
   Node& addChild(const Node& child);
 

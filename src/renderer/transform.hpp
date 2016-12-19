@@ -37,11 +37,13 @@ glm::mat4 makeProjectionMat(float zNear, float zFar, float frustumScale, float a
 
 glm::mat4 makeProjectionMatFov(float zNear, float zFar, float fovAngleV, float aspectRatio);
 
-glm::mat3 rotateZ(float degrees);
-glm::mat3 rotateY(float degrees);
-glm::mat3 rotateX(float degrees);
+glm::mat4 rotateZ(float degrees);
+glm::mat4 rotateY(float degrees);
+glm::mat4 rotateX(float degrees);
 
 glm::mat4 translate(const glm::vec3& offset);
+
+glm::mat4 scale(const glm::vec3& factors);
 
 } // namespace ogl
 
