@@ -11,16 +11,17 @@ class MatrixStack;
 class Hierarchy : public Tutorial
 {
 public:
+  static const float STANDARD_ANGLE_INCREMENT;
+  static const float SMALL_ANGLE_INCREMENT;
+
   Hierarchy(Window* window);
 
 private:
   void renderInternal() override;
   void framebufferSizeChanged(int w, int h) override;
 
-  // Armature functions
-  static const float STANDARD_ANGLE_INCREMENT;
-  static const float SMALL_ANGLE_INCREMENT;
 
+  // Armature functions
   static void onKeyPressed(Window* win, int key, int, Window::KeyAction action);
 
   void AdjBase(bool bIncrement);

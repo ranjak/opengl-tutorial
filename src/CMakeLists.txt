@@ -68,12 +68,16 @@ set(TUTORIAL_PRIMITIVES
 set(SRC_TUTORIAL_POSITIONING
   tutorial/positioning/translation.cpp
   tutorial/positioning/hierarchy.cpp
+  tutorial/positioning/nodehierarchy.cpp
+  tutorial/positioning/node.cpp
 )
 
 set(INCLUDE_TUTORIAL_POSITIONING
   tutorial/positioning/translation.hpp
   tutorial/positioning/matrixstack.hpp
   tutorial/positioning/hierarchy.hpp
+  tutorial/positioning/nodehierarchy.hpp
+  tutorial/positioning/node.hpp
 )
 
 set(SHADERS
