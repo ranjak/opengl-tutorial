@@ -41,6 +41,8 @@ glm::mat3 rotateZ(float degrees);
 glm::mat3 rotateY(float degrees);
 glm::mat3 rotateX(float degrees);
 
+glm::mat4 translate(const glm::vec3& offset);
+
 } // namespace ogl
 
 #endif // TRANSFORM_HPP

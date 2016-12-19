@@ -1,5 +1,6 @@
 #include "transform.hpp"
 #include <glm/mat4x4.hpp>
+#include <glm/mat3x3.hpp>
 
 namespace ogl
 {
@@ -56,6 +57,14 @@ glm::mat3 rotateX(float degrees)
     0.0f, cosa, sina,
     0.0f, -sina, cosa
   };
+}
+
+glm::mat4 translate(const glm::vec3& offset)
+{
+  glm::mat4 mat(1.0f);
+  mat[3] = glm::vec4(offset, 1.0);
+
+  return mat;
 }
 
 } // namespace ogl

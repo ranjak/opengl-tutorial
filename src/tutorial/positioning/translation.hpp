@@ -9,7 +9,7 @@
 // Represents an individual object (actually only provides a translation matrix)
 struct Instance
 {
-  typedef glm::vec3(*OffsetFunc)(float);
+  typedef glm::mat4(*OffsetFunc)(float);
 
   Instance(OffsetFunc f) : CalcOffset(f) {}
 
