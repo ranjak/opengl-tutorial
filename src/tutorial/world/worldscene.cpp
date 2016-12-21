@@ -27,7 +27,12 @@ WorldScene::WorldScene(Window *window) :
   Tutorial(window),
   UniformColor(LoadProgram("shaders/world/PosOnlyWorldTransform.vert", "shaders/world/ColorUniform.frag")),
   ObjectColor(LoadProgram("shaders/world/PosColorWorldTransform.vert", "shaders/world/ColorPassthrough.frag")),
-  UniformColorTint(LoadProgram("shaders/world/PosColorWorldTransform.vert", "shaders/world/ColorMultUniform.frag"))
+  UniformColorTint(LoadProgram("shaders/world/PosColorWorldTransform.vert", "shaders/world/ColorMultUniform.frag")),
+  g_pConeMesh("assets/UnitConeTint.xml"),
+  g_pCylinderMesh("assets/UnitCylinderTint.xml"),
+  g_pCubeTintMesh("assets/UnitCubeTint.xml"),
+  g_pCubeColorMesh("assets/UnitCubeColor.xml"),
+  g_pPlaneMesh("assets/UnitPlane.xml")
 {
 
 }

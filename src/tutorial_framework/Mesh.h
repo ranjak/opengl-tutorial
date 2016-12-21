@@ -5,6 +5,7 @@
 #ifndef FRAMEWORK_MESH_H
 #define FRAMEWORK_MESH_H
 
+#include <string>
 
 namespace Framework
 {

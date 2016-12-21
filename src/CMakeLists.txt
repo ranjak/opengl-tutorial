@@ -181,3 +181,4 @@ target_link_libraries(ogl-app
 install(TARGETS ogl-app RUNTIME DESTINATION ".")
 # Resources
 install(DIRECTORY ../shaders DESTINATION "." USE_SOURCE_PERMISSIONS)
+install(DIRECTORY ../assets DESTINATION "." USE_SOURCE_PERMISSIONS)
