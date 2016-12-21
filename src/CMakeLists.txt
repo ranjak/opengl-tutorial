@@ -145,7 +145,6 @@ add_executable(ogl-app WIN32
   ${TUTORIAL_PRIMITIVES}
   ${SHADERS}
   ${SHADERS_WORLD}
-  $<TARGET_OBJECTS:tutorial_framework>
 )
 
 # GLFW shouldn't include gl.h since we're using a loader (glad)
@@ -170,6 +169,7 @@ target_include_directories(ogl-app PRIVATE
 )
 
 target_link_libraries(ogl-app
+  tutorial_framework
   glm
   glfw
   glad
