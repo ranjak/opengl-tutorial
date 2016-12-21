@@ -80,6 +80,14 @@ set(INCLUDE_TUTORIAL_POSITIONING
   tutorial/positioning/node.hpp
 )
 
+set(SRC_TUTORIAL_WORLD
+  tutorial/world/worldscene.cpp
+)
+
+set(INCLUDE_TUTORIAL_WORLD
+  tutorial/world/worldscene.hpp
+)
+
 set(SHADERS
   ../shaders/vertex.glsl
   ../shaders/fragment.glsl
@@ -92,6 +100,14 @@ set(SHADERS
   ../shaders/matrixperspective.vert
   ../shaders/matrixperspective-vec3offset.vert
   ../shaders/modeltoclip.vert
+)
+
+set(SHADERS_WORLD
+  ../shaders/world/PosOnlyWorldTransform.vert
+  ../shaders/world/PosColorWorldTransform.vert
+  ../shaders/world/ColorUniform.frag
+  ../shaders/world/ColorPassthrough.frag
+  ../shaders/world/ColorMultUniform.frag
 )
 
 source_group(system FILES ${SRC_SYSTEM} ${INCLUDE_SYSTEM})
@@ -108,8 +124,11 @@ add_executable(ogl-app WIN32
   ${INCLUDE_TUTORIAL}
   ${SRC_TUTORIAL_POSITIONING}
   ${INCLUDE_TUTORIAL_POSITIONING}
+  ${SRC_TUTORIAL_WORLD}
+  ${INCLUDE_TUTORIAL_WORLD}
   ${TUTORIAL_PRIMITIVES}
   ${SHADERS}
+  ${SHADERS_WORLD}
 )
 
 # GLFW shouldn't include gl.h since we're using a loader (glad)
