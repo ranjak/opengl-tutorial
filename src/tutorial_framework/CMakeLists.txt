@@ -16,6 +16,8 @@ target_include_directories(tutorial_framework
   PRIVATE ${GLAD_INCLUDE_DIRS}
   )
 
+target_compile_options(tutorial_framework PRIVATE -Wno-deprecated)
+
 # Prevent glad from including windows.h
 if (WIN32)
   target_compile_definitions(tutorial_framework PRIVATE -DAPIENTRY=__stdcall)

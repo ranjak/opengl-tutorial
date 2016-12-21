@@ -18,6 +18,8 @@
 #include "rapidxml.hpp"
 #include "rapidxml_helpers.h"
 
+#define ARRAY_COUNT( array ) (sizeof( array ) / (sizeof( array[0] ) * (sizeof( array ) != sizeof(void*) || sizeof( array[0] ) <= sizeof(void*))))
+
 #define USE_RAPIDXML_PARSER
 
 #define PARSE_THROW(cond, message)\
@@ -52,7 +54,7 @@ namespace Framework
 		void Render()
 		{
 			if(bIsIndexedCmd)
-				glDrawElements(ePrimType, elemCount, eIndexDataType, (void*)start);
+        glDrawElements(ePrimType, elemCount, eIndexDataType, reinterpret_cast<void*>(start));
 			else
 				glDrawArrays(ePrimType, start, elemCount);
 		}
@@ -471,8 +473,8 @@ namespace Framework
 		std::vector<std::pair<std::string, std::vector<GLuint> > > namedVaoList;
 
 		{
-			std::string strDataFilename = FindFileOrThrow(strFilename);
-			std::ifstream fileStream(strDataFilename.c_str());
+      std::string strDataFilename = strFilename;
+      std::ifstream fileStream(strDataFilename.c_str());
 			if(!fileStream.is_open())
 				throw std::runtime_error("Could not find the mesh file: " + strDataFilename);
 
