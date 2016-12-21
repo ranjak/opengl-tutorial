@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.0)
 
+add_subdirectory(tutorial_framework)
+
 set(SRC_SYSTEM
   system/main.cpp
   system/mainloop.cpp
@@ -115,6 +117,20 @@ source_group(renderer FILES ${SRC_RENDERER} ${INCLUDE_RENDERER})
 source_group(tutorial FILES ${SRC_TUTORIAL} ${INCLUDE_TUTORIAL})
 source_group(shaders FILES ${SHADERS})
 
+# Configuration
+
+include(utilities)
+use_cxx_std(14)
+
+# Warnings
+if (NOT MSVC)
+  list(APPEND CMAKE_CXX_FLAGS "-Wall -Wextra -Wpedantic -Werror")
+endif()
+
+if (NOT CMAKE_BUILD_TYPE MATCHES [Dd]ebug)
+  add_definitions(-DNDEBUG)
+endif()
+
 add_executable(ogl-app WIN32
   ${SRC_SYSTEM}
   ${INCLUDE_SYSTEM}
@@ -129,6 +145,7 @@ add_executable(ogl-app WIN32
   ${TUTORIAL_PRIMITIVES}
   ${SHADERS}
   ${SHADERS_WORLD}
+  $<TARGET_OBJECTS:tutorial_framework>
 )
 
 # GLFW shouldn't include gl.h since we're using a loader (glad)

@@ -50,19 +50,7 @@ endif(OGLTUTOR_STATIC)
 
 include(dependencies)
 
-# Configuration
-
-include(utilities)
-use_cxx_std(14)
-
-# Warnings
-if (NOT MSVC)
-  list(APPEND CMAKE_CXX_FLAGS "-Wall -Wextra -Wpedantic -Werror")
-endif()
-
-if (NOT CMAKE_BUILD_TYPE MATCHES [Dd]ebug)
-  add_definitions(-DNDEBUG)
-endif()
+# Main sources
 
 add_subdirectory(src)
 
