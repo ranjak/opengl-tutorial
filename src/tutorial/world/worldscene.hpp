@@ -41,20 +41,20 @@ private:
   glm::vec3 ResolveCamPosition();
 
 private:
-  ProgramData UniformColor;
-  ProgramData ObjectColor;
-  ProgramData UniformColorTint;
+  ProgramData mUniformColor;
+  ProgramData mObjectColor;
+  ProgramData mUniformColorTint;
 
-  Framework::Mesh g_pConeMesh;
-  Framework::Mesh g_pCylinderMesh;
-  Framework::Mesh g_pCubeTintMesh;
-  Framework::Mesh g_pCubeColorMesh;
-  Framework::Mesh g_pPlaneMesh;
+  Framework::Mesh mConeMesh;
+  Framework::Mesh mCylinderMesh;
+  Framework::Mesh mCubeTintMesh;
+  Framework::Mesh mCubeColorMesh;
+  Framework::Mesh mPlaneMesh;
 
-  bool g_bDrawLookatPoint = false;
-  glm::vec3 g_camTarget;
+  bool mDrawLookatPoint = false;
+  glm::vec3 mCamTarget;
   //In spherical coordinates.
-  glm::vec3 g_sphereCamRelPos;
+  glm::vec3 mSphereCamRelPos;
 };
 
 #endif // WORLDSCENE_HPP

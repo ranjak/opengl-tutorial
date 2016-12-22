@@ -66,17 +66,17 @@ glm::mat4 CalcLookAtMatrix(const glm::vec3& cameraPt, const glm::vec3& lookPt, c
 
 WorldScene::WorldScene(Window* window) :
   Tutorial(window),
-  UniformColor(LoadProgram("shaders/world/PosOnlyWorldTransform.vert", "shaders/world/ColorUniform.frag")),
-  ObjectColor(LoadProgram("shaders/world/PosColorWorldTransform.vert", "shaders/world/ColorPassthrough.frag")),
-  UniformColorTint(LoadProgram("shaders/world/PosColorWorldTransform.vert", "shaders/world/ColorMultUniform.frag")),
-  g_pConeMesh("assets/UnitConeTint.xml"),
-  g_pCylinderMesh("assets/UnitCylinderTint.xml"),
-  g_pCubeTintMesh("assets/UnitCubeTint.xml"),
-  g_pCubeColorMesh("assets/UnitCubeColor.xml"),
-  g_pPlaneMesh("assets/UnitPlane.xml"),
-  g_bDrawLookatPoint(false),
-  g_camTarget(0.0f, 0.4f, 0.0f),
-  g_sphereCamRelPos(67.5f, -46.0f, 150.0f)
+  mUniformColor(LoadProgram("shaders/world/PosOnlyWorldTransform.vert", "shaders/world/ColorUniform.frag")),
+  mObjectColor(LoadProgram("shaders/world/PosColorWorldTransform.vert", "shaders/world/ColorPassthrough.frag")),
+  mUniformColorTint(LoadProgram("shaders/world/PosColorWorldTransform.vert", "shaders/world/ColorMultUniform.frag")),
+  mConeMesh("assets/UnitConeTint.xml"),
+  mCylinderMesh("assets/UnitCylinderTint.xml"),
+  mCubeTintMesh("assets/UnitCubeTint.xml"),
+  mCubeColorMesh("assets/UnitCubeColor.xml"),
+  mPlaneMesh("assets/UnitPlane.xml"),
+  mDrawLookatPoint(false),
+  mCamTarget(0.0f, 0.4f, 0.0f),
+  mSphereCamRelPos(67.5f, -46.0f, 150.0f)
 {
   glEnable(GL_CULL_FACE);
   glCullFace(GL_BACK);
@@ -102,8 +102,8 @@ void WorldScene::onKeyPressed(Window* win, int key, int, Window::KeyAction act, 
   // Controls are more precise when holding Shift
   float multiplier = (mods & Window::MOD_SHIFT) ? 1.0f : 10.0f;
 
-  glm::vec3& camTarget = thisScene->g_camTarget;
-  glm::vec3& sphereCamRelPos = thisScene->g_sphereCamRelPos;
+  glm::vec3& camTarget = thisScene->mCamTarget;
+  glm::vec3& sphereCamRelPos = thisScene->mSphereCamRelPos;
 
   switch (key) {
   case 'W': camTarget.z -= 0.4f * multiplier; break;
@@ -121,7 +121,7 @@ void WorldScene::onKeyPressed(Window* win, int key, int, Window::KeyAction act, 
   case 'U': sphereCamRelPos.z += 0.5f * multiplier; break;
 
   case 32:
-    thisScene->g_bDrawLookatPoint = !thisScene->g_bDrawLookatPoint;
+    thisScene->mDrawLookatPoint = !thisScene->mDrawLookatPoint;
     printf("Target: %f, %f, %f\n", camTarget.x, camTarget.y, camTarget.z);
     printf("Position: %f, %f, %f\n", sphereCamRelPos.x, sphereCamRelPos.y, sphereCamRelPos.z);
     break;
@@ -141,10 +141,10 @@ void WorldScene::DrawTree(glutil::MatrixStack& modelMatrix, float fTrunkHeight, 
     modelMatrix.Scale(glm::vec3(1.0f, fTrunkHeight, 1.0f));
     modelMatrix.Translate(glm::vec3(0.0f, 0.5f, 0.0f));
 
-    glUseProgram(UniformColorTint.theProgram);
-    glUniformMatrix4fv(UniformColorTint.modelToWorldMatrixUnif, 1, GL_FALSE, glm::value_ptr(modelMatrix.Top()));
-    glUniform4f(UniformColorTint.baseColorUnif, 0.694f, 0.4f, 0.106f, 1.0f);
-    g_pCylinderMesh.Render();
+    glUseProgram(mUniformColorTint.theProgram);
+    glUniformMatrix4fv(mUniformColorTint.modelToWorldMatrixUnif, 1, GL_FALSE, glm::value_ptr(modelMatrix.Top()));
+    glUniform4f(mUniformColorTint.baseColorUnif, 0.694f, 0.4f, 0.106f, 1.0f);
+    mCylinderMesh.Render();
     glUseProgram(0);
   }
 
@@ -155,10 +155,10 @@ void WorldScene::DrawTree(glutil::MatrixStack& modelMatrix, float fTrunkHeight, 
     modelMatrix.Translate(glm::vec3(0.0f, fTrunkHeight, 0.0f));
     modelMatrix.Scale(glm::vec3(3.0f, fConeHeight, 3.0f));
 
-    glUseProgram(UniformColorTint.theProgram);
-    glUniformMatrix4fv(UniformColorTint.modelToWorldMatrixUnif, 1, GL_FALSE, glm::value_ptr(modelMatrix.Top()));
-    glUniform4f(UniformColorTint.baseColorUnif, 0.0f, 1.0f, 0.0f, 1.0f);
-    g_pConeMesh.Render();
+    glUseProgram(mUniformColorTint.theProgram);
+    glUniformMatrix4fv(mUniformColorTint.modelToWorldMatrixUnif, 1, GL_FALSE, glm::value_ptr(modelMatrix.Top()));
+    glUniform4f(mUniformColorTint.baseColorUnif, 0.0f, 1.0f, 0.0f, 1.0f);
+    mConeMesh.Render();
     glUseProgram(0);
   }
 }
@@ -173,10 +173,10 @@ void WorldScene::DrawColumn(glutil::MatrixStack& modelMatrix, float fHeight)
     modelMatrix.Scale(glm::vec3(1.0f, g_fColumnBaseHeight, 1.0f));
     modelMatrix.Translate(glm::vec3(0.0f, 0.5f, 0.0f));
 
-    glUseProgram(UniformColorTint.theProgram);
-    glUniformMatrix4fv(UniformColorTint.modelToWorldMatrixUnif, 1, GL_FALSE, glm::value_ptr(modelMatrix.Top()));
-    glUniform4f(UniformColorTint.baseColorUnif, 1.0f, 1.0f, 1.0f, 1.0f);
-    g_pCubeTintMesh.Render();
+    glUseProgram(mUniformColorTint.theProgram);
+    glUniformMatrix4fv(mUniformColorTint.modelToWorldMatrixUnif, 1, GL_FALSE, glm::value_ptr(modelMatrix.Top()));
+    glUniform4f(mUniformColorTint.baseColorUnif, 1.0f, 1.0f, 1.0f, 1.0f);
+    mCubeTintMesh.Render();
     glUseProgram(0);
   }
 
@@ -188,10 +188,10 @@ void WorldScene::DrawColumn(glutil::MatrixStack& modelMatrix, float fHeight)
     modelMatrix.Scale(glm::vec3(1.0f, g_fColumnBaseHeight, 1.0f));
     modelMatrix.Translate(glm::vec3(0.0f, 0.5f, 0.0f));
 
-    glUseProgram(UniformColorTint.theProgram);
-    glUniformMatrix4fv(UniformColorTint.modelToWorldMatrixUnif, 1, GL_FALSE, glm::value_ptr(modelMatrix.Top()));
-    glUniform4f(UniformColorTint.baseColorUnif, 0.9f, 0.9f, 0.9f, 0.9f);
-    g_pCubeTintMesh.Render();
+    glUseProgram(mUniformColorTint.theProgram);
+    glUniformMatrix4fv(mUniformColorTint.modelToWorldMatrixUnif, 1, GL_FALSE, glm::value_ptr(modelMatrix.Top()));
+    glUniform4f(mUniformColorTint.baseColorUnif, 0.9f, 0.9f, 0.9f, 0.9f);
+    mCubeTintMesh.Render();
     glUseProgram(0);
   }
 
@@ -203,10 +203,10 @@ void WorldScene::DrawColumn(glutil::MatrixStack& modelMatrix, float fHeight)
     modelMatrix.Scale(glm::vec3(0.8f, fHeight - (g_fColumnBaseHeight * 2.0f), 0.8f));
     modelMatrix.Translate(glm::vec3(0.0f, 0.5f, 0.0f));
 
-    glUseProgram(UniformColorTint.theProgram);
-    glUniformMatrix4fv(UniformColorTint.modelToWorldMatrixUnif, 1, GL_FALSE, glm::value_ptr(modelMatrix.Top()));
-    glUniform4f(UniformColorTint.baseColorUnif, 0.9f, 0.9f, 0.9f, 0.9f);
-    g_pCylinderMesh.Render();
+    glUseProgram(mUniformColorTint.theProgram);
+    glUniformMatrix4fv(mUniformColorTint.modelToWorldMatrixUnif, 1, GL_FALSE, glm::value_ptr(modelMatrix.Top()));
+    glUniform4f(mUniformColorTint.baseColorUnif, 0.9f, 0.9f, 0.9f, 0.9f);
+    mCylinderMesh.Render();
     glUseProgram(0);
   }
 }
@@ -220,10 +220,10 @@ void WorldScene::DrawParthenon(glutil::MatrixStack& modelMatrix)
     modelMatrix.Scale(glm::vec3(g_fParthenonWidth, g_fParthenonBaseHeight, g_fParthenonLength));
     modelMatrix.Translate(glm::vec3(0.0f, 0.5f, 0.0f));
 
-    glUseProgram(UniformColorTint.theProgram);
-    glUniformMatrix4fv(UniformColorTint.modelToWorldMatrixUnif, 1, GL_FALSE, glm::value_ptr(modelMatrix.Top()));
-    glUniform4f(UniformColorTint.baseColorUnif, 0.9f, 0.9f, 0.9f, 0.9f);
-    g_pCubeTintMesh.Render();
+    glUseProgram(mUniformColorTint.theProgram);
+    glUniformMatrix4fv(mUniformColorTint.modelToWorldMatrixUnif, 1, GL_FALSE, glm::value_ptr(modelMatrix.Top()));
+    glUniform4f(mUniformColorTint.baseColorUnif, 0.9f, 0.9f, 0.9f, 0.9f);
+    mCubeTintMesh.Render();
     glUseProgram(0);
   }
 
@@ -235,10 +235,10 @@ void WorldScene::DrawParthenon(glutil::MatrixStack& modelMatrix)
     modelMatrix.Scale(glm::vec3(g_fParthenonWidth, g_fParthenonTopHeight, g_fParthenonLength));
     modelMatrix.Translate(glm::vec3(0.0f, 0.5f, 0.0f));
 
-    glUseProgram(UniformColorTint.theProgram);
-    glUniformMatrix4fv(UniformColorTint.modelToWorldMatrixUnif, 1, GL_FALSE, glm::value_ptr(modelMatrix.Top()));
-    glUniform4f(UniformColorTint.baseColorUnif, 0.9f, 0.9f, 0.9f, 0.9f);
-    g_pCubeTintMesh.Render();
+    glUseProgram(mUniformColorTint.theProgram);
+    glUniformMatrix4fv(mUniformColorTint.modelToWorldMatrixUnif, 1, GL_FALSE, glm::value_ptr(modelMatrix.Top()));
+    glUniform4f(mUniformColorTint.baseColorUnif, 0.9f, 0.9f, 0.9f, 0.9f);
+    mCubeTintMesh.Render();
     glUseProgram(0);
   }
 
@@ -292,9 +292,9 @@ void WorldScene::DrawParthenon(glutil::MatrixStack& modelMatrix)
                                 g_fParthenonLength - 6.0f));
     modelMatrix.Translate(glm::vec3(0.0f, 0.5f, 0.0f));
 
-    glUseProgram(ObjectColor.theProgram);
-    glUniformMatrix4fv(ObjectColor.modelToWorldMatrixUnif, 1, GL_FALSE, glm::value_ptr(modelMatrix.Top()));
-    g_pCubeColorMesh.Render();
+    glUseProgram(mObjectColor.theProgram);
+    glUniformMatrix4fv(mObjectColor.modelToWorldMatrixUnif, 1, GL_FALSE, glm::value_ptr(modelMatrix.Top()));
+    mCubeColorMesh.Render();
     glUseProgram(0);
   }
 
@@ -309,9 +309,9 @@ void WorldScene::DrawParthenon(glutil::MatrixStack& modelMatrix)
     modelMatrix.RotateX(-135.0f);
     modelMatrix.RotateY(45.0f);
 
-    glUseProgram(ObjectColor.theProgram);
-    glUniformMatrix4fv(ObjectColor.modelToWorldMatrixUnif, 1, GL_FALSE, glm::value_ptr(modelMatrix.Top()));
-    g_pCubeColorMesh.Render();
+    glUseProgram(mObjectColor.theProgram);
+    glUniformMatrix4fv(mObjectColor.modelToWorldMatrixUnif, 1, GL_FALSE, glm::value_ptr(modelMatrix.Top()));
+    mCubeColorMesh.Render();
     glUseProgram(0);
   }
 }
@@ -330,8 +330,8 @@ void WorldScene::DrawForest(glutil::MatrixStack& modelMatrix)
 
 glm::vec3 WorldScene::ResolveCamPosition()
 {
-  float phi = ogl::degToRadf(g_sphereCamRelPos.x);
-  float theta = ogl::degToRadf(g_sphereCamRelPos.y + 90.0f);
+  float phi = ogl::degToRadf(mSphereCamRelPos.x);
+  float theta = ogl::degToRadf(mSphereCamRelPos.y + 90.0f);
 
   float fSinTheta = std::sin(theta);
   float fCosTheta = std::cos(theta);
@@ -339,7 +339,7 @@ glm::vec3 WorldScene::ResolveCamPosition()
   float fSinPhi = std::sin(phi);
 
   glm::vec3 dirToCamera(fSinTheta * fCosPhi, fCosTheta, fSinTheta * fSinPhi);
-  return (dirToCamera * g_sphereCamRelPos.z) + g_camTarget;
+  return (dirToCamera * mSphereCamRelPos.z) + mCamTarget;
 }
 
 void WorldScene::renderInternal()
@@ -351,14 +351,14 @@ void WorldScene::renderInternal()
   const glm::vec3 &camPos = ResolveCamPosition();
 
   glutil::MatrixStack camMatrix;
-  camMatrix.SetMatrix(CalcLookAtMatrix(camPos, g_camTarget, glm::vec3(0.0f, 1.0f, 0.0f)));
+  camMatrix.SetMatrix(CalcLookAtMatrix(camPos, mCamTarget, glm::vec3(0.0f, 1.0f, 0.0f)));
 
-  glUseProgram(UniformColor.theProgram);
-  glUniformMatrix4fv(UniformColor.worldToCameraMatrixUnif, 1, GL_FALSE, glm::value_ptr(camMatrix.Top()));
-  glUseProgram(ObjectColor.theProgram);
-  glUniformMatrix4fv(ObjectColor.worldToCameraMatrixUnif, 1, GL_FALSE, glm::value_ptr(camMatrix.Top()));
-  glUseProgram(UniformColorTint.theProgram);
-  glUniformMatrix4fv(UniformColorTint.worldToCameraMatrixUnif, 1, GL_FALSE, glm::value_ptr(camMatrix.Top()));
+  glUseProgram(mUniformColor.theProgram);
+  glUniformMatrix4fv(mUniformColor.worldToCameraMatrixUnif, 1, GL_FALSE, glm::value_ptr(camMatrix.Top()));
+  glUseProgram(mObjectColor.theProgram);
+  glUniformMatrix4fv(mObjectColor.worldToCameraMatrixUnif, 1, GL_FALSE, glm::value_ptr(camMatrix.Top()));
+  glUseProgram(mUniformColorTint.theProgram);
+  glUniformMatrix4fv(mUniformColorTint.worldToCameraMatrixUnif, 1, GL_FALSE, glm::value_ptr(camMatrix.Top()));
   glUseProgram(0);
 
   glutil::MatrixStack modelMatrix;
@@ -369,10 +369,10 @@ void WorldScene::renderInternal()
 
     modelMatrix.Scale(glm::vec3(100.0f, 1.0f, 100.0f));
 
-    glUseProgram(UniformColor.theProgram);
-    glUniformMatrix4fv(UniformColor.modelToWorldMatrixUnif, 1, GL_FALSE, glm::value_ptr(modelMatrix.Top()));
-    glUniform4f(UniformColor.baseColorUnif, 0.302f, 0.416f, 0.0589f, 1.0f);
-    g_pPlaneMesh.Render();
+    glUseProgram(mUniformColor.theProgram);
+    glUniformMatrix4fv(mUniformColor.modelToWorldMatrixUnif, 1, GL_FALSE, glm::value_ptr(modelMatrix.Top()));
+    glUniform4f(mUniformColor.baseColorUnif, 0.302f, 0.416f, 0.0589f, 1.0f);
+    mPlaneMesh.Render();
     glUseProgram(0);
   }
 
@@ -387,21 +387,21 @@ void WorldScene::renderInternal()
     DrawParthenon(modelMatrix);
   }
 
-  if(g_bDrawLookatPoint)
+  if(mDrawLookatPoint)
   {
     glDisable(GL_DEPTH_TEST);
     glm::mat4 idenity(1.0f);
 
     glutil::PushStack push(modelMatrix);
 
-    glm::vec3 cameraAimVec = g_camTarget - camPos;
+    glm::vec3 cameraAimVec = mCamTarget - camPos;
     modelMatrix.Translate(0.0f, 0.0, -glm::length(cameraAimVec));
     modelMatrix.Scale(1.0f, 1.0f, 1.0f);
 
-    glUseProgram(ObjectColor.theProgram);
-    glUniformMatrix4fv(ObjectColor.modelToWorldMatrixUnif, 1, GL_FALSE, glm::value_ptr(modelMatrix.Top()));
-    glUniformMatrix4fv(ObjectColor.worldToCameraMatrixUnif, 1, GL_FALSE, glm::value_ptr(idenity));
-    g_pCubeColorMesh.Render();
+    glUseProgram(mObjectColor.theProgram);
+    glUniformMatrix4fv(mObjectColor.modelToWorldMatrixUnif, 1, GL_FALSE, glm::value_ptr(modelMatrix.Top()));
+    glUniformMatrix4fv(mObjectColor.worldToCameraMatrixUnif, 1, GL_FALSE, glm::value_ptr(idenity));
+    mCubeColorMesh.Render();
     glUseProgram(0);
     glEnable(GL_DEPTH_TEST);
   }
@@ -412,12 +412,12 @@ void WorldScene::framebufferSizeChanged(int w, int h)
   glutil::MatrixStack persMatrix;
   persMatrix.Perspective(45.0f, (w / static_cast<float>(h)), g_fzNear, g_fzFar);
 
-  glUseProgram(UniformColor.theProgram);
-  glUniformMatrix4fv(UniformColor.cameraToClipMatrixUnif, 1, GL_FALSE, glm::value_ptr(persMatrix.Top()));
-  glUseProgram(ObjectColor.theProgram);
-  glUniformMatrix4fv(ObjectColor.cameraToClipMatrixUnif, 1, GL_FALSE, glm::value_ptr(persMatrix.Top()));
-  glUseProgram(UniformColorTint.theProgram);
-  glUniformMatrix4fv(UniformColorTint.cameraToClipMatrixUnif, 1, GL_FALSE, glm::value_ptr(persMatrix.Top()));
+  glUseProgram(mUniformColor.theProgram);
+  glUniformMatrix4fv(mUniformColor.cameraToClipMatrixUnif, 1, GL_FALSE, glm::value_ptr(persMatrix.Top()));
+  glUseProgram(mObjectColor.theProgram);
+  glUniformMatrix4fv(mObjectColor.cameraToClipMatrixUnif, 1, GL_FALSE, glm::value_ptr(persMatrix.Top()));
+  glUseProgram(mUniformColorTint.theProgram);
+  glUniformMatrix4fv(mUniformColorTint.cameraToClipMatrixUnif, 1, GL_FALSE, glm::value_ptr(persMatrix.Top()));
   glUseProgram(0);
 
   glViewport(0, 0, w, h);
