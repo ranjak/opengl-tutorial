@@ -90,6 +90,7 @@ set(SRC_TUTORIAL_WORLD
 
 set(INCLUDE_TUTORIAL_WORLD
   tutorial/world/worldscene.hpp
+  tutorial/world/forest.hpp
 )
 
 set(SHADERS
