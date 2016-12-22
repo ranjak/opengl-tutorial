@@ -87,6 +87,49 @@ WorldScene::WorldScene(Window* window) :
   glDepthFunc(GL_LEQUAL);
   glDepthRange(0.0f, 1.0f);
   glEnable(GL_DEPTH_CLAMP);
+
+  mWindow->addKeyCallback(onKeyPressed);
+}
+
+void WorldScene::onKeyPressed(Window* win, int key, int, Window::KeyAction act, short mods)
+{
+  if (act == Window::KEYUP) {
+    return;
+  }
+
+  WorldScene* thisScene = static_cast<WorldScene*>(win->getTutorial());
+
+  // Controls are more precise when holding Shift
+  float multiplier = (mods & Window::MOD_SHIFT) ? 1.0f : 10.0f;
+
+  glm::vec3& camTarget = thisScene->g_camTarget;
+  glm::vec3& sphereCamRelPos = thisScene->g_sphereCamRelPos;
+
+  switch (key) {
+  case 'W': camTarget.z -= 0.4f * multiplier; break;
+  case 'S': camTarget.z += 0.4f * multiplier; break;
+  case 'D': camTarget.x += 0.4f * multiplier; break;
+  case 'A': camTarget.x -= 0.4f * multiplier; break;
+  case 'E': camTarget.y -= 0.4f * multiplier; break;
+  case 'Q': camTarget.y += 0.4f * multiplier; break;
+
+  case 'I': sphereCamRelPos.y -= 1.125f * multiplier; break;
+  case 'K': sphereCamRelPos.y += 1.125f * multiplier; break;
+  case 'J': sphereCamRelPos.x -= 1.125f * multiplier; break;
+  case 'L': sphereCamRelPos.x += 1.125f * multiplier; break;
+  case 'O': sphereCamRelPos.z -= 0.5f * multiplier; break;
+  case 'U': sphereCamRelPos.z += 0.5f * multiplier; break;
+
+  case 32:
+    thisScene->g_bDrawLookatPoint = !thisScene->g_bDrawLookatPoint;
+    printf("Target: %f, %f, %f\n", camTarget.x, camTarget.y, camTarget.z);
+    printf("Position: %f, %f, %f\n", sphereCamRelPos.x, sphereCamRelPos.y, sphereCamRelPos.z);
+    break;
+  }
+
+  sphereCamRelPos.y = glm::clamp(sphereCamRelPos.y, -78.75f, -1.0f);
+  camTarget.y = camTarget.y > 0.0f ? camTarget.y : 0.0f;
+  sphereCamRelPos.z = sphereCamRelPos.z > 5.0f ? sphereCamRelPos.z : 5.0f;
 }
 
 void WorldScene::DrawTree(glutil::MatrixStack& modelMatrix, float fTrunkHeight, float fConeHeight)

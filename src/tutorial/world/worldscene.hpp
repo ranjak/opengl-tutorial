@@ -28,6 +28,7 @@ public:
   WorldScene(Window* window);
 
 private:
+  static void onKeyPressed(Window*, int, int, Window::KeyAction, short);
 
   void renderInternal() override;
   void framebufferSizeChanged(int w, int h) override;
