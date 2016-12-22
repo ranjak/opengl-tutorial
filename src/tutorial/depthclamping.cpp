@@ -26,7 +26,7 @@ DepthClamping::DepthClamping(Window* window) :
   glDepthFunc(GL_LEQUAL);
   glDepthRange(0.0f, 1.0f);
 
-  mWindow->addKeyCallback([](Window* win, int key, int /*scancode*/, Window::KeyAction action)
+  mWindow->addKeyCallback([](Window* win, int key, int /*scancode*/, Window::KeyAction action, short /*keyMod*/)
   {
     if (key == 32 && action == Window::KEYDOWN) { // GLFW_KEY_SPACE
       win->makeContextCurrent();

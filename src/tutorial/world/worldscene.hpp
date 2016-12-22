@@ -3,6 +3,7 @@
 
 #include "tutorial.hpp"
 #include "Mesh.h"
+#include "window.hpp"
 #include <glad/glad.h>
 #include <glm/vec3.hpp>
 
@@ -27,6 +28,7 @@ public:
   WorldScene(Window* window);
 
 private:
+
   void renderInternal() override;
   void framebufferSizeChanged(int w, int h) override;
 

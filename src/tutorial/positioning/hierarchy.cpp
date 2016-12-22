@@ -299,7 +299,7 @@ void Hierarchy::DrawUpperArm(MatrixStack& modelToCameraStack)
   modelToCameraStack.pop();
 }
 
-void Hierarchy::onKeyPressed(Window* win, int key, int /*scancode*/, Window::KeyAction action)
+void Hierarchy::onKeyPressed(Window* win, int key, int /*scancode*/, Window::KeyAction action, short /*keyMod*/)
 {
   if (action == Window::KEYUP) {
     return;

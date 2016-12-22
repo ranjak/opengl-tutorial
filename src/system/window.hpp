@@ -10,7 +10,8 @@ class Window
 {
 public:
   enum KeyAction { KEYDOWN, KEYUP, KEYREPEAT, KEYACT_UNKNOWN };
-  using KeyCallback = void (*)(Window*, int key, int scancode, KeyAction);
+  enum KeyMod : short { MOD_SHIFT = 0x0001 };
+  using KeyCallback = void (*)(Window*, int key, int scancode, KeyAction, short keyMods);
 
 public:
   virtual ~Window() = 0;

@@ -4,6 +4,7 @@
 
 namespace
 {
+
 Window::KeyAction toKeyAction(int glfwAction)
 {
   switch (glfwAction) {
@@ -17,6 +18,18 @@ Window::KeyAction toKeyAction(int glfwAction)
     return Window::KEYACT_UNKNOWN;
   }
 }
+
+short toKeyMod(int glfwMods)
+{
+  short mods = 0;
+
+  if (glfwMods & GLFW_MOD_SHIFT) {
+    mods |= Window::MOD_SHIFT;
+  }
+
+  return mods;
+}
+
 } // namespace
 
 void WindowGLFW::setGLversion(int major, int minor)
@@ -37,11 +50,11 @@ WindowGLFW::WindowGLFW(int width, int height, const std::string& title) :
 
   glfwSetWindowUserPointer(mWindow.get(), this);
 
-  glfwSetKeyCallback(mWindow.get(), [](GLFWwindow* win, int key, int scan, int action, int /*mod*/) {
+  glfwSetKeyCallback(mWindow.get(), [](GLFWwindow* win, int key, int scan, int action, int mod) {
     WindowGLFW* thisWin = static_cast<WindowGLFW*>(glfwGetWindowUserPointer(win));
 
     for (KeyCallback callback : thisWin->mKeyCallbacks) {
-      callback(thisWin, key, scan, toKeyAction(action));
+      callback(thisWin, key, scan, toKeyAction(action), toKeyMod(mod));
     }
   });
 }

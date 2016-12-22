@@ -367,7 +367,7 @@ void WorldScene::renderInternal()
 void WorldScene::framebufferSizeChanged(int w, int h)
 {
   glutil::MatrixStack persMatrix;
-  persMatrix.Perspective(45.0f, (w / (float)h), g_fzNear, g_fzFar);
+  persMatrix.Perspective(45.0f, (w / static_cast<float>(h)), g_fzNear, g_fzFar);
 
   glUseProgram(UniformColor.theProgram);
   glUniformMatrix4fv(UniformColor.cameraToClipMatrixUnif, 1, GL_FALSE, glm::value_ptr(persMatrix.Top()));
