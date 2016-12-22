@@ -5,6 +5,12 @@
 #include "Mesh.h"
 #include <glad/glad.h>
 
+// Forward declarations
+namespace glutil
+{
+class MatrixStack;
+}
+
 struct ProgramData
 {
   GLuint theProgram;
@@ -22,6 +28,8 @@ public:
 private:
   void renderInternal() override;
   void framebufferSizeChanged(int w, int h) override;
+
+  void DrawTree(glutil::MatrixStack& modelMatrix, float fTrunkHeight = 2.0f, float fConeHeight = 3.0f);
 
 private:
   ProgramData UniformColor;

@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.0)
 
 add_subdirectory(tutorial_framework)
 
+add_subdirectory(glsdk)
+
 set(SRC_SYSTEM
   system/main.cpp
   system/mainloop.cpp
@@ -169,6 +171,7 @@ target_include_directories(ogl-app PRIVATE
 )
 
 target_link_libraries(ogl-app
+  glsdk
   tutorial_framework
   glm
   glfw
