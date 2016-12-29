@@ -113,6 +113,8 @@ set(SHADERS_WORLD
   ../shaders/world/ColorUniform.frag
   ../shaders/world/ColorPassthrough.frag
   ../shaders/world/ColorMultUniform.frag
+  ../shaders/world/PosOnlyWorldTransformUBO.vert
+  ../shaders/world/PosColorWorldTransformUBO.vert
 )
 
 source_group(system FILES ${SRC_SYSTEM} ${INCLUDE_SYSTEM})
