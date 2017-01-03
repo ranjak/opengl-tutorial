@@ -86,11 +86,13 @@ set(INCLUDE_TUTORIAL_POSITIONING
 
 set(SRC_TUTORIAL_WORLD
   tutorial/world/worldscene.cpp
+  tutorial/world/worldsceneubo.cpp
 )
 
 set(INCLUDE_TUTORIAL_WORLD
   tutorial/world/worldscene.hpp
   tutorial/world/forest.hpp
+  tutorial/world/worldsceneubo.hpp
 )
 
 set(SHADERS
