@@ -11,7 +11,7 @@ namespace glutil
 {
 	void MatrixStack::Rotate( const glm::vec3 axis, float angDegCCW )
 	{
-		m_currMatrix = glm::rotate(m_currMatrix, angDegCCW, axis);
+    m_currMatrix = glm::rotate(m_currMatrix, (3.14159f * 2.0f / 360.0f) * angDegCCW, axis);
 	}
 
 	void MatrixStack::RotateRadians( const glm::vec3 axisOfRotation, float angRadCCW )
