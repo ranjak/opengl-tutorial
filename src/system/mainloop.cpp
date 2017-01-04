@@ -21,6 +21,7 @@ MainLoop::MainLoop() :
   mMainWindow(),
   mTutorial(),
   mExitRequested(false),
+  mDoLogStats(false),
   mMaxFrameTime(0),
   mAccuFrameTimes(0),
   mNumFrames(0)
@@ -86,11 +87,13 @@ void MainLoop::run()
     mTutorial->render();
 
     // Framerate statistics
-    ogl::time frameTime = System::now() - realTimeElasped - startTime;
-    updateStats(frameTime);
+    if (mDoLogStats) {
+      ogl::time frameTime = System::now() - realTimeElasped - startTime;
+      updateStats(frameTime);
 
-    if (mAccuFrameTimes >= 500ms)
-      logStats();
+      if (mAccuFrameTimes >= 500ms)
+        logStats();
+    }
   }
 }
 

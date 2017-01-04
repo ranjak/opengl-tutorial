@@ -37,6 +37,7 @@ private:
   std::unique_ptr<Tutorial> mTutorial;
   bool mExitRequested;
 
+  bool mDoLogStats;
   ogl::time mMaxFrameTime;
   ogl::time mAccuFrameTimes;
   int mNumFrames;

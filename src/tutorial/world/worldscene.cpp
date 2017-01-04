@@ -2,6 +2,7 @@
 #include "shader.hpp"
 #include "forest.hpp"
 #include "transform.hpp"
+#include "log.hpp"
 #include <glutil/MatrixStack.h>
 #include <glm/mat4x4.hpp>
 #include <glm/vec3.hpp>
@@ -122,8 +123,8 @@ void WorldScene::onKeyPressed(Window* win, int key, int, Window::KeyAction act, 
 
   case 32:
     thisScene->mDrawLookatPoint = !thisScene->mDrawLookatPoint;
-    printf("Target: %f, %f, %f\n", camTarget.x, camTarget.y, camTarget.z);
-    printf("Position: %f, %f, %f\n", sphereCamRelPos.x, sphereCamRelPos.y, sphereCamRelPos.z);
+    rlzLog(Log::INFO, "Target: "<<camTarget.x<<", "<<camTarget.y<<", "<<camTarget.z);
+    rlzLog(Log::INFO, "Position: "<<sphereCamRelPos.x<<", "<<sphereCamRelPos.y<<", "<<sphereCamRelPos.z);
     break;
   }
 
