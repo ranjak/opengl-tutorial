@@ -97,6 +97,14 @@ set(INCLUDE_TUTORIAL_WORLD
   tutorial/world/worldsceneobjtocam.hpp
 )
 
+set(SRC_TUTORIAL_ORIENTATION
+  tutorial/orientation/gimballock.cpp
+)
+
+set(SRC_TUTORIAL_INCLUDE
+  tutorial/orientation/gimballock.hpp
+)
+
 set(SHADERS
   ../shaders/vertex.glsl
   ../shaders/fragment.glsl
@@ -121,6 +129,11 @@ set(SHADERS_WORLD
   ../shaders/world/PosColorWorldTransformUBO.vert
   ../shaders/world/PosOnlyWorldTransform_modelToCam.vert
   ../shaders/world/PosColorWorldTransform_modelToCam.vert
+)
+
+set(SHADERS_ORIENTATION
+  ../shaders/orientation/PosColorLocalTransform.vert
+  ../shaders/orientation/ColorMultUniform.frag
 )
 
 source_group(system FILES ${SRC_SYSTEM} ${INCLUDE_SYSTEM})
@@ -153,9 +166,12 @@ add_executable(ogl-app WIN32
   ${INCLUDE_TUTORIAL_POSITIONING}
   ${SRC_TUTORIAL_WORLD}
   ${INCLUDE_TUTORIAL_WORLD}
+  ${SRC_TUTORIAL_ORIENTATION}
+  ${INCLUDE_TUTORIAL_ORIENTATION}
   ${TUTORIAL_PRIMITIVES}
   ${SHADERS}
   ${SHADERS_WORLD}
+  ${SHADERS_ORIENTATION}
 )
 
 # GLFW shouldn't include gl.h since we're using a loader (glad)
