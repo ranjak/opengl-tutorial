@@ -131,8 +131,8 @@ void WorldSceneUBO::onKeyPressed(Window* win, int key, int, Window::KeyAction ac
 
   case 32:
     thisScene->mDrawLookatPoint = !thisScene->mDrawLookatPoint;
-    printf("Target: %f, %f, %f\n", camTarget.x, camTarget.y, camTarget.z);
-    printf("Position: %f, %f, %f\n", sphereCamRelPos.x, sphereCamRelPos.y, sphereCamRelPos.z);
+    rlzLog(Log::INFO, "Target: "<<camTarget.x<<", "<<camTarget.y<<", "<<camTarget.z);
+    rlzLog(Log::INFO, "Position: "<<sphereCamRelPos.x<<", "<<sphereCamRelPos.y<<", "<<sphereCamRelPos.z);
     break;
   }
 
