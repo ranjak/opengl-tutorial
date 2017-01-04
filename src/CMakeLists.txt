@@ -117,6 +117,8 @@ set(SHADERS_WORLD
   ../shaders/world/ColorMultUniform.frag
   ../shaders/world/PosOnlyWorldTransformUBO.vert
   ../shaders/world/PosColorWorldTransformUBO.vert
+  ../shaders/world/PosOnlyWorldTransform_modelToCam.vert
+  ../shaders/world/PosColorWorldTransform_modelToCam.vert
 )
 
 source_group(system FILES ${SRC_SYSTEM} ${INCLUDE_SYSTEM})
