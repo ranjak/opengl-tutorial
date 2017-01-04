@@ -24,7 +24,7 @@ const float g_fParthenonColumnHeight = 5.0f;
 const float g_fParthenonBaseHeight = 1.0f;
 const float g_fParthenonTopHeight = 2.0f;
 
-ProgramData LoadProgram(const std::string& strVertexShader, const std::string& strFragmentShader, GLint matricesBindingIndex)
+ProgramData LoadProgram(const std::string& strVertexShader, const std::string& strFragmentShader)
 {
   std::initializer_list<ogl::Shader> shaderList {
     ogl::Shader(GL_VERTEX_SHADER, strVertexShader),
@@ -33,11 +33,8 @@ ProgramData LoadProgram(const std::string& strVertexShader, const std::string& s
 
   ProgramData data;
   data.theProgram = ogl::makePorgram(shaderList);
-  data.modelToCameraMatrixUnif = glGetUniformLocation(data.theProgram, "modelToCameraMatrix");
+  data.modelToClipMatrixUnif = glGetUniformLocation(data.theProgram, "modelToClipMatrix");
   data.baseColorUnif = glGetUniformLocation(data.theProgram, "baseColor");
-  data.globalMatricesBlockIndex = glGetUniformBlockIndex(data.theProgram, "GlobalMatrices");
-
-  glUniformBlockBinding(data.theProgram, data.globalMatricesBlockIndex, matricesBindingIndex);
 
   return data;
 }
@@ -67,11 +64,9 @@ glm::mat4 CalcLookAtMatrix(const glm::vec3& cameraPt, const glm::vec3& lookPt, c
 
 WorldSceneObjToCam::WorldSceneObjToCam(Window* window) :
   Tutorial(window),
-  mGlobalMatricesUBO(0),
-  mGlobalMatricesBindingIndex(0),
-  mUniformColor(LoadProgram("shaders/world/PosOnlyWorldTransform_modelToCam.vert", "shaders/world/ColorUniform.frag", mGlobalMatricesBindingIndex)),
-  mObjectColor(LoadProgram("shaders/world/PosColorWorldTransform_modelToCam.vert", "shaders/world/ColorPassthrough.frag", mGlobalMatricesBindingIndex)),
-  mUniformColorTint(LoadProgram("shaders/world/PosColorWorldTransform_modelToCam.vert", "shaders/world/ColorMultUniform.frag", mGlobalMatricesBindingIndex)),
+  mUniformColor(LoadProgram("shaders/world/PosOnlyWorldTransform_modelToCam.vert", "shaders/world/ColorUniform.frag")),
+  mObjectColor(LoadProgram("shaders/world/PosColorWorldTransform_modelToCam.vert", "shaders/world/ColorPassthrough.frag")),
+  mUniformColorTint(LoadProgram("shaders/world/PosColorWorldTransform_modelToCam.vert", "shaders/world/ColorMultUniform.frag")),
   mConeMesh("assets/UnitConeTint.xml"),
   mCylinderMesh("assets/UnitCylinderTint.xml"),
   mCubeTintMesh("assets/UnitCubeTint.xml"),
@@ -79,14 +74,9 @@ WorldSceneObjToCam::WorldSceneObjToCam(Window* window) :
   mPlaneMesh("assets/UnitPlane.xml"),
   mDrawLookatPoint(false),
   mCamTarget(0.0f, 0.4f, 0.0f),
-  mSphereCamRelPos(67.5f, -46.0f, 150.0f)
+  mSphereCamRelPos(67.5f, -46.0f, 150.0f),
+  mPerspectiveMatrix(1.0f)
 {
-  glGenBuffers(1, &mGlobalMatricesUBO);
-  glBindBuffer(GL_UNIFORM_BUFFER, mGlobalMatricesUBO);
-  glBufferData(GL_UNIFORM_BUFFER, sizeof(glm::mat4) * 2, nullptr, GL_STREAM_DRAW);
-  glBindBuffer(GL_UNIFORM_BUFFER, 0);
-  glBindBufferRange(GL_UNIFORM_BUFFER, mGlobalMatricesBindingIndex, mGlobalMatricesUBO, 0, sizeof(glm::mat4));
-
   glEnable(GL_CULL_FACE);
   glCullFace(GL_BACK);
   glFrontFace(GL_CW);
@@ -151,7 +141,7 @@ void WorldSceneObjToCam::DrawTree(glutil::MatrixStack& modelMatrix, float fTrunk
     modelMatrix.Translate(glm::vec3(0.0f, 0.5f, 0.0f));
 
     glUseProgram(mUniformColorTint.theProgram);
-    glUniformMatrix4fv(mUniformColorTint.modelToCameraMatrixUnif, 1, GL_FALSE, glm::value_ptr(modelMatrix.Top()));
+    glUniformMatrix4fv(mUniformColorTint.modelToClipMatrixUnif, 1, GL_FALSE, glm::value_ptr(modelMatrix.Top()));
     glUniform4f(mUniformColorTint.baseColorUnif, 0.694f, 0.4f, 0.106f, 1.0f);
     mCylinderMesh.Render();
     glUseProgram(0);
@@ -165,7 +155,7 @@ void WorldSceneObjToCam::DrawTree(glutil::MatrixStack& modelMatrix, float fTrunk
     modelMatrix.Scale(glm::vec3(3.0f, fConeHeight, 3.0f));
 
     glUseProgram(mUniformColorTint.theProgram);
-    glUniformMatrix4fv(mUniformColorTint.modelToCameraMatrixUnif, 1, GL_FALSE, glm::value_ptr(modelMatrix.Top()));
+    glUniformMatrix4fv(mUniformColorTint.modelToClipMatrixUnif, 1, GL_FALSE, glm::value_ptr(modelMatrix.Top()));
     glUniform4f(mUniformColorTint.baseColorUnif, 0.0f, 1.0f, 0.0f, 1.0f);
     mConeMesh.Render();
     glUseProgram(0);
@@ -183,7 +173,7 @@ void WorldSceneObjToCam::DrawColumn(glutil::MatrixStack& modelMatrix, float fHei
     modelMatrix.Translate(glm::vec3(0.0f, 0.5f, 0.0f));
 
     glUseProgram(mUniformColorTint.theProgram);
-    glUniformMatrix4fv(mUniformColorTint.modelToCameraMatrixUnif, 1, GL_FALSE, glm::value_ptr(modelMatrix.Top()));
+    glUniformMatrix4fv(mUniformColorTint.modelToClipMatrixUnif, 1, GL_FALSE, glm::value_ptr(modelMatrix.Top()));
     glUniform4f(mUniformColorTint.baseColorUnif, 1.0f, 1.0f, 1.0f, 1.0f);
     mCubeTintMesh.Render();
     glUseProgram(0);
@@ -198,7 +188,7 @@ void WorldSceneObjToCam::DrawColumn(glutil::MatrixStack& modelMatrix, float fHei
     modelMatrix.Translate(glm::vec3(0.0f, 0.5f, 0.0f));
 
     glUseProgram(mUniformColorTint.theProgram);
-    glUniformMatrix4fv(mUniformColorTint.modelToCameraMatrixUnif, 1, GL_FALSE, glm::value_ptr(modelMatrix.Top()));
+    glUniformMatrix4fv(mUniformColorTint.modelToClipMatrixUnif, 1, GL_FALSE, glm::value_ptr(modelMatrix.Top()));
     glUniform4f(mUniformColorTint.baseColorUnif, 0.9f, 0.9f, 0.9f, 0.9f);
     mCubeTintMesh.Render();
     glUseProgram(0);
@@ -213,7 +203,7 @@ void WorldSceneObjToCam::DrawColumn(glutil::MatrixStack& modelMatrix, float fHei
     modelMatrix.Translate(glm::vec3(0.0f, 0.5f, 0.0f));
 
     glUseProgram(mUniformColorTint.theProgram);
-    glUniformMatrix4fv(mUniformColorTint.modelToCameraMatrixUnif, 1, GL_FALSE, glm::value_ptr(modelMatrix.Top()));
+    glUniformMatrix4fv(mUniformColorTint.modelToClipMatrixUnif, 1, GL_FALSE, glm::value_ptr(modelMatrix.Top()));
     glUniform4f(mUniformColorTint.baseColorUnif, 0.9f, 0.9f, 0.9f, 0.9f);
     mCylinderMesh.Render();
     glUseProgram(0);
@@ -230,7 +220,7 @@ void WorldSceneObjToCam::DrawParthenon(glutil::MatrixStack& modelMatrix)
     modelMatrix.Translate(glm::vec3(0.0f, 0.5f, 0.0f));
 
     glUseProgram(mUniformColorTint.theProgram);
-    glUniformMatrix4fv(mUniformColorTint.modelToCameraMatrixUnif, 1, GL_FALSE, glm::value_ptr(modelMatrix.Top()));
+    glUniformMatrix4fv(mUniformColorTint.modelToClipMatrixUnif, 1, GL_FALSE, glm::value_ptr(modelMatrix.Top()));
     glUniform4f(mUniformColorTint.baseColorUnif, 0.9f, 0.9f, 0.9f, 0.9f);
     mCubeTintMesh.Render();
     glUseProgram(0);
@@ -245,7 +235,7 @@ void WorldSceneObjToCam::DrawParthenon(glutil::MatrixStack& modelMatrix)
     modelMatrix.Translate(glm::vec3(0.0f, 0.5f, 0.0f));
 
     glUseProgram(mUniformColorTint.theProgram);
-    glUniformMatrix4fv(mUniformColorTint.modelToCameraMatrixUnif, 1, GL_FALSE, glm::value_ptr(modelMatrix.Top()));
+    glUniformMatrix4fv(mUniformColorTint.modelToClipMatrixUnif, 1, GL_FALSE, glm::value_ptr(modelMatrix.Top()));
     glUniform4f(mUniformColorTint.baseColorUnif, 0.9f, 0.9f, 0.9f, 0.9f);
     mCubeTintMesh.Render();
     glUseProgram(0);
@@ -302,7 +292,7 @@ void WorldSceneObjToCam::DrawParthenon(glutil::MatrixStack& modelMatrix)
     modelMatrix.Translate(glm::vec3(0.0f, 0.5f, 0.0f));
 
     glUseProgram(mObjectColor.theProgram);
-    glUniformMatrix4fv(mObjectColor.modelToCameraMatrixUnif, 1, GL_FALSE, glm::value_ptr(modelMatrix.Top()));
+    glUniformMatrix4fv(mObjectColor.modelToClipMatrixUnif, 1, GL_FALSE, glm::value_ptr(modelMatrix.Top()));
     mCubeColorMesh.Render();
     glUseProgram(0);
   }
@@ -319,7 +309,7 @@ void WorldSceneObjToCam::DrawParthenon(glutil::MatrixStack& modelMatrix)
     modelMatrix.RotateY(45.0f);
 
     glUseProgram(mObjectColor.theProgram);
-    glUniformMatrix4fv(mObjectColor.modelToCameraMatrixUnif, 1, GL_FALSE, glm::value_ptr(modelMatrix.Top()));
+    glUniformMatrix4fv(mObjectColor.modelToClipMatrixUnif, 1, GL_FALSE, glm::value_ptr(modelMatrix.Top()));
     mCubeColorMesh.Render();
     glUseProgram(0);
   }
@@ -359,45 +349,50 @@ void WorldSceneObjToCam::renderInternal()
 
   const glm::vec3 &camPos = ResolveCamPosition();
 
-  glutil::MatrixStack camMatrix;
-  camMatrix.SetMatrix(CalcLookAtMatrix(camPos, mCamTarget, glm::vec3(0.0f, 1.0f, 0.0f)));
+  glutil::MatrixStack clipMatrix(mPerspectiveMatrix);
 
-  //Render the ground plane.
+  // World rendering
   {
-    glutil::PushStack push(camMatrix);
+    glutil::PushStack push(clipMatrix);
+    clipMatrix.ApplyMatrix(CalcLookAtMatrix(camPos, mCamTarget, glm::vec3(0.0f, 1.0f, 0.0f)));
 
-    camMatrix.Scale(glm::vec3(100.0f, 1.0f, 100.0f));
+    //Render the ground plane.
+    {
+      glutil::PushStack push(clipMatrix);
 
-    glUseProgram(mUniformColor.theProgram);
-    glUniformMatrix4fv(mUniformColor.modelToCameraMatrixUnif, 1, GL_FALSE, glm::value_ptr(camMatrix.Top()));
-    glUniform4f(mUniformColor.baseColorUnif, 0.302f, 0.416f, 0.0589f, 1.0f);
-    mPlaneMesh.Render();
-    glUseProgram(0);
-  }
+      clipMatrix.Scale(glm::vec3(100.0f, 1.0f, 100.0f));
 
-  //Draw the trees
-  DrawForest(camMatrix);
+      glUseProgram(mUniformColor.theProgram);
+      glUniformMatrix4fv(mUniformColor.modelToClipMatrixUnif, 1, GL_FALSE, glm::value_ptr(clipMatrix.Top()));
+      glUniform4f(mUniformColor.baseColorUnif, 0.302f, 0.416f, 0.0589f, 1.0f);
+      mPlaneMesh.Render();
+      glUseProgram(0);
+    }
 
-  //Draw the building.
-  {
-    glutil::PushStack push(camMatrix);
-    camMatrix.Translate(glm::vec3(20.0f, 0.0f, -10.0f));
+    //Draw the trees
+    DrawForest(clipMatrix);
 
-    DrawParthenon(camMatrix);
-  }
+    //Draw the building.
+    {
+      glutil::PushStack push(clipMatrix);
+      clipMatrix.Translate(glm::vec3(20.0f, 0.0f, -10.0f));
+
+      DrawParthenon(clipMatrix);
+    }
+  } // World rendering end
 
   if(mDrawLookatPoint)
   {
     glDisable(GL_DEPTH_TEST);
 
-    glutil::MatrixStack modelMatrix;
-
     glm::vec3 cameraAimVec = mCamTarget - camPos;
-    modelMatrix.Translate(0.0f, 0.0, -glm::length(cameraAimVec));
-    modelMatrix.Scale(1.0f, 1.0f, 1.0f);
+
+    glutil::PushStack push(clipMatrix);
+    clipMatrix.Translate(0.0f, 0.0, -glm::length(cameraAimVec));
+    clipMatrix.Scale(1.0f, 1.0f, 1.0f);
 
     glUseProgram(mObjectColor.theProgram);
-    glUniformMatrix4fv(mObjectColor.modelToCameraMatrixUnif, 1, GL_FALSE, glm::value_ptr(modelMatrix.Top()));
+    glUniformMatrix4fv(mObjectColor.modelToClipMatrixUnif, 1, GL_FALSE, glm::value_ptr(clipMatrix.Top()));
     mCubeColorMesh.Render();
     glUseProgram(0);
     glEnable(GL_DEPTH_TEST);
@@ -409,9 +404,7 @@ void WorldSceneObjToCam::framebufferSizeChanged(int w, int h)
   glutil::MatrixStack persMatrix;
   persMatrix.Perspective(45.0f, (w / static_cast<float>(h)), g_fzNear, g_fzFar);
 
-  glBindBuffer(GL_UNIFORM_BUFFER, mGlobalMatricesUBO);
-  glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), glm::value_ptr(persMatrix.Top()));
-  glBindBuffer(GL_UNIFORM_BUFFER, 0);
+  mPerspectiveMatrix = persMatrix.Top();
 
   glViewport(0, 0, w, h);
 }

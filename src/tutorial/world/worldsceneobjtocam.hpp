@@ -6,6 +6,7 @@
 #include "window.hpp"
 #include <glad/glad.h>
 #include <glm/vec3.hpp>
+#include <glm/mat4x4.hpp>
 
 // Forward declarations
 namespace glutil
@@ -16,9 +17,8 @@ class MatrixStack;
 struct ProgramData
 {
   GLuint theProgram;
-  GLuint modelToCameraMatrixUnif;
+  GLuint modelToClipMatrixUnif;
   GLuint baseColorUnif;
-  GLuint globalMatricesBlockIndex;
 };
 
 
@@ -41,8 +41,6 @@ private:
   glm::vec3 ResolveCamPosition();
 
 private:
-  GLuint mGlobalMatricesUBO;
-  GLint mGlobalMatricesBindingIndex;
   ProgramData mUniformColor;
   ProgramData mObjectColor;
   ProgramData mUniformColorTint;
@@ -57,6 +55,7 @@ private:
   glm::vec3 mCamTarget;
   //In spherical coordinates.
   glm::vec3 mSphereCamRelPos;
+  glm::mat4 mPerspectiveMatrix;
 };
 
 #endif // WORLDSCENEOBJTOCAM_HPP
