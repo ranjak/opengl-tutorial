@@ -1,7 +1,7 @@
 #include "mainloop.hpp"
 #include "log.hpp"
 #include "system.hpp"
-#include "orientation/gimballock.hpp"
+#include "orientation/quaternionypr.hpp"
 #include "glfw/windowglfw.hpp"
 #include <algorithm>
 
@@ -52,7 +52,7 @@ bool MainLoop::init(int width, int height, const std::string& title)
   mMainWindow->setCloseCallback([](Window*) { MainLoop::requestExit(); });
   mMainWindow->setSwapInterval(1);
 
-  mTutorial.reset(new GimbalLock(mMainWindow.get()));
+  mTutorial.reset(new QuaternionYPR(mMainWindow.get()));
   mTutorial->init();
 
   return true;

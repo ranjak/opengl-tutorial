@@ -99,10 +99,12 @@ set(INCLUDE_TUTORIAL_WORLD
 
 set(SRC_TUTORIAL_ORIENTATION
   tutorial/orientation/gimballock.cpp
+  tutorial/orientation/quaternionypr.cpp
 )
 
 set(SRC_TUTORIAL_INCLUDE
   tutorial/orientation/gimballock.hpp
+  tutorial/orientation/quaternionypr.hpp
 )
 
 set(SHADERS
