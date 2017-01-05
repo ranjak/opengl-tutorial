@@ -100,11 +100,13 @@ set(INCLUDE_TUTORIAL_WORLD
 set(SRC_TUTORIAL_ORIENTATION
   tutorial/orientation/gimballock.cpp
   tutorial/orientation/quaternionypr.cpp
+  tutorial/orientation/camerarelative.cpp
 )
 
 set(SRC_TUTORIAL_INCLUDE
   tutorial/orientation/gimballock.hpp
   tutorial/orientation/quaternionypr.hpp
+  tutorial/orientation/camerarelative.hpp
 )
 
 set(SHADERS
