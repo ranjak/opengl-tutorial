@@ -50,13 +50,13 @@ CameraRelative::CameraRelative(Window* window) :
   mBaseColorUnif(0),
 
   mCameraToClipMatrix(0.0f),
-  mOrientation(),
-  mSphereCamRelPos(0.0f, 0.0f, 200.0f),
-  mCamTarget(0.0f, 0.0f, -200.0f),
+  mOrientation(1.0f, 0.0f, 0.0f, 0.0f),
+  mSphereCamRelPos(90.0f, 0.0f, 66.0f),
+  mCamTarget(0.0f, 10.0f, 0.0f),
   mOffsetType(MODEL_RELATIVE),
 
   mShip("assets/orientation/Ship.xml"),
-  mPlaneMesh("assets/UnitPlane.xml")
+  mPlaneMesh("assets/orientation/UnitPlane.xml")
 {
   InitializeProgram();
 
@@ -147,6 +147,8 @@ void CameraRelative::onKeyboard(Window* win, int key, int, Window::KeyAction act
     thisScene->mOffsetType = (thisScene->mOffsetType + 1) % 3;
     break;
   }
+
+  sphereCamPos.y = glm::clamp(sphereCamPos.y, -78.75f, 10.0f);
 }
 
 glm::vec3 CameraRelative::ResolveCamPosition()
@@ -207,12 +209,23 @@ void CameraRelative::renderInternal()
   glutil::MatrixStack currMatrix;
   currMatrix.SetMatrix(CalcLookAtMatrix(ResolveCamPosition(), mCamTarget, {0.0f, 1.0f, 0.0f}));
 
-  currMatrix.Translate(glm::vec3(0.0f, 0.0f, -200.0f));
-  currMatrix.ApplyMatrix(glm::mat4_cast(mOrientation));
-
   glUseProgram(mProgram);
-  currMatrix.Scale(3.0, 3.0, 3.0);
+  // Render the plane
+  {
+    glutil::PushStack push(currMatrix);
+    currMatrix.Scale(100.0f, 1.0f, 100.0f);
+
+    glUniform4f(mBaseColorUnif, 0.2f, 0.5f, 0.2f, 1.0f);
+    glUniformMatrix4fv(mModelToCameraMatrixUnif, 1, GL_FALSE, glm::value_ptr(currMatrix.Top()));
+
+    mPlaneMesh.Render();
+  }
+
+  // Render the ship
+  currMatrix.Translate(mCamTarget);
+  currMatrix.ApplyMatrix(glm::mat4_cast(mOrientation));
   currMatrix.RotateX(-90);
+
   //Set the base color for this object.
   glUniform4f(mBaseColorUnif, 1.0, 1.0, 1.0, 1.0);
   glUniformMatrix4fv(mModelToCameraMatrixUnif, 1, GL_FALSE, glm::value_ptr(currMatrix.Top()));
