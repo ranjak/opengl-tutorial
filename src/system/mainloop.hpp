@@ -18,7 +18,6 @@ public:
   MainLoop();
   MainLoop(const MainLoop &) = delete;
   MainLoop& operator=(const MainLoop &) = delete;
-  ~MainLoop();
 
   bool init(int width=640, int height=480, const std::string& title="OpenGL Window");
 

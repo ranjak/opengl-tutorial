@@ -32,11 +32,6 @@ MainLoop::MainLoop() :
     instance = this;
 }
 
-MainLoop::~MainLoop()
-{
-  System::cleanup();
-}
-
 bool MainLoop::init(int width, int height, const std::string& title)
 {
   if (!System::init()) {

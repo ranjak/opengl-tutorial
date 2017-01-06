@@ -12,6 +12,8 @@ using seconds = std::chrono::duration<float, std::chrono::seconds::period>;
 
 struct System
 {
+  ~System();
+
   static bool init();
 
   static ogl::time now();
@@ -21,7 +23,8 @@ struct System
   static void cleanup();
 
 private:
-  static bool wasInit;
+  System();
+
   static std::chrono::time_point<std::chrono::steady_clock> initTime;
 };
 
