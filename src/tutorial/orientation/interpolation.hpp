@@ -17,12 +17,19 @@ public:
     : m_bIsAnimating(false)
     , m_ixCurrOrient(0)
     , m_bSlerp(false)
+    , m_bShortPath(false)
   {}
 
   bool ToggleSlerp()
   {
     m_bSlerp = !m_bSlerp;
     return m_bSlerp;
+  }
+
+  bool ToggleShortPath()
+  {
+    m_bShortPath = !m_bShortPath;
+    return m_bShortPath;
   }
 
   glm::fquat GetOrient() const;
@@ -43,7 +50,7 @@ private:
       return m_currTimer.Update();
     }
 
-    glm::fquat GetOrient(const glm::fquat &initial, bool bSlerp) const;
+    glm::fquat GetOrient(const glm::fquat &initial, bool bSlerp, bool bShortPath) const;
 
     void StartAnimation(int ixDestination, float fDuration);
 
@@ -57,6 +64,7 @@ private:
   bool m_bIsAnimating;
   int m_ixCurrOrient;
   bool m_bSlerp;
+  bool m_bShortPath;
 
   Animation m_anim;
 };

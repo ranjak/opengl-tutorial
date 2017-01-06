@@ -124,10 +124,14 @@ void Interpolation::onKeyboard(Window* win, int key, int, Window::KeyAction act,
 
   Interpolation* thisTut = static_cast<Interpolation*>(win->getTutorial());
 
-  if (key == 32) {
+  switch (key) {
+  case 32:
     rlzLog(Log::INFO, "Interpolation: "<< (thisTut->mOrientation.ToggleSlerp() ? "Slerp" : "Lerp"));
-  }
-  else {
+    break;
+  case 'S':
+    rlzLog(Log::INFO, "Interpolation: Shortest path "<< (thisTut->mOrientation.ToggleShortPath() ? "ON" : "OFF"));
+    break;
+  default:
     for(size_t iOrient = 0; iOrient < ARRAY_COUNT(g_OrientKeys); iOrient++) {
       if(key == g_OrientKeys[iOrient])
         thisTut->ApplyOrientation(iOrient);
@@ -208,7 +212,7 @@ void Interpolation::renderInternal()
 glm::fquat Orientation::GetOrient() const
 {
   if(m_bIsAnimating)
-    return m_anim.GetOrient(g_Orients[m_ixCurrOrient], m_bSlerp);
+    return m_anim.GetOrient(g_Orients[m_ixCurrOrient], m_bSlerp, m_bShortPath);
   else
     return g_Orients[m_ixCurrOrient];
 }
@@ -235,15 +239,18 @@ void Orientation::AnimateToOrient(int ixDestination)
   m_bIsAnimating = true;
 }
 
-glm::fquat Orientation::Animation::GetOrient(const glm::fquat& initial, bool bSlerp) const
+glm::fquat Orientation::Animation::GetOrient(const glm::fquat& initial, bool bSlerp, bool bShortPath) const
 {
+  float dotProd = glm::dot(initial, g_Orients[m_ixFinalOrient]);
+  glm::fquat initialShort = (dotProd < 0.0f && bShortPath) ? -initial : initial;
+
   if(bSlerp)
   {
-    return Slerp(initial, g_Orients[m_ixFinalOrient], m_currTimer.GetAlpha());
+    return Slerp(initialShort, g_Orients[m_ixFinalOrient], m_currTimer.GetAlpha());
   }
   else
   {
-    return Lerp(initial, g_Orients[m_ixFinalOrient], m_currTimer.GetAlpha());
+    return Lerp(initialShort, g_Orients[m_ixFinalOrient], m_currTimer.GetAlpha());
   }
 
   return initial;
