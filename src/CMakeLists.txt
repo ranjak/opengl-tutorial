@@ -11,6 +11,7 @@ set(SRC_SYSTEM
   system/system.cpp
   system/sysutils.cpp
   system/glfw/windowglfw.cpp
+  system/framework/Timer.cpp
 )
 
 set(INCLUDE_SYSTEM
@@ -20,6 +21,7 @@ set(INCLUDE_SYSTEM
   system/window.hpp
   system/sysutils.hpp
   system/glfw/windowglfw.hpp
+  system/framework/Timer.h
 )
 
 set(SRC_RENDERER
@@ -101,12 +103,14 @@ set(SRC_TUTORIAL_ORIENTATION
   tutorial/orientation/gimballock.cpp
   tutorial/orientation/quaternionypr.cpp
   tutorial/orientation/camerarelative.cpp
+#  tutorial/orientation/interpolation.cpp
 )
 
-set(SRC_TUTORIAL_INCLUDE
+set(INCLUDE_TUTORIAL_ORIENTATION
   tutorial/orientation/gimballock.hpp
   tutorial/orientation/quaternionypr.hpp
   tutorial/orientation/camerarelative.hpp
+#  tutorial/orientation/interpolation.hpp
 )
 
 set(SHADERS
