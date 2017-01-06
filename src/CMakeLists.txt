@@ -103,14 +103,14 @@ set(SRC_TUTORIAL_ORIENTATION
   tutorial/orientation/gimballock.cpp
   tutorial/orientation/quaternionypr.cpp
   tutorial/orientation/camerarelative.cpp
-#  tutorial/orientation/interpolation.cpp
+  tutorial/orientation/interpolation.cpp
 )
 
 set(INCLUDE_TUTORIAL_ORIENTATION
   tutorial/orientation/gimballock.hpp
   tutorial/orientation/quaternionypr.hpp
   tutorial/orientation/camerarelative.hpp
-#  tutorial/orientation/interpolation.hpp
+  tutorial/orientation/interpolation.hpp
 )
 
 set(SHADERS

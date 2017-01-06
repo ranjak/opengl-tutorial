@@ -1,8 +1,12 @@
 #include "interpolation.hpp"
 #include "shader.hpp"
 #include "transform.hpp"
+#include "log.hpp"
 #include <glutil/MatrixStack.h>
 #include <cstdio>
+#include <cmath>
+
+#define ARRAY_COUNT( array ) (sizeof( array ) / (sizeof( array[0] ) * (sizeof( array ) != sizeof(void*) || sizeof( array[0] ) <= sizeof(void*))))
 
 namespace
 {
@@ -47,13 +51,13 @@ glm::fquat Slerp(const glm::fquat &v0, const glm::fquat &v1, float alpha)
     return Lerp(v0, v1, alpha);
 
   glm::clamp(dot, -1.0f, 1.0f);
-  float theta_0 = acosf(dot);
+  float theta_0 = std::acos(dot);
   float theta = theta_0*alpha;
 
   glm::fquat v2 = v1 + -(v0*dot);
   v2 = glm::normalize(v2);
 
-  return v0*cos(theta) + v2*sin(theta);
+  return v0*std::cos(theta) + v2*std::sin(theta);
 }
 
 const float fFrustumScale = CalcFrustumScale(20.0f);
@@ -112,6 +116,25 @@ Interpolation::Interpolation(Window* window) :
   mWindow->addKeyCallback(onKeyboard);
 }
 
+void Interpolation::onKeyboard(Window* win, int key, int, Window::KeyAction act, short)
+{
+  if (act == Window::KEYUP) {
+    return;
+  }
+
+  Interpolation* thisTut = static_cast<Interpolation*>(win->getTutorial());
+
+  if (key == 32) {
+    rlzLog(Log::INFO, "Interpolation: "<< (thisTut->mOrientation.ToggleSlerp() ? "Slerp" : "Lerp"));
+  }
+  else {
+    for(size_t iOrient = 0; iOrient < ARRAY_COUNT(g_OrientKeys); iOrient++) {
+      if(key == g_OrientKeys[iOrient])
+        thisTut->ApplyOrientation(iOrient);
+    }
+  }
+}
+
 void Interpolation::InitializeProgram()
 {
   mProgram = ogl::makePorgram({
@@ -137,4 +160,97 @@ void Interpolation::InitializeProgram()
   glUseProgram(mProgram);
   glUniformMatrix4fv(mCameraToClipMatrixUnif, 1, GL_FALSE, glm::value_ptr(mCameraToClipMatrix));
   glUseProgram(0);
+}
+
+void Interpolation::ApplyOrientation(int iIndex)
+{
+  if(!mOrientation.IsAnimating())
+    mOrientation.AnimateToOrient(iIndex);
+}
+
+void Interpolation::framebufferSizeChanged(int w, int h)
+{
+  mCameraToClipMatrix[0].x = fFrustumScale * (h / (float)w);
+  mCameraToClipMatrix[1].y = fFrustumScale;
+
+  glUseProgram(mProgram);
+  glUniformMatrix4fv(mCameraToClipMatrixUnif, 1, GL_FALSE, glm::value_ptr(mCameraToClipMatrix));
+  glUseProgram(0);
+
+  glViewport(0, 0, (GLsizei) w, (GLsizei) h);
+}
+
+void Interpolation::renderInternal()
+{
+  mOrientation.UpdateTime();
+
+  glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+  glClearDepth(1.0f);
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+  glutil::MatrixStack currMatrix;
+  currMatrix.Translate(glm::vec3(0.0f, 0.0f, -200.0f));
+  currMatrix.ApplyMatrix(glm::mat4_cast(mOrientation.GetOrient()));
+
+  glUseProgram(mProgram);
+  currMatrix.Scale(3.0, 3.0, 3.0);
+  currMatrix.RotateX(-90);
+  //Set the base color for this object.
+  glUniform4f(mBaseColorUnif, 1.0, 1.0, 1.0, 1.0);
+  glUniformMatrix4fv(mModelToCameraMatrixUnif, 1, GL_FALSE, glm::value_ptr(currMatrix.Top()));
+
+  mShip.Render("tint");
+
+  glUseProgram(0);
+}
+
+
+glm::fquat Orientation::GetOrient() const
+{
+  if(m_bIsAnimating)
+    return m_anim.GetOrient(g_Orients[m_ixCurrOrient], m_bSlerp);
+  else
+    return g_Orients[m_ixCurrOrient];
+}
+
+void Orientation::UpdateTime()
+{
+  if(m_bIsAnimating)
+  {
+    bool bIsFinished = m_anim.UpdateTime();
+    if(bIsFinished)
+    {
+      m_bIsAnimating = false;
+      m_ixCurrOrient = m_anim.GetFinalIx();
+    }
+  }
+}
+
+void Orientation::AnimateToOrient(int ixDestination)
+{
+  if(m_ixCurrOrient == ixDestination)
+    return;
+
+  m_anim.StartAnimation(ixDestination, 1.0f);
+  m_bIsAnimating = true;
+}
+
+glm::fquat Orientation::Animation::GetOrient(const glm::fquat& initial, bool bSlerp) const
+{
+  if(bSlerp)
+  {
+    return Slerp(initial, g_Orients[m_ixFinalOrient], m_currTimer.GetAlpha());
+  }
+  else
+  {
+    return Lerp(initial, g_Orients[m_ixFinalOrient], m_currTimer.GetAlpha());
+  }
+
+  return initial;
+}
+
+void Orientation::Animation::StartAnimation(int ixDestination, float fDuration)
+{
+  m_ixFinalOrient = ixDestination;
+  m_currTimer = Framework::Timer(Framework::Timer::TT_SINGLE, fDuration);
 }

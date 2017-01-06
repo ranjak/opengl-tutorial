@@ -4,9 +4,11 @@
 #include "tutorial.hpp"
 #include "window.hpp"
 #include "Mesh.h"
+#include "framework/Timer.h"
 #include <glad/glad.h>
 #include <glm/mat4x4.hpp>
 #include <glm/gtc/quaternion.hpp>
+
 
 class Orientation
 {
@@ -23,37 +25,13 @@ public:
     return m_bSlerp;
   }
 
-  glm::fquat GetOrient() const
-  {
-    if(m_bIsAnimating)
-      return m_anim.GetOrient(g_Orients[m_ixCurrOrient], m_bSlerp);
-    else
-      return g_Orients[m_ixCurrOrient];
-  }
+  glm::fquat GetOrient() const;
 
   bool IsAnimating() const {return m_bIsAnimating;}
 
-  void UpdateTime()
-  {
-    if(m_bIsAnimating)
-    {
-      bool bIsFinished = m_anim.UpdateTime();
-      if(bIsFinished)
-      {
-        m_bIsAnimating = false;
-        m_ixCurrOrient = m_anim.GetFinalIx();
-      }
-    }
-  }
+  void UpdateTime();
 
-  void AnimateToOrient(int ixDestination)
-  {
-    if(m_ixCurrOrient == ixDestination)
-      return;
-
-    m_anim.StartAnimation(ixDestination, 1.0f);
-    m_bIsAnimating = true;
-  }
+  void AnimateToOrient(int ixDestination);
 
 private:
   class Animation
@@ -65,25 +43,9 @@ private:
       return m_currTimer.Update();
     }
 
-    glm::fquat GetOrient(const glm::fquat &initial, bool bSlerp) const
-    {
-      if(bSlerp)
-      {
-        return Slerp(initial, g_Orients[m_ixFinalOrient], m_currTimer.GetAlpha());
-      }
-      else
-      {
-        return Lerp(initial, g_Orients[m_ixFinalOrient], m_currTimer.GetAlpha());
-      }
+    glm::fquat GetOrient(const glm::fquat &initial, bool bSlerp) const;
 
-      return initial;
-    }
-
-    void StartAnimation(int ixDestination, float fDuration)
-    {
-      m_ixFinalOrient = ixDestination;
-      m_currTimer = Framework::Timer(Framework::Timer::TT_SINGLE, fDuration);
-    }
+    void StartAnimation(int ixDestination, float fDuration);
 
     int GetFinalIx() const {return m_ixFinalOrient;}
 
@@ -99,8 +61,6 @@ private:
   Animation m_anim;
 };
 
-Orientation g_orient;
-
 class Animation
 {
 public:
@@ -108,6 +68,7 @@ public:
 private:
   glm::fquat m_finalOrient;
 };
+
 
 class Interpolation : public Tutorial
 {
@@ -121,7 +82,7 @@ private:
   void renderInternal() override;
 
   void InitializeProgram();
-  void OffsetOrientation(const glm::vec3& _axis, float fAngDeg);
+  void ApplyOrientation(int iIndex);
 
 private:
   GLuint mProgram;
@@ -133,7 +94,7 @@ private:
   GLuint mBaseColorUnif;
 
   glm::mat4 mCameraToClipMatrix;
-  glm::fquat mOrientation;
+  Orientation mOrientation;
 
   Framework::Mesh mShip;
 };
