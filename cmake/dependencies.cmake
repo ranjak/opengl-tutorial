@@ -105,7 +105,7 @@ if (NOT OGLTUTOR_SYSTEM_GLAD)
     WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
   )
 
-  set(GLAD_PROFILE "compatibility" CACHE INTERNAL "OpenGL profile" FORCE)
+  set(GLAD_PROFILE "core" CACHE INTERNAL "OpenGL profile" FORCE)
   set(GLAD_API "gl=3.3" CACHE INTERNAL "API type/version pairs, like \"gl=3.2,gles=\", no version means latest" FORCE)
   set(GLAD_GENERATOR "c" CACHE INTERNAL "Language to generate the binding for" FORCE)
   set(GLAD_EXTENSIONS "" CACHE INTERNAL "Path to extensions file or comma separated list of extensions, if missing all extensions are included" FORCE)

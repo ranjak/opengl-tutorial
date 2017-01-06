@@ -20,10 +20,6 @@ std::string getErrorString(GLenum error)
     return "Invalid framebuffer operation";
   case GL_OUT_OF_MEMORY:
     return "Out of memory";
-  case GL_STACK_UNDERFLOW:
-    return "Stack underflow";
-  case GL_STACK_OVERFLOW:
-    return "Stack overflow";
   default:
     return "Invalid error code";
   }
