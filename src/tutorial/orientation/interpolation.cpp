@@ -37,6 +37,7 @@ glm::fquat Lerp(const glm::fquat &v0, const glm::fquat &v1, float alpha)
   glm::vec4 interp = glm::mix(start, end, alpha);
 
   std::printf("alpha: %f, (%f, %f, %f, %f)\n", alpha, interp.w, interp.x, interp.y, interp.z);
+  std::fflush(stdout);
 
   interp = glm::normalize(interp);
   return glm::fquat(interp.w, interp.x, interp.y, interp.z);
@@ -168,8 +169,7 @@ void Interpolation::InitializeProgram()
 
 void Interpolation::ApplyOrientation(int iIndex)
 {
-  if(!mOrientation.IsAnimating())
-    mOrientation.AnimateToOrient(iIndex);
+  mOrientation.AnimateToOrient(iIndex);
 }
 
 void Interpolation::framebufferSizeChanged(int w, int h)
@@ -211,32 +211,38 @@ void Interpolation::renderInternal()
 
 glm::fquat Orientation::GetOrient() const
 {
-  if(m_bIsAnimating)
-    return m_anim.GetOrient(g_Orients[m_ixCurrOrient], m_bSlerp, m_bShortPath);
-  else
-    return g_Orients[m_ixCurrOrient];
+  glm::fquat currentOrient = g_Orients[m_ixCurrOrient];
+
+  for (const Animation& anim : m_anims)
+  {
+    currentOrient = anim.GetOrient(currentOrient, m_bSlerp, m_bShortPath);
+  }
+
+  return currentOrient;
 }
 
 void Orientation::UpdateTime()
 {
-  if(m_bIsAnimating)
+  for (std::deque<Animation>::iterator it=m_anims.begin(); it != m_anims.end();)
   {
-    bool bIsFinished = m_anim.UpdateTime();
-    if(bIsFinished)
+    // Animation finished ?
+    if (it->UpdateTime())
     {
-      m_bIsAnimating = false;
-      m_ixCurrOrient = m_anim.GetFinalIx();
+      m_ixCurrOrient = it->GetFinalIx();
+      it = m_anims.erase(it);
     }
+    else
+      it++;
   }
 }
 
 void Orientation::AnimateToOrient(int ixDestination)
 {
-  if(m_ixCurrOrient == ixDestination)
+  if(m_ixCurrOrient == ixDestination && m_anims.empty())
     return;
 
-  m_anim.StartAnimation(ixDestination, 1.0f);
-  m_bIsAnimating = true;
+  m_anims.emplace_back();
+  m_anims.back().StartAnimation(ixDestination, 1.0f);
 }
 
 glm::fquat Orientation::Animation::GetOrient(const glm::fquat& initial, bool bSlerp, bool bShortPath) const

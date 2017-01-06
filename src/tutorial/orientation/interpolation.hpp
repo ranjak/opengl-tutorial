@@ -8,14 +8,14 @@
 #include <glad/glad.h>
 #include <glm/mat4x4.hpp>
 #include <glm/gtc/quaternion.hpp>
+#include <deque>
 
 
 class Orientation
 {
 public:
   Orientation()
-    : m_bIsAnimating(false)
-    , m_ixCurrOrient(0)
+    : m_ixCurrOrient(0)
     , m_bSlerp(false)
     , m_bShortPath(false)
   {}
@@ -34,7 +34,7 @@ public:
 
   glm::fquat GetOrient() const;
 
-  bool IsAnimating() const {return m_bIsAnimating;}
+  bool IsAnimating() const {return !m_anims.empty();}
 
   void UpdateTime();
 
@@ -66,7 +66,7 @@ private:
   bool m_bSlerp;
   bool m_bShortPath;
 
-  Animation m_anim;
+  std::deque<Animation> m_anims;
 };
 
 class Animation
