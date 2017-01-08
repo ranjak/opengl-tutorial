@@ -117,9 +117,9 @@ Interpolation::Interpolation(Window* window) :
   mWindow->addKeyCallback(onKeyboard);
 }
 
-void Interpolation::onKeyboard(Window* win, int key, int, Window::KeyAction act, short)
+void Interpolation::onKeyboard(Window* win, int key, int, Window::Action act, short)
 {
-  if (act == Window::KEYUP) {
+  if (act == Window::RELEASE) {
     return;
   }
 

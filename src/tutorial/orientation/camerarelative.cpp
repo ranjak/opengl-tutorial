@@ -113,9 +113,9 @@ void CameraRelative::framebufferSizeChanged(int w, int h)
 
 #define SMALL_ANGLE_INCREMENT 9.0f
 
-void CameraRelative::onKeyboard(Window* win, int key, int, Window::KeyAction act, short mods)
+void CameraRelative::onKeyboard(Window* win, int key, int, Window::Action act, short mods)
 {
-  if (act == Window::KEYUP) {
+  if (act == Window::RELEASE) {
     return;
   }
   // Controls are more precise when holding Shift

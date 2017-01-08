@@ -1,5 +1,6 @@
 set(SRC
   source/MatrixStack.cpp
+  source/MousePoles.cpp
   )
 
 add_library(glsdk STATIC

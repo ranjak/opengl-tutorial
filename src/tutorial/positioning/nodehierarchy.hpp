@@ -12,7 +12,7 @@ public:
   NodeHierarchy(Window* window);
 
 private:
-  static void onKeyPressed(Window* win, int key, int, Window::KeyAction action, short);
+  static void onKeyPressed(Window* win, int key, int, Window::Action action, short);
 
   void renderInternal() override;
   void framebufferSizeChanged(int w, int h) override;

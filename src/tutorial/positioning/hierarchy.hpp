@@ -22,7 +22,7 @@ private:
 
 
   // Armature functions
-  static void onKeyPressed(Window* win, int key, int, Window::KeyAction action, short);
+  static void onKeyPressed(Window* win, int key, int, Window::Action action, short);
 
   void AdjBase(bool bIncrement);
   void AdjUpperArm(bool bIncrement);

@@ -92,9 +92,9 @@ WorldScene::WorldScene(Window* window) :
   mWindow->addKeyCallback(onKeyPressed);
 }
 
-void WorldScene::onKeyPressed(Window* win, int key, int, Window::KeyAction act, short mods)
+void WorldScene::onKeyPressed(Window* win, int key, int, Window::Action act, short mods)
 {
-  if (act == Window::KEYUP) {
+  if (act == Window::RELEASE) {
     return;
   }
 

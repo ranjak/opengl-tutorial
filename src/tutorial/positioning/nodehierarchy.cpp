@@ -177,9 +177,9 @@ void NodeHierarchy::WritePose()
   std::printf("\n");
 }
 
-void NodeHierarchy::onKeyPressed(Window* win, int key, int /*scancode*/, Window::KeyAction action, short /*keyMod*/)
+void NodeHierarchy::onKeyPressed(Window* win, int key, int /*scancode*/, Window::Action action, short /*keyMod*/)
 {
-  if (action == Window::KEYUP) {
+  if (action == Window::RELEASE) {
     return;
   }
 

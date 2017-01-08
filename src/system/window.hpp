@@ -9,9 +9,18 @@ class Tutorial;
 class Window
 {
 public:
-  enum KeyAction { KEYDOWN, KEYUP, KEYREPEAT, KEYACT_UNKNOWN };
-  enum KeyMod : short { MOD_SHIFT = 0x0001 };
-  using KeyCallback = void (*)(Window*, int key, int scancode, KeyAction, short keyMods);
+  enum Action { PRESS, RELEASE, KEYREPEAT, ACT_UNKNOWN };
+  enum KeyMod : short { MOD_SHIFT = 0x0001, MOD_ALT = 0x0002, MOD_CONTROL = 0x0004 };
+
+  using KeyCallback = void (*)(Window*, int key, int scancode, Action, short keyMods);
+  using MouseMvtCallback = void (*)(Window*, double x, double y);
+  using MouseButtonCallback = void (*)(Window*, int button, int action, int mods);
+  using ScrollCallback = void (*)(Window*, double xoffset, double yoffset);
+
+  // Mouse buttons, to be defined in implementation.
+  static const int MOUSE_LEFT;
+  static const int MOUSE_RIGHT;
+  static const int MOUSE_MIDDLE;
 
 public:
   virtual ~Window() = 0;
@@ -31,6 +40,14 @@ public:
   virtual std::pair<int, int> getFramebufferSize() = 0;
 
   virtual void addKeyCallback(KeyCallback callback) = 0;
+
+  virtual int getModifierKeys() = 0;
+
+  virtual void setMouseMovementCallback(MouseMvtCallback callback) = 0;
+  virtual void setMouseButtonCallback(MouseButtonCallback callback) = 0;
+  virtual void setScrollCallback(ScrollCallback callback) = 0;
+
+  virtual std::pair<double, double> getCursorPos() = 0;
 
   void setTutorial(Tutorial* tutorial)
   {

@@ -30,6 +30,14 @@ public:
 
   void addKeyCallback(KeyCallback callback);
 
+  int getModifierKeys() override;
+
+  void setMouseMovementCallback(MouseMvtCallback callback) override;
+  void setMouseButtonCallback(MouseButtonCallback callback) override;
+  void setScrollCallback(ScrollCallback callback) override;
+
+  virtual std::pair<double, double> getCursorPos() override;
+
 private:
   void onKeyEvent(GLFWwindow* window, int key, int scancode, int action, int mods);
 
@@ -39,6 +47,10 @@ private:
   void (*mFBResizeCallback)(Window*, int, int);
 
   std::vector<KeyCallback> mKeyCallbacks;
+  int mModifierKeys;
+  MouseMvtCallback mMousePosCb;
+  MouseButtonCallback mMouseButtonCb;
+  ScrollCallback mScrollCb;
 };
 
 #endif // WINDOWGLFW_H

@@ -22,6 +22,7 @@ set(INCLUDE_SYSTEM
   system/sysutils.hpp
   system/glfw/windowglfw.hpp
   system/framework/Timer.h
+  system/framework/MousePole.h
 )
 
 set(SRC_RENDERER
@@ -113,6 +114,14 @@ set(INCLUDE_TUTORIAL_ORIENTATION
   tutorial/orientation/interpolation.hpp
 )
 
+set(SRC_TUTORIAL_ILLUMINATION
+  tutorial/illumination/basiclighting.cpp
+  )
+
+set(INCLUDE_TUTORIAL_ILLUMINATION
+  tutorial/illumination/basiclighting.hpp
+  )
+
 set(SHADERS
   ../shaders/vertex.glsl
   ../shaders/fragment.glsl
@@ -143,6 +152,13 @@ set(SHADERS_ORIENTATION
   ../shaders/orientation/PosColorLocalTransform.vert
   ../shaders/orientation/ColorMultUniform.frag
 )
+
+set(SHADERS_ILLUMINATION
+  ../shaders/illumination/basiclighting.vert
+  ../shaders/illumination/ColorPassthrough.frag
+  ../shaders/illumination/DirVertexLighting_PN.vert
+  ../shaders/illumination/DirVertexLighting_PCN.vert
+  )
 
 source_group(system FILES ${SRC_SYSTEM} ${INCLUDE_SYSTEM})
 source_group(renderer FILES ${SRC_RENDERER} ${INCLUDE_RENDERER})
@@ -177,9 +193,12 @@ add_executable(ogl-app WIN32
   ${SRC_TUTORIAL_ORIENTATION}
   ${INCLUDE_TUTORIAL_ORIENTATION}
   ${TUTORIAL_PRIMITIVES}
+#  ${SRC_TUTORIAL_ILLUMINATION}
+#  ${INCLUDE_TUTORIAL_ILLUMINATION}
   ${SHADERS}
   ${SHADERS_WORLD}
   ${SHADERS_ORIENTATION}
+  ${SHADERS_ILLUMINATION}
 )
 
 # GLFW shouldn't include gl.h since we're using a loader (glad)

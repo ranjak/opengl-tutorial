@@ -94,9 +94,9 @@ void QuaternionYPR::OffsetOrientation(const glm::vec3& _axis, float fAngDeg)
 
 #define SMALL_ANGLE_INCREMENT 9.0f
 
-void QuaternionYPR::onKeyboard(Window* win, int key, int, Window::KeyAction act, short)
+void QuaternionYPR::onKeyboard(Window* win, int key, int, Window::Action act, short)
 {
-  if (act == Window::KEYUP) {
+  if (act == Window::RELEASE) {
     return;
   }
 

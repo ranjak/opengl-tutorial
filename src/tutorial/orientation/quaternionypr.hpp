@@ -14,7 +14,7 @@ public:
   QuaternionYPR(Window* window);
 
 private:
-  static void onKeyboard(Window* win, int key, int, Window::KeyAction act, short /*mods*/);
+  static void onKeyboard(Window* win, int key, int, Window::Action act, short /*mods*/);
 
   void framebufferSizeChanged(int w, int h) override;
   void renderInternal() override;
