@@ -1,8 +1,13 @@
 #include "basiclighting.hpp"
 #include "shader.hpp"
+#include "framework/MousePole.h"
 #include <glutil/MatrixStack.h>
 #include <glm/mat4x4.hpp>
+#include <glm/mat3x3.hpp>
 #include <glm/vec4.hpp>
+#include <glm/vec3.hpp>
+#include <glm/gtc/quaternion.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 namespace
 {
@@ -31,6 +36,9 @@ glutil::ObjectData g_initialObjectData =
 };
 
 glm::vec4 g_lightDirection(0.866f, 0.5f, 0.0f, 0.0f);
+
+float g_fzNear = 1.0f;
+float g_fzFar = 1000.0f;
 
 } // namespace
 
@@ -78,25 +86,124 @@ BasicLighting::BasicLighting(Window* window) :
   glDepthMask(GL_TRUE);
   glDepthFunc(GL_LEQUAL);
   glDepthRange(0.0f, 1.0f);
+
+  mWindow->setMouseMovementCallback([] (Window* win, double x, double y)
+  {
+    BasicLighting* thisTut = static_cast<BasicLighting*>(win->getTutorial());
+    thisTut->MouseMotion(static_cast<int>(x), static_cast<int>(y));
+  });
+  mWindow->setMouseButtonCallback([] (Window* win, int button, int state, int)
+  {
+    BasicLighting* thisTut = static_cast<BasicLighting*>(win->getTutorial());
+    thisTut->MouseButton(button, state);
+  });
+  mWindow->setScrollCallback([] (Window* win, double /*x*/, double y)
+  {
+    BasicLighting* thisTut = static_cast<BasicLighting*>(win->getTutorial());
+    thisTut->MouseWheel(static_cast<int>(y));
+  });
+  mWindow->addKeyCallback([] (Window* win, int key, int, Window::Action act, short)
+  {
+    BasicLighting* thisTut = static_cast<BasicLighting*>(win->getTutorial());
+    thisTut->onKeyboard(key, act);
+  });
+}
+
+void BasicLighting::framebufferSizeChanged(int w, int h)
+{
+  glutil::MatrixStack persMatrix;
+  persMatrix.Perspective(45.0f, (w / static_cast<float>(h)), g_fzNear, g_fzFar);
+
+  glBindBuffer(GL_UNIFORM_BUFFER, mProjectionUniformBuffer);
+  glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), glm::value_ptr(persMatrix.Top()));
+  glBindBuffer(GL_UNIFORM_BUFFER, 0);
+
+  glViewport(0, 0, w, h);
+}
+
+void BasicLighting::renderInternal()
+{
+  glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+  glClearDepth(1.0f);
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+  glutil::MatrixStack modelMatrix;
+  modelMatrix.SetMatrix(mViewPole.CalcMatrix());
+
+  glm::vec4 lightDirCameraSpace = modelMatrix.Top() * g_lightDirection;
+
+  glUseProgram(mWhiteDiffuseColor.theProgram);
+  glUniform3fv(mWhiteDiffuseColor.dirToLightUnif, 1, glm::value_ptr(lightDirCameraSpace));
+  glUseProgram(mVertexDiffuseColor.theProgram);
+  glUniform3fv(mVertexDiffuseColor.dirToLightUnif, 1, glm::value_ptr(lightDirCameraSpace));
+  glUseProgram(0);
+
+  {
+    glutil::PushStack push(modelMatrix);
+
+    //Render the ground plane.
+    {
+      glutil::PushStack push(modelMatrix);
+
+      glUseProgram(mWhiteDiffuseColor.theProgram);
+      glUniformMatrix4fv(mWhiteDiffuseColor.modelToCameraMatrixUnif, 1, GL_FALSE, glm::value_ptr(modelMatrix.Top()));
+      glm::mat3 normMatrix(modelMatrix.Top());
+      glUniformMatrix3fv(mWhiteDiffuseColor.normalModelToCameraMatrixUnif, 1, GL_FALSE, glm::value_ptr(normMatrix));
+      glUniform4f(mWhiteDiffuseColor.lightIntensityUnif, 1.0f, 1.0f, 1.0f, 1.0f);
+      mPlane.Render();
+      glUseProgram(0);
+    }
+
+    //Render the Cylinder
+    {
+      glutil::PushStack push(modelMatrix);
+
+      modelMatrix.ApplyMatrix(mObjtPole.CalcMatrix());
+
+      if(mDrawColoredCyl)
+      {
+        glUseProgram(mVertexDiffuseColor.theProgram);
+        glUniformMatrix4fv(mVertexDiffuseColor.modelToCameraMatrixUnif, 1, GL_FALSE, glm::value_ptr(modelMatrix.Top()));
+        glm::mat3 normMatrix(modelMatrix.Top());
+        glUniformMatrix3fv(mVertexDiffuseColor.normalModelToCameraMatrixUnif, 1, GL_FALSE, glm::value_ptr(normMatrix));
+        glUniform4f(mVertexDiffuseColor.lightIntensityUnif, 1.0f, 1.0f, 1.0f, 1.0f);
+        mCylinder.Render("lit-color");
+      }
+      else
+      {
+        glUseProgram(mWhiteDiffuseColor.theProgram);
+        glUniformMatrix4fv(mWhiteDiffuseColor.modelToCameraMatrixUnif, 1, GL_FALSE, glm::value_ptr(modelMatrix.Top()));
+        glm::mat3 normMatrix(modelMatrix.Top());
+        glUniformMatrix3fv(mWhiteDiffuseColor.normalModelToCameraMatrixUnif, 1, GL_FALSE, glm::value_ptr(normMatrix));
+        glUniform4f(mWhiteDiffuseColor.lightIntensityUnif, 1.0f, 1.0f, 1.0f, 1.0f);
+        mCylinder.Render("lit");
+      }
+      glUseProgram(0);
+    }
+  }
 }
 
 void BasicLighting::MouseMotion(int x, int y)
 {
-  Framework::ForwardMouseMotion(g_viewPole, x, y);
-  Framework::ForwardMouseMotion(g_objtPole, x, y);
-  glutPostRedisplay();
+  Framework::ForwardMouseMotion(mViewPole, x, y);
+  Framework::ForwardMouseMotion(mObjtPole, x, y);
 }
 
-void BasicLighting::MouseButton(int button, int state, int x, int y)
+void BasicLighting::MouseButton(int button, int state)
 {
-  Framework::ForwardMouseButton(g_viewPole, button, state, x, y);
-  Framework::ForwardMouseButton(g_objtPole, button, state, x, y);
-  glutPostRedisplay();
+  Framework::ForwardMouseButton(mViewPole, mWindow, button, state);
+  Framework::ForwardMouseButton(mObjtPole, mWindow, button, state);
 }
 
-void BasicLighting::MouseWheel(int wheel, int direction, int x, int y)
+void BasicLighting::MouseWheel(int offset)
 {
-  Framework::ForwardMouseWheel(g_viewPole, wheel, direction, x, y);
-  Framework::ForwardMouseWheel(g_objtPole, wheel, direction, x, y);
-  glutPostRedisplay();
+  Framework::ForwardMouseWheel(mViewPole, mWindow, offset);
+  Framework::ForwardMouseWheel(mObjtPole, mWindow, offset);
+}
+
+void BasicLighting::onKeyboard(int key, Window::Action act)
+{
+  if (key == 32 && act != Window::RELEASE) {
+    mDrawColoredCyl = !mDrawColoredCyl;
+  }
 }

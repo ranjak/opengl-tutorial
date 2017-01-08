@@ -40,29 +40,23 @@ namespace Framework
 
 		glutil::MouseButtons eButton;
 
-		switch(button)
-		{
-    case Window::MOUSE_LEFT:
+    if (button == Window::MOUSE_LEFT)
 			eButton = glutil::MB_LEFT_BTN;
-			break;
-    case Window::MOUSE_MIDDLE:
+    else if (button == Window::MOUSE_MIDDLE)
 			eButton = glutil::MB_MIDDLE_BTN;
-			break;
-    case Window::MOUSE_RIGHT:
+    else if (button == Window::MOUSE_RIGHT)
 			eButton = glutil::MB_RIGHT_BTN;
-			break;
-		default:
+    else
 			return;
-		}
 
     forward.MouseClick(eButton, state == Window::PRESS, modifiers, glm::ivec2((int)pos.first, (int)pos.second));
 	}
 
 	template<typename Pole>
-  inline void ForwardMouseWheel(Pole &forward, Window* win, double offset)
+  inline void ForwardMouseWheel(Pole &forward, Window* win, int offset)
 	{
     std::pair<double, double> pos = win->getCursorPos();
-    forward.MouseWheel((int)offset, calc_window_modifiers(win), glm::ivec2((int)pos.first, (int)pos.second));
+    forward.MouseWheel(offset, calc_window_modifiers(win), glm::ivec2((int)pos.first, (int)pos.second));
 	}
 
 }

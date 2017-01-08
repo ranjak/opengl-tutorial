@@ -77,17 +77,23 @@ WindowGLFW::WindowGLFW(int width, int height, const std::string& title) :
   glfwSetCursorPosCallback(mWindow.get(), [](GLFWwindow* win, double xpos, double ypos) {
 
     WindowGLFW* thisWin = static_cast<WindowGLFW*>(glfwGetWindowUserPointer(win));
-    thisWin->mMousePosCb(thisWin, xpos, ypos);
+    if (thisWin->mMousePosCb) {
+      thisWin->mMousePosCb(thisWin, xpos, ypos);
+    }
   });
   glfwSetMouseButtonCallback(mWindow.get(), [](GLFWwindow* win, int button, int action, int mod) {
 
     WindowGLFW* thisWin = static_cast<WindowGLFW*>(glfwGetWindowUserPointer(win));
-    thisWin->mMouseButtonCb(thisWin, button, toKeyAction(action), toKeyMod(mod));
+    if (thisWin->mMouseButtonCb) {
+      thisWin->mMouseButtonCb(thisWin, button, toKeyAction(action), toKeyMod(mod));
+    }
   });
   glfwSetScrollCallback(mWindow.get(), [](GLFWwindow* win, double xoffset, double yoffset) {
 
     WindowGLFW* thisWin = static_cast<WindowGLFW*>(glfwGetWindowUserPointer(win));
-    thisWin->mScrollCb(thisWin, xoffset, yoffset);
+    if (thisWin->mScrollCb) {
+      thisWin->mScrollCb(thisWin, xoffset, yoffset);
+    }
   });
 
 }

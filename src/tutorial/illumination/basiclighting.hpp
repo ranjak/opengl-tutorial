@@ -3,6 +3,7 @@
 
 #include "tutorial.hpp"
 #include "Mesh.h"
+#include "window.hpp"
 #include <glutil/MousePoles.h>
 #include <glad/glad.h>
 #include <string>
@@ -30,8 +31,9 @@ private:
   ProgramData LoadProgram(const std::string& strVertexShader, const std::string& strFragmentShader);
 
   void MouseMotion(int x, int y);
-  void MouseButton(int button, int state, int x, int y);
-  void MouseWheel(int wheel, int direction, int x, int y);
+  void MouseButton(int button, int state);
+  void MouseWheel(int offset);
+  void onKeyboard(int key, Window::Action act);
 
 private:
   // Projection matrix uniform block
