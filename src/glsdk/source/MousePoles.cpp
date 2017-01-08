@@ -60,7 +60,7 @@ namespace glutil
 
 		glm::fquat CalcRotationQuat(int eAxis, float degAngle)
 		{
-			return glm::angleAxis(degAngle, g_axisVectors[eAxis]);
+      return glm::angleAxis(glm::radians(degAngle), g_axisVectors[eAxis]);
 		}
 	}
 
@@ -214,7 +214,7 @@ namespace glutil
 		theMat = glm::translate(theMat, glm::vec3(0.0f, 0.0f, -m_currView.radius));
 
 		//Rotate the world to look in the right direction..
-		glm::fquat fullRotation = glm::angleAxis(m_currView.degSpinRotation, glm::vec3(0.0f, 0.0f, 1.0f)) *
+    glm::fquat fullRotation = glm::angleAxis(glm::radians(m_currView.degSpinRotation), glm::vec3(0.0f, 0.0f, 1.0f)) *
 			m_currView.orient;
 		theMat = theMat * glm::mat4_cast(fullRotation);
 
@@ -242,7 +242,7 @@ namespace glutil
 		float degAngleDiff = (iXDiff * m_viewScale.rotationScale);
 
 		//Rotate about the world-space Y axis.
-		m_currView.orient = m_startDragOrient * glm::angleAxis(degAngleDiff, glm::vec3(0.0f, 1.0f, 0.0f));
+    m_currView.orient = m_startDragOrient * glm::angleAxis(glm::radians(degAngleDiff), glm::vec3(0.0f, 1.0f, 0.0f));
 	}
 
 	void ViewPole::ProcessYChange( int iYDiff, bool bClearXZ )
@@ -250,7 +250,7 @@ namespace glutil
 		float degAngleDiff = (iYDiff * m_viewScale.rotationScale);
 
 		//Rotate about the local-space X axis.
-		m_currView.orient = glm::angleAxis(degAngleDiff, glm::vec3(1.0f, 0.0f, 0.0f)) * m_startDragOrient;
+    m_currView.orient = glm::angleAxis(glm::radians(degAngleDiff), glm::vec3(1.0f, 0.0f, 0.0f)) * m_startDragOrient;
 	}
 
 	void ViewPole::ProcessXYChange( int iXDiff, int iYDiff )
@@ -259,9 +259,9 @@ namespace glutil
 		float degYAngleDiff = (iYDiff * m_viewScale.rotationScale);
 
 		//Rotate about the world-space Y axis.
-		m_currView.orient = m_startDragOrient * glm::angleAxis(degXAngleDiff, glm::vec3(0.0f, 1.0f, 0.0f));
+    m_currView.orient = m_startDragOrient * glm::angleAxis(glm::radians(degXAngleDiff), glm::vec3(0.0f, 1.0f, 0.0f));
 		//Rotate about the local-space X axis.
-		m_currView.orient = glm::angleAxis(degYAngleDiff, glm::vec3(1.0f, 0.0f, 0.0f)) * m_currView.orient;
+    m_currView.orient = glm::angleAxis(glm::radians(degYAngleDiff), glm::vec3(1.0f, 0.0f, 0.0f)) * m_currView.orient;
 	}
 
 	void ViewPole::ProcessSpinAxis( int iXDiff, int iYDiff )
