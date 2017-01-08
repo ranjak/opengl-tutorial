@@ -31,7 +31,7 @@ private:
   ProgramData LoadProgram(const std::string& strVertexShader, const std::string& strFragmentShader);
 
   void MouseMotion(int x, int y);
-  void MouseButton(int button, int state);
+  void MouseButton(int button, int state, int mods);
   void MouseWheel(int offset);
   void onKeyboard(int key, Window::Action act);
 

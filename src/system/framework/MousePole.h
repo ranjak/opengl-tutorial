@@ -11,11 +11,10 @@
 
 namespace Framework
 {
-  inline int calc_window_modifiers(Window* window)
+  inline int calc_window_modifiers(int modifiers)
 	{
 		int ret = 0;
 
-    int modifiers = window->getModifierKeys();
     if(modifiers & Window::MOD_SHIFT)
 			ret |= glutil::MM_KEY_SHIFT;
     if(modifiers & Window::MOD_CONTROL)
@@ -33,9 +32,9 @@ namespace Framework
 	}
 
 	template<typename Pole>
-  inline void ForwardMouseButton(Pole &forward, Window* win, int button, int state)
+  inline void ForwardMouseButton(Pole &forward, Window* win, int button, int state, int mods)
 	{
-    int modifiers = calc_window_modifiers(win);
+    int modifiers = calc_window_modifiers(mods);
     std::pair<double, double> pos = win->getCursorPos();
 
 		glutil::MouseButtons eButton;
@@ -56,7 +55,7 @@ namespace Framework
   inline void ForwardMouseWheel(Pole &forward, Window* win, int offset)
 	{
     std::pair<double, double> pos = win->getCursorPos();
-    forward.MouseWheel(offset, calc_window_modifiers(win), glm::ivec2((int)pos.first, (int)pos.second));
+    forward.MouseWheel(offset, calc_window_modifiers(win->getModifierKeys()), glm::ivec2((int)pos.first, (int)pos.second));
 	}
 
 }

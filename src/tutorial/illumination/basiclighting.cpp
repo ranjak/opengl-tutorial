@@ -92,10 +92,10 @@ BasicLighting::BasicLighting(Window* window) :
     BasicLighting* thisTut = static_cast<BasicLighting*>(win->getTutorial());
     thisTut->MouseMotion(static_cast<int>(x), static_cast<int>(y));
   });
-  mWindow->setMouseButtonCallback([] (Window* win, int button, int state, int)
+  mWindow->setMouseButtonCallback([] (Window* win, int button, int state, int mods)
   {
     BasicLighting* thisTut = static_cast<BasicLighting*>(win->getTutorial());
-    thisTut->MouseButton(button, state);
+    thisTut->MouseButton(button, state, mods);
   });
   mWindow->setScrollCallback([] (Window* win, double /*x*/, double y)
   {
@@ -189,10 +189,10 @@ void BasicLighting::MouseMotion(int x, int y)
   Framework::ForwardMouseMotion(mObjtPole, x, y);
 }
 
-void BasicLighting::MouseButton(int button, int state)
+void BasicLighting::MouseButton(int button, int state, int mods)
 {
-  Framework::ForwardMouseButton(mViewPole, mWindow, button, state);
-  Framework::ForwardMouseButton(mObjtPole, mWindow, button, state);
+  Framework::ForwardMouseButton(mViewPole, mWindow, button, state, mods);
+  Framework::ForwardMouseButton(mObjtPole, mWindow, button, state, mods);
 }
 
 void BasicLighting::MouseWheel(int offset)
