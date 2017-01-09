@@ -116,10 +116,12 @@ set(INCLUDE_TUTORIAL_ORIENTATION
 
 set(SRC_TUTORIAL_ILLUMINATION
   tutorial/illumination/basiclighting.cpp
+  tutorial/illumination/scalelighting.cpp
   )
 
 set(INCLUDE_TUTORIAL_ILLUMINATION
   tutorial/illumination/basiclighting.hpp
+  tutorial/illumination/scalelighting.hpp
   )
 
 set(SHADERS

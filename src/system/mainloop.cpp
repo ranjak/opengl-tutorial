@@ -1,7 +1,7 @@
 #include "mainloop.hpp"
 #include "log.hpp"
 #include "system.hpp"
-#include "illumination/basiclighting.hpp"
+#include "illumination/scalelighting.hpp"
 #include "glfw/windowglfw.hpp"
 #include <algorithm>
 
@@ -47,7 +47,7 @@ bool MainLoop::init(int width, int height, const std::string& title)
   mMainWindow->setCloseCallback([](Window*) { MainLoop::requestExit(); });
   mMainWindow->setSwapInterval(1);
 
-  mTutorial.reset(new BasicLighting(mMainWindow.get()));
+  mTutorial.reset(new ScaleLighting(mMainWindow.get()));
   mTutorial->init();
 
   return true;
