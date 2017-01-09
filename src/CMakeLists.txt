@@ -117,11 +117,13 @@ set(INCLUDE_TUTORIAL_ORIENTATION
 set(SRC_TUTORIAL_ILLUMINATION
   tutorial/illumination/basiclighting.cpp
   tutorial/illumination/scalelighting.cpp
+  tutorial/illumination/ambientlighting.cpp
   )
 
 set(INCLUDE_TUTORIAL_ILLUMINATION
   tutorial/illumination/basiclighting.hpp
   tutorial/illumination/scalelighting.hpp
+  tutorial/illumination/ambientlighting.hpp
   )
 
 set(SHADERS
@@ -160,6 +162,8 @@ set(SHADERS_ILLUMINATION
   ../shaders/illumination/ColorPassthrough.frag
   ../shaders/illumination/DirVertexLighting_PN.vert
   ../shaders/illumination/DirVertexLighting_PCN.vert
+  ../shaders/illumination/DirAmbVertexLighting_PN.vert
+  ../shaders/illumination/DirAmbVertexLighting_PCN.vert
   )
 
 source_group(system FILES ${SRC_SYSTEM} ${INCLUDE_SYSTEM})
