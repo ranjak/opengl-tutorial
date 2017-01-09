@@ -4,6 +4,7 @@
 
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <glm/gtc/quaternion.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include "glutil/MousePoles.h"
