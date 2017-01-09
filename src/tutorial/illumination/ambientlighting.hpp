@@ -6,6 +6,7 @@
 #include "window.hpp"
 #include <glutil/MousePoles.h>
 #include <glad/glad.h>
+#include <glm/vec4.hpp>
 #include <string>
 
 struct ProgramData
@@ -54,6 +55,7 @@ private:
   bool mUseAmbientLight;
   glutil::ViewPole mViewPole;
   glutil::ObjectPole mObjtPole;
+  glm::vec4 mLightIntensity;
 };
 
 #endif // AMBIENTLIGHTING_HPP

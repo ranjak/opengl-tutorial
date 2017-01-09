@@ -74,7 +74,8 @@ AmbientLighting::AmbientLighting(Window* window) :
   mDrawColoredCyl(true),
   mUseAmbientLight(true),
   mViewPole(g_initialViewData, g_viewScale, glutil::MB_LEFT_BTN),
-  mObjtPole(g_initialObjectData, 90.0f/250.0f, glutil::MB_RIGHT_BTN, &mViewPole)
+  mObjtPole(g_initialObjectData, 90.0f/250.0f, glutil::MB_RIGHT_BTN, &mViewPole),
+  mLightIntensity(0.8f, 0.8f, 0.8f, 1.0f)
 {
   glGenBuffers(1, &mProjectionUniformBuffer);
   glBindBuffer(GL_UNIFORM_BUFFER, mProjectionUniformBuffer);
@@ -146,10 +147,10 @@ void AmbientLighting::renderInternal()
 
   if (mUseAmbientLight) {
     glUniform4f(colorProgram.ambientIntensityUnif, 0.2f, 0.2f, 0.2f, 1.0f);
-    glUniform4f(colorProgram.lightIntensityUnif, 0.8f, 0.8f, 0.8f, 1.0f);
+    glUniform4fv(colorProgram.lightIntensityUnif, 1, glm::value_ptr(mLightIntensity));
     glUseProgram(whiteProgram.theProgram);
     glUniform4f(whiteProgram.ambientIntensityUnif, 0.2f, 0.2f, 0.2f, 1.0f);
-    glUniform4f(whiteProgram.lightIntensityUnif, 0.8f, 0.8f, 0.8f, 1.0f);
+    glUniform4fv(whiteProgram.lightIntensityUnif, 1, glm::value_ptr(mLightIntensity));
   }
   else {
     glUniform4f(colorProgram.lightIntensityUnif, 1.0f, 1.0f, 1.0f, 1.0f);
@@ -230,6 +231,14 @@ void AmbientLighting::onKeyboard(int key, Window::Action act)
     break;
   case 'A':
     mUseAmbientLight = !mUseAmbientLight;
+    break;
+  case 'L':
+    if (mLightIntensity.r < 1.0f) {
+      mLightIntensity = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+    }
+    else {
+      mLightIntensity = glm::vec4(0.8f, 0.8f, 0.8f, 1.0f);
+    }
     break;
   default:
     break;
