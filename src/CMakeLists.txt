@@ -118,12 +118,14 @@ set(SRC_TUTORIAL_ILLUMINATION
   tutorial/illumination/basiclighting.cpp
   tutorial/illumination/scalelighting.cpp
   tutorial/illumination/ambientlighting.cpp
+  tutorial/illumination/orennayar.cpp
   )
 
 set(INCLUDE_TUTORIAL_ILLUMINATION
   tutorial/illumination/basiclighting.hpp
   tutorial/illumination/scalelighting.hpp
   tutorial/illumination/ambientlighting.hpp
+  tutorial/illumination/orennayar.hpp
   )
 
 set(SHADERS

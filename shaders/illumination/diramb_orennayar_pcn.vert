@@ -6,7 +6,7 @@ mat3 rotateX(float angleRad)
 {
   float cosa = cos(angleRad);
   float sina = sin(angleRad);
-  return mat4(
+  return mat3(
         1.0, 0.0, 0.0,
         0.0, cosa, sina,
         0.0, -sina, cosa);
@@ -16,7 +16,7 @@ mat3 rotateY(float angleRad)
 {
   float cosa = cos(angleRad);
   float sina = sin(angleRad);
-  return mat4(
+  return mat3(
         cosa, 0.0, -sina,
         0.0, 1.0, 0.0,
         sina, 0.0, cosa);

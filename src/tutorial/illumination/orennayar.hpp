@@ -7,6 +7,7 @@
 #include <glutil/MousePoles.h>
 #include <glad/glad.h>
 #include <glm/vec4.hpp>
+#include <glm/vec2.hpp>
 #include <string>
 
 struct ProgramData
@@ -16,7 +17,7 @@ struct ProgramData
   GLint dirToLightUnif;
   GLint lightIntensityUnif;
   GLint ambientIntensityUnif;
-  GLint facetAnglesUnit;
+  GLint facetAnglesUnif;
 
   GLint modelToCameraMatrixUnif;
   GLint normalModelToCameraMatrixUnif;
@@ -44,19 +45,20 @@ private:
   const GLint mProjectionBlockIndex;
   GLuint mProjectionUniformBuffer;
 
-  ProgramData mWhiteDiffuseColor;
-  ProgramData mVertexDiffuseColor;
   ProgramData mWhiteAmbDiffuseColor;
   ProgramData mVertexAmbDiffuseColor;
+  ProgramData mWhiteOrenNayar;
+  ProgramData mVertexOrenNayar;
 
   Framework::Mesh mCylinder;
   Framework::Mesh mPlane;
 
   bool mDrawColoredCyl;
-  bool mUseAmbientLight;
+  bool mUseOrenNayar;
   glutil::ViewPole mViewPole;
   glutil::ObjectPole mObjtPole;
   glm::vec4 mLightIntensity;
+  glm::vec2 mONfacetAngles;
 };
 
 #endif // ORENNAYAR_HPP

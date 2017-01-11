@@ -1,5 +1,6 @@
 #include "orennayar.hpp"
 #include "shader.hpp"
+#include "transform.hpp"
 #include "framework/MousePole.h"
 #include <glutil/MatrixStack.h>
 #include <glm/mat4x4.hpp>
@@ -54,6 +55,7 @@ ProgramData OrenNayar::LoadProgram(const std::string &strVertexShader, const std
   data.dirToLightUnif = glGetUniformLocation(data.theProgram, "dirToLight");
   data.lightIntensityUnif = glGetUniformLocation(data.theProgram, "lightIntensity");
   data.ambientIntensityUnif = glGetUniformLocation(data.theProgram, "ambientIntensity");
+  data.facetAnglesUnif = glGetUniformLocation(data.theProgram, "facetAngles");
 
   GLuint projectionBlock = glGetUniformBlockIndex(data.theProgram, "Projection");
   glUniformBlockBinding(data.theProgram, projectionBlock, mProjectionBlockIndex);
@@ -65,17 +67,18 @@ OrenNayar::OrenNayar(Window* window) :
   Tutorial(window),
   mProjectionBlockIndex(2),
   mProjectionUniformBuffer(0),
-  mWhiteDiffuseColor(LoadProgram("shaders/illumination/DirVertexLighting_PN.vert", "shaders/illumination/ColorPassthrough.frag")),
-  mVertexDiffuseColor(LoadProgram("shaders/illumination/DirVertexLighting_PCN.vert", "shaders/illumination/ColorPassthrough.frag")),
   mWhiteAmbDiffuseColor(LoadProgram("shaders/illumination/DirAmbVertexLighting_PN.vert", "shaders/illumination/ColorPassthrough.frag")),
   mVertexAmbDiffuseColor(LoadProgram("shaders/illumination/DirAmbVertexLighting_PCN.vert", "shaders/illumination/ColorPassthrough.frag")),
+  mWhiteOrenNayar(LoadProgram("shaders/illumination/DirVertexLighting_PN.vert", "shaders/illumination/ColorPassthrough.frag")),
+  mVertexOrenNayar(LoadProgram("shaders/illumination/diramb_orennayar_pcn.vert", "shaders/illumination/ColorPassthrough.frag")),
   mCylinder("assets/illumination/UnitCylinder.xml"),
   mPlane("assets/illumination/LargePlane.xml"),
   mDrawColoredCyl(true),
-  mUseAmbientLight(true),
+  mUseOrenNayar(false),
   mViewPole(g_initialViewData, g_viewScale, glutil::MB_LEFT_BTN),
   mObjtPole(g_initialObjectData, 90.0f/250.0f, glutil::MB_RIGHT_BTN, &mViewPole),
-  mLightIntensity(0.8f, 0.8f, 0.8f, 1.0f)
+  mLightIntensity(0.8f, 0.8f, 0.8f, 1.0f),
+  mONfacetAngles(ogl::PIf/4.0f, 0.f)
 {
   glGenBuffers(1, &mProjectionUniformBuffer);
   glBindBuffer(GL_UNIFORM_BUFFER, mProjectionUniformBuffer);
@@ -137,25 +140,23 @@ void OrenNayar::renderInternal()
 
   glm::vec4 lightDirCameraSpace = modelMatrix.Top() * g_lightDirection;
 
-  ProgramData& colorProgram = mUseAmbientLight ? mVertexAmbDiffuseColor : mVertexDiffuseColor;
-  ProgramData& whiteProgram = mUseAmbientLight ? mWhiteAmbDiffuseColor : mWhiteDiffuseColor;
+  ProgramData& colorProgram = mUseOrenNayar ? mVertexOrenNayar : mVertexAmbDiffuseColor;
+  ProgramData& whiteProgram = mUseOrenNayar ? mWhiteOrenNayar : mWhiteAmbDiffuseColor;
 
   glUseProgram(whiteProgram.theProgram);
   glUniform3fv(whiteProgram.dirToLightUnif, 1, glm::value_ptr(lightDirCameraSpace));
+  glUniform4f(whiteProgram.ambientIntensityUnif, 0.2f, 0.2f, 0.2f, 1.0f);
+  glUniform4fv(whiteProgram.lightIntensityUnif, 1, glm::value_ptr(mLightIntensity));
+
   glUseProgram(colorProgram.theProgram);
   glUniform3fv(colorProgram.dirToLightUnif, 1, glm::value_ptr(lightDirCameraSpace));
+  glUniform4f(colorProgram.ambientIntensityUnif, 0.2f, 0.2f, 0.2f, 1.0f);
+  glUniform4fv(colorProgram.lightIntensityUnif, 1, glm::value_ptr(mLightIntensity));
 
-  if (mUseAmbientLight) {
-    glUniform4f(colorProgram.ambientIntensityUnif, 0.2f, 0.2f, 0.2f, 1.0f);
-    glUniform4fv(colorProgram.lightIntensityUnif, 1, glm::value_ptr(mLightIntensity));
+  if (mUseOrenNayar) {
+    glUniform2fv(colorProgram.facetAnglesUnif, 1, glm::value_ptr(mONfacetAngles));
     glUseProgram(whiteProgram.theProgram);
-    glUniform4f(whiteProgram.ambientIntensityUnif, 0.2f, 0.2f, 0.2f, 1.0f);
-    glUniform4fv(whiteProgram.lightIntensityUnif, 1, glm::value_ptr(mLightIntensity));
-  }
-  else {
-    glUniform4f(colorProgram.lightIntensityUnif, 1.0f, 1.0f, 1.0f, 1.0f);
-    glUseProgram(whiteProgram.theProgram);
-    glUniform4f(whiteProgram.lightIntensityUnif, 1.0f, 1.0f, 1.0f, 1.0f);
+    glUniform2fv(whiteProgram.facetAnglesUnif, 1, glm::value_ptr(mONfacetAngles));
   }
   glUseProgram(0);
 
@@ -229,8 +230,8 @@ void OrenNayar::onKeyboard(int key, Window::Action act)
   case 32:
     mDrawColoredCyl = !mDrawColoredCyl;
     break;
-  case 'A':
-    mUseAmbientLight = !mUseAmbientLight;
+  case 'O':
+    mUseOrenNayar = !mUseOrenNayar;
     break;
   case 'L':
     if (mLightIntensity.r < 1.0f) {
