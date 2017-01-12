@@ -29,30 +29,40 @@ void main()
   vec3 normCamSpace = normalize(normalModelToCameraMatrix * normal);
   vec3 viewDir = normalize(-vec3(modelToCameraMatrix * vec4(position, 1.0)));
 
+  /*** Oren-Nayar reflectance computation (simplified model) ***/
+
   // Z = zenith angle, A = azimuth angle
   // Angle from surface to light
-  float cosZi = max(0.0f, dirToLight.z);
+  float cosZi = dot(normCamSpace, dirToLight);
+
+  // Light coming from behind -> reflectance = 0
+  if (cosZi <= 0.0f) {
+    interpColor = diffuseColor * ambientIntensity;
+    return;
+  }
+
   float sinZi = sqrt(1.0f - cosZi*cosZi);
-  float cosAi = dirToLight.x / sinZi;
-  float sinAi = dirToLight.y / sinZi;
 
   // Angle from surface to camera
-  float cosZr = viewDir.z;
+  float cosZr = dot(normCamSpace, viewDir);
   float sinZr = sqrt(1.0f - cosZr*cosZr);
-  float cosAr = viewDir.x / sinZr;
-  float sinAr = viewDir.y / sinZr;
+
+  // To get the azimuth difference between i and r, project them onto the plane perpendicular to the normal
+  vec3 iProj = normalize(cross(normCamSpace, cross(dirToLight, normCamSpace)));
+  vec3 rProj = normalize(cross(normCamSpace, cross(viewDir, normCamSpace)));
+  float cosAzimuthDiff = dot(iProj, rProj);
 
   float sigma2 = sigma*sigma;
   float termA = 1.0f - 0.5f * sigma2 / (sigma2 + 0.57f);
 
   float termB = 0.45f * sigma2 / (sigma2 + 0.09f);
-  termB *= max(0.f, cosAi*cosAr + sinAi*sinAr);
+  termB *= max(0.f, cosAzimuthDiff);
   // sin(alpha) part. Find out max(Zi, Zr). Zi > Zr if cosZi < cosZr.
   termB *= (cosZi < cosZr) ? sinZi : sinZr;
   // tan(beta) part
   termB *= (cosZi > cosZr) ? sinZi/cosZi : sinZr/cosZr;
 
-  vec4 orenNayarColor = (diffuseColor / PI) * cosZi * (termA + termB) * lightIntensity;
+  vec4 orenNayarColor = diffuseColor * cosZi * (termA + termB) * lightIntensity;
 
   interpColor = orenNayarColor + (diffuseColor * ambientIntensity);
 }
