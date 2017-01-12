@@ -167,6 +167,7 @@ set(SHADERS_ILLUMINATION
   ../shaders/illumination/DirAmbVertexLighting_PN.vert
   ../shaders/illumination/DirAmbVertexLighting_PCN.vert
   ../shaders/illumination/diramb_orennayar_pcn.vert
+  ../shaders/illumination/diramb_orennayar_pn.vert
   )
 
 source_group(system FILES ${SRC_SYSTEM} ${INCLUDE_SYSTEM})

@@ -69,7 +69,7 @@ OrenNayar::OrenNayar(Window* window) :
   mProjectionUniformBuffer(0),
   mWhiteAmbDiffuseColor(LoadProgram("shaders/illumination/DirAmbVertexLighting_PN.vert", "shaders/illumination/ColorPassthrough.frag")),
   mVertexAmbDiffuseColor(LoadProgram("shaders/illumination/DirAmbVertexLighting_PCN.vert", "shaders/illumination/ColorPassthrough.frag")),
-  mWhiteOrenNayar(LoadProgram("shaders/illumination/DirAmbVertexLighting_PN.vert", "shaders/illumination/ColorPassthrough.frag")),
+  mWhiteOrenNayar(LoadProgram("shaders/illumination/diramb_orennayar_pn.vert", "shaders/illumination/ColorPassthrough.frag")),
   mVertexOrenNayar(LoadProgram("shaders/illumination/diramb_orennayar_pcn.vert", "shaders/illumination/ColorPassthrough.frag")),
   mCylinder("assets/illumination/UnitCylinder.xml"),
   mPlane("assets/illumination/LargePlane.xml"),
@@ -155,8 +155,8 @@ void OrenNayar::renderInternal()
 
   if (mUseOrenNayar) {
     glUniform1f(colorProgram.facetSlopesDeviationUnif, mFacetSlopesDeviation);
-//    glUseProgram(whiteProgram.theProgram);
-//    glUniform1f(whiteProgram.facetSlopesDeviationUnif, mFacetSlopesDeviation);
+    glUseProgram(whiteProgram.theProgram);
+    glUniform1f(whiteProgram.facetSlopesDeviationUnif, mFacetSlopesDeviation);
   }
   glUseProgram(0);
 

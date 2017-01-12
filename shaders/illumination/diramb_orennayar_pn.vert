@@ -1,7 +1,6 @@
 #version 330
 
 layout(location = 0) in vec3 position;
-layout(location = 1) in vec4 diffuseColor;
 layout(location = 2) in vec3 normal;
 
 smooth out vec4 interpColor;
@@ -35,7 +34,7 @@ void main()
 
   // Light coming from behind -> reflectance = 0
   if (cosZi <= 0.0f) {
-    interpColor = diffuseColor * ambientIntensity;
+    interpColor =  ambientIntensity;
     return;
   }
 
@@ -60,7 +59,7 @@ void main()
   // tan(beta) part
   termB *= (cosZi > cosZr) ? sinZi/cosZi : sinZr/cosZr;
 
-  vec4 orenNayarColor = diffuseColor * cosZi * (termA + termB) * lightIntensity;
+  vec4 orenNayarColor =  cosZi * (termA + termB) * lightIntensity;
 
-  interpColor = orenNayarColor + (diffuseColor * ambientIntensity);
+  interpColor = orenNayarColor + ambientIntensity;
 }
