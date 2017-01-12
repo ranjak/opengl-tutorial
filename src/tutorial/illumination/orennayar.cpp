@@ -69,7 +69,7 @@ OrenNayar::OrenNayar(Window* window) :
   mProjectionUniformBuffer(0),
   mWhiteAmbDiffuseColor(LoadProgram("shaders/illumination/DirAmbVertexLighting_PN.vert", "shaders/illumination/ColorPassthrough.frag")),
   mVertexAmbDiffuseColor(LoadProgram("shaders/illumination/DirAmbVertexLighting_PCN.vert", "shaders/illumination/ColorPassthrough.frag")),
-  mWhiteOrenNayar(LoadProgram("shaders/illumination/DirVertexLighting_PN.vert", "shaders/illumination/ColorPassthrough.frag")),
+  mWhiteOrenNayar(LoadProgram("shaders/illumination/DirAmbVertexLighting_PN.vert", "shaders/illumination/ColorPassthrough.frag")),
   mVertexOrenNayar(LoadProgram("shaders/illumination/diramb_orennayar_pcn.vert", "shaders/illumination/ColorPassthrough.frag")),
   mCylinder("assets/illumination/UnitCylinder.xml"),
   mPlane("assets/illumination/LargePlane.xml"),
@@ -241,7 +241,15 @@ void OrenNayar::onKeyboard(int key, Window::Action act)
       mLightIntensity = glm::vec4(0.8f, 0.8f, 0.8f, 1.0f);
     }
     break;
+  case 'B':
+    mFacetSlopesDeviation -= ogl::PIf / 16.0f;
+    break;
+  case 'N':
+    mFacetSlopesDeviation += ogl::PIf / 16.0f;
+    break;
   default:
     break;
   }
+
+  mFacetSlopesDeviation = glm::clamp(mFacetSlopesDeviation, 0.0f, ogl::PIf/2.0f);
 }
