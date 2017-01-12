@@ -7,7 +7,6 @@
 #include <glutil/MousePoles.h>
 #include <glad/glad.h>
 #include <glm/vec4.hpp>
-#include <glm/vec2.hpp>
 #include <string>
 
 struct ProgramData
@@ -17,7 +16,7 @@ struct ProgramData
   GLint dirToLightUnif;
   GLint lightIntensityUnif;
   GLint ambientIntensityUnif;
-  GLint facetAnglesUnif;
+  GLint facetSlopesDeviationUnif;
 
   GLint modelToCameraMatrixUnif;
   GLint normalModelToCameraMatrixUnif;
@@ -58,7 +57,7 @@ private:
   glutil::ViewPole mViewPole;
   glutil::ObjectPole mObjtPole;
   glm::vec4 mLightIntensity;
-  glm::vec2 mONfacetAngles;
+  float mFacetSlopesDeviation;
 };
 
 #endif // ORENNAYAR_HPP

@@ -2,26 +2,6 @@
 
 const float PI = 3.14159265359;
 
-mat3 rotateX(float angleRad)
-{
-  float cosa = cos(angleRad);
-  float sina = sin(angleRad);
-  return mat3(
-        1.0, 0.0, 0.0,
-        0.0, cosa, sina,
-        0.0, -sina, cosa);
-}
-
-mat3 rotateY(float angleRad)
-{
-  float cosa = cos(angleRad);
-  float sina = sin(angleRad);
-  return mat3(
-        cosa, 0.0, -sina,
-        0.0, 1.0, 0.0,
-        sina, 0.0, cosa);
-}
-
 layout(location = 0) in vec3 position;
 layout(location = 1) in vec4 diffuseColor;
 layout(location = 2) in vec3 normal;
@@ -31,8 +11,8 @@ smooth out vec4 interpColor;
 uniform vec3 dirToLight;
 uniform vec4 lightIntensity;
 uniform vec4 ambientIntensity;
-// Polar angles of surface facets. x = zenith, y = azimuth
-uniform vec2 facetAngles;
+// Stadard deviation of facet slopes, in radians
+uniform float sigma;
 
 uniform mat4 modelToCameraMatrix;
 uniform mat3 normalModelToCameraMatrix;
@@ -46,14 +26,33 @@ void main()
 {
   gl_Position = cameraToClipMatrix * (modelToCameraMatrix * vec4(position, 1.0));
 
-  vec3 facetNormModelSpace = rotateX(facetAngles.x) * rotateY(facetAngles.y) * normal;
   vec3 normCamSpace = normalize(normalModelToCameraMatrix * normal);
-  vec3 facetNorm = normalize(normalModelToCameraMatrix * facetNormModelSpace);
+  vec3 viewDir = normalize(-vec3(modelToCameraMatrix * vec4(position, 1.0)));
 
-  // In camera space, the view is always pointing forward (negative Z).
-  vec3 viewDir = vec3(0.0f, 0.0f, -1.0f);
+  // Z = zenith angle, A = azimuth angle
+  // Angle from surface to light
+  float cosZi = max(0.0f, dirToLight.z);
+  float sinZi = sqrt(1.0f - cosZi*cosZi);
+  float cosAi = dirToLight.x / sinZi;
+  float sinAi = dirToLight.y / sinZi;
 
-  vec4 orenNayarColor = (diffuseColor / PI) * lightIntensity * (dot(dirToLight, facetNorm) * dot(viewDir, facetNorm)) / (dot(facetNorm, normCamSpace) * dot(viewDir, normCamSpace));
+  // Angle from surface to camera
+  float cosZr = viewDir.z;
+  float sinZr = sqrt(1.0f - cosZr*cosZr);
+  float cosAr = viewDir.x / sinZr;
+  float sinAr = viewDir.y / sinZr;
+
+  float sigma2 = sigma*sigma;
+  float termA = 1.0f - 0.5f * sigma2 / (sigma2 + 0.57f);
+
+  float termB = 0.45f * sigma2 / (sigma2 + 0.09f);
+  termB *= max(0.f, cosAi*cosAr + sinAi*sinAr);
+  // sin(alpha) part. Find out max(Zi, Zr). Zi > Zr if cosZi < cosZr.
+  termB *= (cosZi < cosZr) ? sinZi : sinZr;
+  // tan(beta) part
+  termB *= (cosZi > cosZr) ? sinZi/cosZi : sinZr/cosZr;
+
+  vec4 orenNayarColor = (diffuseColor / PI) * cosZi * (termA + termB) * lightIntensity;
 
   interpColor = orenNayarColor + (diffuseColor * ambientIntensity);
 }

@@ -55,7 +55,7 @@ ProgramData OrenNayar::LoadProgram(const std::string &strVertexShader, const std
   data.dirToLightUnif = glGetUniformLocation(data.theProgram, "dirToLight");
   data.lightIntensityUnif = glGetUniformLocation(data.theProgram, "lightIntensity");
   data.ambientIntensityUnif = glGetUniformLocation(data.theProgram, "ambientIntensity");
-  data.facetAnglesUnif = glGetUniformLocation(data.theProgram, "facetAngles");
+  data.facetSlopesDeviationUnif = glGetUniformLocation(data.theProgram, "sigma");
 
   GLuint projectionBlock = glGetUniformBlockIndex(data.theProgram, "Projection");
   glUniformBlockBinding(data.theProgram, projectionBlock, mProjectionBlockIndex);
@@ -78,7 +78,7 @@ OrenNayar::OrenNayar(Window* window) :
   mViewPole(g_initialViewData, g_viewScale, glutil::MB_LEFT_BTN),
   mObjtPole(g_initialObjectData, 90.0f/250.0f, glutil::MB_RIGHT_BTN, &mViewPole),
   mLightIntensity(0.8f, 0.8f, 0.8f, 1.0f),
-  mONfacetAngles(ogl::PIf/4.0f, 0.f)
+  mFacetSlopesDeviation(0.0f)
 {
   glGenBuffers(1, &mProjectionUniformBuffer);
   glBindBuffer(GL_UNIFORM_BUFFER, mProjectionUniformBuffer);
@@ -154,9 +154,9 @@ void OrenNayar::renderInternal()
   glUniform4fv(colorProgram.lightIntensityUnif, 1, glm::value_ptr(mLightIntensity));
 
   if (mUseOrenNayar) {
-    glUniform2fv(colorProgram.facetAnglesUnif, 1, glm::value_ptr(mONfacetAngles));
-    glUseProgram(whiteProgram.theProgram);
-    glUniform2fv(whiteProgram.facetAnglesUnif, 1, glm::value_ptr(mONfacetAngles));
+    glUniform1f(colorProgram.facetSlopesDeviationUnif, mFacetSlopesDeviation);
+//    glUseProgram(whiteProgram.theProgram);
+//    glUniform1f(whiteProgram.facetSlopesDeviationUnif, mFacetSlopesDeviation);
   }
   glUseProgram(0);
 
