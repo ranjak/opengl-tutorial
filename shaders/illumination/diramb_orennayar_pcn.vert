@@ -38,29 +38,18 @@ void main()
     interpColor = diffuseColor * ambientIntensity;
     return;
   }
-
-  float sinZi = sqrt(1.0f - cosZi*cosZi);
-
   // Angle from surface to camera
   float cosZr = dot(normCamSpace, viewDir);
-  float sinZr = sqrt(1.0f - cosZr*cosZr);
 
-  // To get the azimuth difference between i and r, project them onto the plane perpendicular to the normal
-  vec3 iProj = normalize(cross(normCamSpace, cross(dirToLight, normCamSpace)));
-  vec3 rProj = normalize(cross(normCamSpace, cross(viewDir, normCamSpace)));
-  float cosAzimuthDiff = dot(iProj, rProj);
-
+  // Using vector math, the formula can be reduced down to
+  // using only 3 dot products (no sine, sqrt, etc.)
   float sigma2 = sigma*sigma;
   float termA = 1.0f - 0.5f * sigma2 / (sigma2 + 0.57f);
 
   float termB = 0.45f * sigma2 / (sigma2 + 0.09f);
-  termB *= max(0.f, cosAzimuthDiff);
-  // sin(alpha) part. Find out max(Zi, Zr). Zi > Zr if cosZi < cosZr.
-  termB *= (cosZi < cosZr) ? sinZi : sinZr;
-  // tan(beta) part
-  termB *= (cosZi > cosZr) ? sinZi/cosZi : sinZr/cosZr;
+  float cosAzimuthSinaTanb = (dot(dirToLight, viewDir) - cosZr * cosZi) / max(cosZr, cosZi);
 
-  vec4 orenNayarColor = diffuseColor * cosZi * (termA + termB) * lightIntensity;
+  vec4 orenNayarColor = diffuseColor * cosZi * (termA + termB * max(0.0f, cosAzimuthSinaTanb)) * lightIntensity;
 
   interpColor = orenNayarColor + (diffuseColor * ambientIntensity);
 }
