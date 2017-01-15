@@ -1,5 +1,6 @@
 #include "fragmentpointlighting.hpp"
 #include "shader.hpp"
+#include "transform.hpp"
 #include "framework/MousePole.h"
 #include <glutil/MatrixStack.h>
 #include <glm/mat4x4.hpp>
@@ -50,6 +51,8 @@ FragmentPointLighting::FragmentPointLighting(Window* window) :
   mVertexDiffuseColor(LoadProgram("shaders/illumination/fragment/posvertexlighting_pcn.vert", "shaders/illumination/ColorPassthrough.frag")),
   mWhiteFragmentDiffuse(LoadProgram("shaders/illumination/fragment/posfragmentlighting_pn.vert", "shaders/illumination/fragment/diffuse_lambert.frag")),
   mColorFragmentDiffuse(LoadProgram("shaders/illumination/fragment/posfragmentlighting_pcn.vert", "shaders/illumination/fragment/diffuse_lambert.frag")),
+  mWhiteFragmentDiffuse_ON(LoadProgram("shaders/illumination/fragment/posfragmentlighting_pn.vert", "shaders/illumination/fragment/diffuse_oren-nayar.frag")),
+  mColorFragmentDiffuse_ON(LoadProgram("shaders/illumination/fragment/posfragmentlighting_pcn.vert", "shaders/illumination/fragment/diffuse_oren-nayar.frag")),
   mUnlit(LoadUnlitProgram("shaders/illumination/PosTransform.vert", "shaders/illumination/UniformColor.frag")),
 
   mCylinder("assets/illumination/UnitCylinder.xml"),
@@ -59,6 +62,8 @@ FragmentPointLighting::FragmentPointLighting(Window* window) :
   mDrawLight(true),
   mUseFragmentLighting(false),
   mScaleCylinder(false),
+  mUseOrenNayar(false),
+  mFacetSlopesDeviation(0.0f),
   mViewPole(g_initialViewData, g_viewScale, glutil::MB_LEFT_BTN),
   mObjtPole(g_initialObjectData, 90.0f/250.0f, glutil::MB_RIGHT_BTN, &mViewPole),
 
@@ -114,6 +119,9 @@ ProgramData FragmentPointLighting::LoadProgram(const std::string &strVertexShade
   data.modelSpaceLightPosUnif = glGetUniformLocation(data.theProgram, "lightPos");
   data.lightIntensityUnif = glGetUniformLocation(data.theProgram, "lightIntensity");
   data.ambientIntensityUnif = glGetUniformLocation(data.theProgram, "ambientIntensity");
+
+  data.modelSpaceCamPosUnif = glGetUniformLocation(data.theProgram, "cameraPos");
+  data.facetStandardDeviationUnif = glGetUniformLocation(data.theProgram, "sigma");
 
   GLuint projectionBlock = glGetUniformBlockIndex(data.theProgram, "Projection");
   glUniformBlockBinding(data.theProgram, projectionBlock, mProjectionBlockIndex);
@@ -175,16 +183,27 @@ void FragmentPointLighting::renderInternal()
   const glm::vec4& worldLightPos = CalcLightPosition();
 
   glm::vec4 lightPosCameraSpace = modelMatrix.Top() * worldLightPos;
+  glm::vec4 camPosCameraSpace(0.0f, 0.0f, 0.0f, 1.0f);
 
-  ProgramData& whiteProgram = mUseFragmentLighting ? mWhiteFragmentDiffuse : mWhiteDiffuseColor;
-  ProgramData& colorProgram = mUseFragmentLighting ? mColorFragmentDiffuse : mVertexDiffuseColor;
+  ProgramData* whiteProgram = &mWhiteDiffuseColor;
+  ProgramData* colorProgram = &mVertexDiffuseColor;
+  if (mUseFragmentLighting && mUseOrenNayar) {
+    whiteProgram = &mWhiteFragmentDiffuse_ON;
+    colorProgram = &mColorFragmentDiffuse_ON;
+  }
+  else if (mUseFragmentLighting) {
+    whiteProgram = &mWhiteFragmentDiffuse;
+    colorProgram = &mColorFragmentDiffuse;
+  }
 
-  glUseProgram(whiteProgram.theProgram);
-  glUniform4f(whiteProgram.lightIntensityUnif, 0.8f, 0.8f, 0.8f, 1.0f);
-  glUniform4f(whiteProgram.ambientIntensityUnif, 0.2f, 0.2f, 0.2f, 1.0f);
-  glUseProgram(colorProgram.theProgram);
-  glUniform4f(colorProgram.lightIntensityUnif, 0.8f, 0.8f, 0.8f, 1.0f);
-  glUniform4f(colorProgram.ambientIntensityUnif, 0.2f, 0.2f, 0.2f, 1.0f);
+  glUseProgram(whiteProgram->theProgram);
+  glUniform4f(whiteProgram->lightIntensityUnif, 0.8f, 0.8f, 0.8f, 1.0f);
+  glUniform4f(whiteProgram->ambientIntensityUnif, 0.2f, 0.2f, 0.2f, 1.0f);
+  glUniform1f(whiteProgram->facetStandardDeviationUnif, mFacetSlopesDeviation);
+  glUseProgram(colorProgram->theProgram);
+  glUniform4f(colorProgram->lightIntensityUnif, 0.8f, 0.8f, 0.8f, 1.0f);
+  glUniform4f(colorProgram->ambientIntensityUnif, 0.2f, 0.2f, 0.2f, 1.0f);
+  glUniform1f(colorProgram->facetStandardDeviationUnif, mFacetSlopesDeviation);
   glUseProgram(0);
 
   {
@@ -194,13 +213,15 @@ void FragmentPointLighting::renderInternal()
     {
       glutil::PushStack push(modelMatrix);
 
-      glUseProgram(whiteProgram.theProgram);
-      glUniformMatrix4fv(whiteProgram.modelToCameraMatrixUnif, 1, GL_FALSE,
+      glUseProgram(whiteProgram->theProgram);
+      glUniformMatrix4fv(whiteProgram->modelToCameraMatrixUnif, 1, GL_FALSE,
         glm::value_ptr(modelMatrix.Top()));
 
       glm::mat4 camToModel = glm::inverse(modelMatrix.Top());
       glm::vec4 modelLightPos = camToModel * lightPosCameraSpace;
-      glUniform3fv(whiteProgram.modelSpaceLightPosUnif, 1, glm::value_ptr(modelLightPos));
+      glm::vec4 modelCamPos = camToModel * camPosCameraSpace;
+      glUniform3fv(whiteProgram->modelSpaceLightPosUnif, 1, glm::value_ptr(modelLightPos));
+      glUniform3fv(whiteProgram->modelSpaceCamPosUnif, 1, glm::value_ptr(modelCamPos));
 
       mPlane.Render();
       glUseProgram(0);
@@ -217,22 +238,25 @@ void FragmentPointLighting::renderInternal()
 
       glm::mat4 camToModel = glm::inverse(modelMatrix.Top());
       glm::vec4 modelLightPos = camToModel * lightPosCameraSpace;
+      glm::vec4 modelCamPos = camToModel * camPosCameraSpace;
 
       if(mDrawColoredCyl)
       {
-        glUseProgram(colorProgram.theProgram);
-        glUniformMatrix4fv(colorProgram.modelToCameraMatrixUnif, 1, GL_FALSE,
+        glUseProgram(colorProgram->theProgram);
+        glUniformMatrix4fv(colorProgram->modelToCameraMatrixUnif, 1, GL_FALSE,
           glm::value_ptr(modelMatrix.Top()));
-        glUniform3fv(colorProgram.modelSpaceLightPosUnif, 1, glm::value_ptr(modelLightPos));
+        glUniform3fv(colorProgram->modelSpaceLightPosUnif, 1, glm::value_ptr(modelLightPos));
+        glUniform3fv(colorProgram->modelSpaceCamPosUnif, 1, glm::value_ptr(modelCamPos));
 
         mCylinder.Render("lit-color");
       }
       else
       {
-        glUseProgram(whiteProgram.theProgram);
-        glUniformMatrix4fv(whiteProgram.modelToCameraMatrixUnif, 1, GL_FALSE,
+        glUseProgram(whiteProgram->theProgram);
+        glUniformMatrix4fv(whiteProgram->modelToCameraMatrixUnif, 1, GL_FALSE,
           glm::value_ptr(modelMatrix.Top()));
-        glUniform3fv(whiteProgram.modelSpaceLightPosUnif, 1, glm::value_ptr(modelLightPos));
+        glUniform3fv(whiteProgram->modelSpaceLightPosUnif, 1, glm::value_ptr(modelLightPos));
+        glUniform3fv(whiteProgram->modelSpaceCamPosUnif, 1, glm::value_ptr(modelCamPos));
 
         mCylinder.Render("lit");
       }
@@ -295,8 +319,13 @@ void FragmentPointLighting::onKeyboard(int key, Window::Action act, int mods)
   case 'B': mLightTimer.TogglePause(); break;
   case 'H': mUseFragmentLighting = !mUseFragmentLighting; break;
   case 'T': mScaleCylinder = !mScaleCylinder; break;
+  case 'O': mUseOrenNayar = !mUseOrenNayar; break;
+
+  case 264: mFacetSlopesDeviation -= ogl::PIf / 16.0f; break; // UP
+  case 265: mFacetSlopesDeviation += ogl::PIf / 16.0f; break; // DOWN
   }
 
+  mFacetSlopesDeviation = glm::clamp(mFacetSlopesDeviation, 0.0f, ogl::PIf/2.0f);
   if(mLightRadius < 0.2f)
     mLightRadius = 0.2f;
 }

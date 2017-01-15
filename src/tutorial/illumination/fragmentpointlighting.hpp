@@ -17,8 +17,11 @@ struct ProgramData
   GLint modelSpaceLightPosUnif;
   GLint lightIntensityUnif;
   GLint ambientIntensityUnif;
-
   GLint modelToCameraMatrixUnif;
+
+  // Oren-Nayar-specific
+  GLint modelSpaceCamPosUnif;
+  GLint facetStandardDeviationUnif;
 };
 
 struct UnlitProgramData
@@ -55,6 +58,8 @@ private:
   ProgramData mVertexDiffuseColor;
   ProgramData mWhiteFragmentDiffuse;
   ProgramData mColorFragmentDiffuse;
+  ProgramData mWhiteFragmentDiffuse_ON;
+  ProgramData mColorFragmentDiffuse_ON;
   UnlitProgramData mUnlit;
 
   Framework::Mesh mCylinder;
@@ -65,6 +70,8 @@ private:
   bool mDrawLight;
   bool mUseFragmentLighting;
   bool mScaleCylinder;
+  bool mUseOrenNayar;
+  float mFacetSlopesDeviation;
   glutil::ViewPole mViewPole;
   glutil::ObjectPole mObjtPole;
 

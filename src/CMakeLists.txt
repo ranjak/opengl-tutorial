@@ -181,6 +181,7 @@ set(SHADERS_ILLUMINATION
   ../shaders/illumination/fragment/posfragmentlighting_pn.vert
   ../shaders/illumination/fragment/posvertexlighting_pcn.vert
   ../shaders/illumination/fragment/posvertexlighting_pn.vert
+  ../shaders/illumination/fragment/diffuse_oren-nayar.frag
   )
 
 source_group(system FILES ${SRC_SYSTEM} ${INCLUDE_SYSTEM})
