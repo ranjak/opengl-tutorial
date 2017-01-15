@@ -120,6 +120,7 @@ set(SRC_TUTORIAL_ILLUMINATION
   tutorial/illumination/ambientlighting.cpp
   tutorial/illumination/orennayar.cpp
   tutorial/illumination/vertexpointlighting.cpp
+  tutorial/illumination/fragmentpointlighting.cpp
   )
 
 set(INCLUDE_TUTORIAL_ILLUMINATION
@@ -128,6 +129,7 @@ set(INCLUDE_TUTORIAL_ILLUMINATION
   tutorial/illumination/ambientlighting.hpp
   tutorial/illumination/orennayar.hpp
   tutorial/illumination/vertexpointlighting.hpp
+  tutorial/illumination/fragmentpointlighting.hpp
   )
 
 set(SHADERS
@@ -174,6 +176,11 @@ set(SHADERS_ILLUMINATION
   ../shaders/illumination/PosVertexLighting_PN.vert
   ../shaders/illumination/PosTransform.vert
   ../shaders/illumination/UniformColor.frag
+  ../shaders/illumination/fragment/diffuse_lambert.frag
+  ../shaders/illumination/fragment/posfragmentlighting_pcn.vert
+  ../shaders/illumination/fragment/posfragmentlighting_pn.vert
+  ../shaders/illumination/fragment/posvertexlighting_pcn.vert
+  ../shaders/illumination/fragment/posvertexlighting_pn.vert
   )
 
 source_group(system FILES ${SRC_SYSTEM} ${INCLUDE_SYSTEM})
