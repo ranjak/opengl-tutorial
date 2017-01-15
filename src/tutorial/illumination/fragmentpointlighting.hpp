@@ -63,6 +63,8 @@ private:
 
   bool mDrawColoredCyl;
   bool mDrawLight;
+  bool mUseFragmentLighting;
+  bool mScaleCylinder;
   glutil::ViewPole mViewPole;
   glutil::ObjectPole mObjtPole;
 

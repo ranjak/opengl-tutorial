@@ -57,6 +57,8 @@ FragmentPointLighting::FragmentPointLighting(Window* window) :
   mCube("assets/illumination/UnitCube.xml"),
   mDrawColoredCyl(true),
   mDrawLight(true),
+  mUseFragmentLighting(false),
+  mScaleCylinder(false),
   mViewPole(g_initialViewData, g_viewScale, glutil::MB_LEFT_BTN),
   mObjtPole(g_initialObjectData, 90.0f/250.0f, glutil::MB_RIGHT_BTN, &mViewPole),
 
@@ -174,12 +176,15 @@ void FragmentPointLighting::renderInternal()
 
   glm::vec4 lightPosCameraSpace = modelMatrix.Top() * worldLightPos;
 
-  glUseProgram(mWhiteDiffuseColor.theProgram);
-  glUniform4f(mWhiteDiffuseColor.lightIntensityUnif, 0.8f, 0.8f, 0.8f, 1.0f);
-  glUniform4f(mWhiteDiffuseColor.ambientIntensityUnif, 0.2f, 0.2f, 0.2f, 1.0f);
-  glUseProgram(mVertexDiffuseColor.theProgram);
-  glUniform4f(mVertexDiffuseColor.lightIntensityUnif, 0.8f, 0.8f, 0.8f, 1.0f);
-  glUniform4f(mVertexDiffuseColor.ambientIntensityUnif, 0.2f, 0.2f, 0.2f, 1.0f);
+  ProgramData& whiteProgram = mUseFragmentLighting ? mWhiteFragmentDiffuse : mWhiteDiffuseColor;
+  ProgramData& colorProgram = mUseFragmentLighting ? mColorFragmentDiffuse : mVertexDiffuseColor;
+
+  glUseProgram(whiteProgram.theProgram);
+  glUniform4f(whiteProgram.lightIntensityUnif, 0.8f, 0.8f, 0.8f, 1.0f);
+  glUniform4f(whiteProgram.ambientIntensityUnif, 0.2f, 0.2f, 0.2f, 1.0f);
+  glUseProgram(colorProgram.theProgram);
+  glUniform4f(colorProgram.lightIntensityUnif, 0.8f, 0.8f, 0.8f, 1.0f);
+  glUniform4f(colorProgram.ambientIntensityUnif, 0.2f, 0.2f, 0.2f, 1.0f);
   glUseProgram(0);
 
   {
@@ -189,13 +194,13 @@ void FragmentPointLighting::renderInternal()
     {
       glutil::PushStack push(modelMatrix);
 
-      glUseProgram(mWhiteDiffuseColor.theProgram);
-      glUniformMatrix4fv(mWhiteDiffuseColor.modelToCameraMatrixUnif, 1, GL_FALSE,
+      glUseProgram(whiteProgram.theProgram);
+      glUniformMatrix4fv(whiteProgram.modelToCameraMatrixUnif, 1, GL_FALSE,
         glm::value_ptr(modelMatrix.Top()));
 
       glm::mat4 camToModel = glm::inverse(modelMatrix.Top());
       glm::vec4 modelLightPos = camToModel * lightPosCameraSpace;
-      glUniform3fv(mWhiteDiffuseColor.modelSpaceLightPosUnif, 1, glm::value_ptr(modelLightPos));
+      glUniform3fv(whiteProgram.modelSpaceLightPosUnif, 1, glm::value_ptr(modelLightPos));
 
       mPlane.Render();
       glUseProgram(0);
@@ -206,28 +211,28 @@ void FragmentPointLighting::renderInternal()
       glutil::PushStack push(modelMatrix);
 
       modelMatrix.ApplyMatrix(mObjtPole.CalcMatrix());
+      if (mScaleCylinder) {
+        modelMatrix.Scale(1.0f, 1.0f, 0.2f);
+      }
+
+      glm::mat4 camToModel = glm::inverse(modelMatrix.Top());
+      glm::vec4 modelLightPos = camToModel * lightPosCameraSpace;
 
       if(mDrawColoredCyl)
       {
-        glUseProgram(mVertexDiffuseColor.theProgram);
-        glUniformMatrix4fv(mVertexDiffuseColor.modelToCameraMatrixUnif, 1, GL_FALSE,
+        glUseProgram(colorProgram.theProgram);
+        glUniformMatrix4fv(colorProgram.modelToCameraMatrixUnif, 1, GL_FALSE,
           glm::value_ptr(modelMatrix.Top()));
-
-        glm::mat4 camToModel = glm::inverse(modelMatrix.Top());
-        glm::vec4 modelLightPos = camToModel * lightPosCameraSpace;
-        glUniform3fv(mVertexDiffuseColor.modelSpaceLightPosUnif, 1, glm::value_ptr(modelLightPos));
+        glUniform3fv(colorProgram.modelSpaceLightPosUnif, 1, glm::value_ptr(modelLightPos));
 
         mCylinder.Render("lit-color");
       }
       else
       {
-        glUseProgram(mWhiteDiffuseColor.theProgram);
-        glUniformMatrix4fv(mWhiteDiffuseColor.modelToCameraMatrixUnif, 1, GL_FALSE,
+        glUseProgram(whiteProgram.theProgram);
+        glUniformMatrix4fv(whiteProgram.modelToCameraMatrixUnif, 1, GL_FALSE,
           glm::value_ptr(modelMatrix.Top()));
-
-        glm::mat4 camToModel = glm::inverse(modelMatrix.Top());
-        glm::vec4 modelLightPos = camToModel * lightPosCameraSpace;
-        glUniform3fv(mWhiteDiffuseColor.modelSpaceLightPosUnif, 1, glm::value_ptr(modelLightPos));
+        glUniform3fv(whiteProgram.modelSpaceLightPosUnif, 1, glm::value_ptr(modelLightPos));
 
         mCylinder.Render("lit");
       }
@@ -279,9 +284,7 @@ void FragmentPointLighting::onKeyboard(int key, Window::Action act, int mods)
 
   switch (key) {
 
-  case 32:
-    mDrawColoredCyl = !mDrawColoredCyl;
-    break;
+  case 32: mDrawColoredCyl = !mDrawColoredCyl; break;
 
   case 'I': mLightHeight += offset; break;
   case 'K': mLightHeight -= offset; break;
@@ -290,6 +293,8 @@ void FragmentPointLighting::onKeyboard(int key, Window::Action act, int mods)
 
   case 'Y': mDrawLight = !mDrawLight; break;
   case 'B': mLightTimer.TogglePause(); break;
+  case 'H': mUseFragmentLighting = !mUseFragmentLighting; break;
+  case 'T': mScaleCylinder = !mScaleCylinder; break;
   }
 
   if(mLightRadius < 0.2f)
