@@ -121,6 +121,7 @@ set(SRC_TUTORIAL_ILLUMINATION
   tutorial/illumination/orennayar.cpp
   tutorial/illumination/vertexpointlighting.cpp
   tutorial/illumination/fragmentpointlighting.cpp
+  tutorial/illumination/fragmentattenuation.cpp
   )
 
 set(INCLUDE_TUTORIAL_ILLUMINATION
@@ -130,6 +131,7 @@ set(INCLUDE_TUTORIAL_ILLUMINATION
   tutorial/illumination/orennayar.hpp
   tutorial/illumination/vertexpointlighting.hpp
   tutorial/illumination/fragmentpointlighting.hpp
+  tutorial/illumination/fragmentattenuation.hpp
   )
 
 set(SHADERS
@@ -183,6 +185,9 @@ set(SHADERS_ILLUMINATION
   ../shaders/illumination/fragment/posvertexlighting_pn.vert
   ../shaders/illumination/fragment/diffuse_oren-nayar.frag
   ../shaders/illumination/fragment/diffuse_oren-nayar-fujii.frag
+  ../shaders/illumination/fragment/FragLightAtten_PN.vert
+  ../shaders/illumination/fragment/FragLightAtten_PCN.vert
+  ../shaders/illumination/fragment/FragLightAtten.frag
   )
 
 source_group(system FILES ${SRC_SYSTEM} ${INCLUDE_SYSTEM})
