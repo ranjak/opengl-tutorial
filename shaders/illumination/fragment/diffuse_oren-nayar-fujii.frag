@@ -42,12 +42,13 @@ void main()
   float cosZr = dot(normal, viewDir);
 
   float termA = 1.0f / (PI + sigmaFactor * sigma);
-
   float termB = sigma / (PI + sigmaFactor * sigma);
-  float cosAzimuthSinaTanb = (dot(dirToLight, viewDir) - cosZr * cosZi) / max(cosZr, cosZi);
+
+  float s = dot(dirToLight, viewDir) - cosZr * cosZi;
+  float t = (s <= 0.0f) ? 1.0f : max(cosZi, cosZr);
 
   // Terms A and B divide by Pi, cancel that to be able to multiply with colors directly.
-  vec4 orenNayarColor = interpColor * PI * cosZi * (termA + termB * max(0.0f, cosAzimuthSinaTanb)) * lightIntensity;
+  vec4 orenNayarColor = interpColor*PI * cosZi * (termA + termB * s/t) * lightIntensity;
 
   outputColor = orenNayarColor + (interpColor * ambientIntensity);
 }
