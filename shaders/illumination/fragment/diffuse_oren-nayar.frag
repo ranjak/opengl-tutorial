@@ -37,11 +37,12 @@ void main()
   // using only 3 dot products (no sine, sqrt, etc.)
   float sigma2 = sigma*sigma;
   float termA = 1.0f - 0.5f * sigma2 / (sigma2 + 0.57f);
-
   float termB = 0.45f * sigma2 / (sigma2 + 0.09f);
-  float cosAzimuthSinaTanb = (dot(dirToLight, viewDir) - cosZr * cosZi) / max(cosZr, cosZi);
 
-  vec4 orenNayarColor = interpColor * cosZi * (termA + termB * max(0.0f, cosAzimuthSinaTanb)) * lightIntensity;
+  float s = dot(dirToLight, viewDir) - cosZr * cosZi;
+  float t = (s <= 0.0f) ? 1.0f : max(cosZi, cosZr);
+
+  vec4 orenNayarColor = interpColor * cosZi * (termA + termB * s/t) * lightIntensity;
 
   outputColor = orenNayarColor + (interpColor * ambientIntensity);
 }

@@ -51,8 +51,8 @@ FragmentPointLighting::FragmentPointLighting(Window* window) :
   mVertexDiffuseColor(LoadProgram("shaders/illumination/fragment/posvertexlighting_pcn.vert", "shaders/illumination/ColorPassthrough.frag")),
   mWhiteFragmentDiffuse(LoadProgram("shaders/illumination/fragment/posfragmentlighting_pn.vert", "shaders/illumination/fragment/diffuse_lambert.frag")),
   mColorFragmentDiffuse(LoadProgram("shaders/illumination/fragment/posfragmentlighting_pcn.vert", "shaders/illumination/fragment/diffuse_lambert.frag")),
-  mWhiteFragmentDiffuse_ON(LoadProgram("shaders/illumination/fragment/posfragmentlighting_pn.vert", "shaders/illumination/fragment/diffuse_oren-nayar-fujii.frag")),
-  mColorFragmentDiffuse_ON(LoadProgram("shaders/illumination/fragment/posfragmentlighting_pcn.vert", "shaders/illumination/fragment/diffuse_oren-nayar-fujii.frag")),
+  mWhiteFragmentDiffuse_ON(LoadProgram("shaders/illumination/fragment/posfragmentlighting_pn.vert", "shaders/illumination/fragment/diffuse_oren-nayar.frag")),
+  mColorFragmentDiffuse_ON(LoadProgram("shaders/illumination/fragment/posfragmentlighting_pcn.vert", "shaders/illumination/fragment/diffuse_oren-nayar.frag")),
   mUnlit(LoadUnlitProgram("shaders/illumination/PosTransform.vert", "shaders/illumination/UniformColor.frag")),
 
   mCylinder("assets/illumination/UnitCylinder.xml"),
@@ -63,7 +63,7 @@ FragmentPointLighting::FragmentPointLighting(Window* window) :
   mUseFragmentLighting(false),
   mScaleCylinder(false),
   mUseOrenNayar(false),
-  mSurfaceRoughness(0.0f),
+  mFacetSlopesDeviation(0.0f),
   mViewPole(g_initialViewData, g_viewScale, glutil::MB_LEFT_BTN),
   mObjtPole(g_initialObjectData, 90.0f/250.0f, glutil::MB_RIGHT_BTN, &mViewPole),
 
@@ -121,7 +121,7 @@ ProgramData FragmentPointLighting::LoadProgram(const std::string &strVertexShade
   data.ambientIntensityUnif = glGetUniformLocation(data.theProgram, "ambientIntensity");
 
   data.modelSpaceCamPosUnif = glGetUniformLocation(data.theProgram, "cameraPos");
-  data.surfaceRoughnessUnif = glGetUniformLocation(data.theProgram, "sigma");
+  data.facetStandardDeviationUnif = glGetUniformLocation(data.theProgram, "sigma");
 
   GLuint projectionBlock = glGetUniformBlockIndex(data.theProgram, "Projection");
   glUniformBlockBinding(data.theProgram, projectionBlock, mProjectionBlockIndex);
@@ -199,11 +199,11 @@ void FragmentPointLighting::renderInternal()
   glUseProgram(whiteProgram->theProgram);
   glUniform4f(whiteProgram->lightIntensityUnif, 0.8f, 0.8f, 0.8f, 1.0f);
   glUniform4f(whiteProgram->ambientIntensityUnif, 0.2f, 0.2f, 0.2f, 1.0f);
-  glUniform1f(whiteProgram->surfaceRoughnessUnif, mSurfaceRoughness);
+  glUniform1f(whiteProgram->facetStandardDeviationUnif, mFacetSlopesDeviation);
   glUseProgram(colorProgram->theProgram);
   glUniform4f(colorProgram->lightIntensityUnif, 0.8f, 0.8f, 0.8f, 1.0f);
   glUniform4f(colorProgram->ambientIntensityUnif, 0.2f, 0.2f, 0.2f, 1.0f);
-  glUniform1f(colorProgram->surfaceRoughnessUnif, mSurfaceRoughness);
+  glUniform1f(colorProgram->facetStandardDeviationUnif, mFacetSlopesDeviation);
   glUseProgram(0);
 
   {
@@ -321,11 +321,11 @@ void FragmentPointLighting::onKeyboard(int key, Window::Action act, int mods)
   case 'T': mScaleCylinder = !mScaleCylinder; break;
   case 'O': mUseOrenNayar = !mUseOrenNayar; break;
 
-  case 264: mSurfaceRoughness -= 0.1f; break; // DOWN
-  case 265: mSurfaceRoughness += 0.1f; break; // UP
+  case 264: mFacetSlopesDeviation -= ogl::PIf / 16.0f; break; // UP
+  case 265: mFacetSlopesDeviation += ogl::PIf / 16.0f; break; // DOWN
   }
 
-  mSurfaceRoughness = glm::clamp(mSurfaceRoughness, 0.0f, 1.0f);
+  mFacetSlopesDeviation = glm::clamp(mFacetSlopesDeviation, 0.0f, ogl::PIf/2.0f);
   if(mLightRadius < 0.2f)
     mLightRadius = 0.2f;
 }

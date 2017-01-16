@@ -21,7 +21,7 @@ struct ProgramData
 
   // Oren-Nayar-specific
   GLint modelSpaceCamPosUnif;
-  GLint surfaceRoughnessUnif;
+  GLint facetStandardDeviationUnif;
 };
 
 struct UnlitProgramData
@@ -71,7 +71,7 @@ private:
   bool mUseFragmentLighting;
   bool mScaleCylinder;
   bool mUseOrenNayar;
-  float mSurfaceRoughness;
+  float mFacetSlopesDeviation;
   glutil::ViewPole mViewPole;
   glutil::ObjectPole mObjtPole;
 
