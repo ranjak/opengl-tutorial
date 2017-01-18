@@ -58,12 +58,8 @@ private:
   GLuint mProjectionUniformBuffer;
   GLuint mUnprojectionUniformBuffer;
 
-  ProgramData mWhiteDiffuseColor;
-  ProgramData mVertexDiffuseColor;
   ProgramData mWhiteFragmentDiffuse;
   ProgramData mColorFragmentDiffuse;
-  ProgramData mWhiteFragmentDiffuse_ON;
-  ProgramData mColorFragmentDiffuse_ON;
   UnlitProgramData mUnlit;
 
   Framework::Mesh mCylinder;
@@ -72,7 +68,6 @@ private:
 
   bool mDrawColoredCyl;
   bool mDrawLight;
-  bool mUseFragmentLighting;
   bool mScaleCylinder;
   bool mUseRSquare;
   glutil::ViewPole mViewPole;

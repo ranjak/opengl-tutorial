@@ -64,7 +64,6 @@ FragmentAttenuation::FragmentAttenuation(Window* window) :
   mCube("assets/illumination/UnitCube.xml"),
   mDrawColoredCyl(true),
   mDrawLight(true),
-  mUseFragmentLighting(false),
   mScaleCylinder(false),
   mUseRSquare(false),
   mViewPole(g_initialViewData, g_viewScale, glutil::MB_LEFT_BTN),

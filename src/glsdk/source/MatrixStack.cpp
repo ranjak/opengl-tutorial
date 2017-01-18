@@ -68,13 +68,13 @@ namespace glutil
 	void MatrixStack::Scale( const glm::vec3 &scaleVec )
 	{
 		m_currMatrix = glm::scale(m_currMatrix, scaleVec);
-    m_currInverseMatrix = glm::scale(glm::mat4(1.0f), scaleVec) * m_currInverseMatrix;
+    m_currInverseMatrix = glm::scale(glm::mat4(1.0f), 1.0f/scaleVec) * m_currInverseMatrix;
 	}
 
 	void MatrixStack::Translate( const glm::vec3 &offsetVec )
 	{
 		m_currMatrix = glm::translate(m_currMatrix, offsetVec);
-    m_currInverseMatrix = glm::translate(glm::mat4(1.0f), offsetVec) * m_currInverseMatrix;
+    m_currInverseMatrix = glm::translate(glm::mat4(1.0f), -offsetVec) * m_currInverseMatrix;
   }
 
 	void MatrixStack::Perspective( float degFOV, float aspectRatio, float zNear, float zFar )
