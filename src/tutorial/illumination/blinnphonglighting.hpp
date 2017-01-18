@@ -81,7 +81,8 @@ private:
   float mLightRadius;
   Framework::Timer mLightTimer;
   float mLightAttenuation;
-  float mShininessFactor;
+  float mPhongShininessFactor;
+  float mBlinnShininessFactor;
   glm::vec4 mDiffuseColor;
 };
 

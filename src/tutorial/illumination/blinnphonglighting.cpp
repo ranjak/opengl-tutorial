@@ -72,7 +72,8 @@ BlinnPhongLighting::BlinnPhongLighting(Window* window) :
   mLightRadius(1.0f),
   mLightTimer(Framework::Timer::TT_LOOP, 5.0f),
   mLightAttenuation(1.2f),
-  mShininessFactor(4.0f),
+  mPhongShininessFactor(4.0f),
+  mBlinnShininessFactor(6.0f),
   mDiffuseColor(1.0f)
 {
   glGenBuffers(1, &mProjectionUniformBuffer);
@@ -202,6 +203,7 @@ void BlinnPhongLighting::onKeyboard(int key, Window::Action act, int mods)
 
   float offset = (mods & Window::MOD_SHIFT) ? 0.05f : 0.2f;
   float shineOffset = (mods & Window::MOD_SHIFT) ? 0.1f : 0.5f;
+  float& currentFactor = mUseBlinnPhong ? mBlinnShininessFactor : mPhongShininessFactor;
 
   switch (key) {
 
@@ -211,8 +213,8 @@ void BlinnPhongLighting::onKeyboard(int key, Window::Action act, int mods)
   case 'K': mLightHeight -= offset; break;
   case 'L': mLightRadius += offset; break;
   case 'J': mLightRadius -= offset; break;
-  case 'U': mShininessFactor -= shineOffset; break;
-  case 'O': mShininessFactor += shineOffset; break;
+  case 'U': currentFactor -= shineOffset; break;
+  case 'O': currentFactor += shineOffset; break;
 
   case 'Y': mDrawLight = !mDrawLight; break;
   case 'B': mLightTimer.TogglePause(); break;
@@ -231,7 +233,7 @@ void BlinnPhongLighting::onKeyboard(int key, Window::Action act, int mods)
   }
 
   mLightRadius = glm::max(0.2f, mLightRadius);
-  mShininessFactor = glm::max(0.0001f, mShininessFactor);
+  currentFactor = glm::max(0.0001f, currentFactor);
 }
 
 void BlinnPhongLighting::renderInternal()
@@ -251,13 +253,16 @@ void BlinnPhongLighting::renderInternal()
 
   ProgramData* whiteProgram = nullptr;
   ProgramData* colorProgram = nullptr;
+  float* currentFactor = nullptr;
   if (mUseBlinnPhong) {
     whiteProgram = mDiffuseEnabled ? &mWhiteBlinnDiffuse : &mWhiteBlinnOnly;
     colorProgram = mDiffuseEnabled ? &mColorBlinnDiffuse : &mColorBlinnOnly;
+    currentFactor = &mBlinnShininessFactor;
   }
   else {
     whiteProgram = mDiffuseEnabled ? &mWhitePhongDiffuse : &mWhitePhongOnly;
     colorProgram = mDiffuseEnabled ? &mColorPhongDiffuse : &mColorPhongOnly;
+    currentFactor = &mPhongShininessFactor;
   }
 
   glUseProgram(whiteProgram->theProgram);
@@ -265,7 +270,7 @@ void BlinnPhongLighting::renderInternal()
   glUniform4f(whiteProgram->ambientIntensityUnif, 0.2f, 0.2f, 0.2f, 1.0f);
   glUniform3fv(whiteProgram->cameraSpaceLightPosUnif, 1, glm::value_ptr(lightPosCameraSpace));
   glUniform1f(whiteProgram->lightAttenuationUnif, mLightAttenuation);
-  glUniform1f(whiteProgram->shininessFactorUnif, mShininessFactor);
+  glUniform1f(whiteProgram->shininessFactorUnif, *currentFactor);
   glUniform4fv(whiteProgram->baseDiffuseColorUnif, 1, glm::value_ptr(mDiffuseColor));
 
   glUseProgram(colorProgram->theProgram);
@@ -273,7 +278,7 @@ void BlinnPhongLighting::renderInternal()
   glUniform4f(colorProgram->ambientIntensityUnif, 0.2f, 0.2f, 0.2f, 1.0f);
   glUniform3fv(colorProgram->cameraSpaceLightPosUnif, 1, glm::value_ptr(lightPosCameraSpace));
   glUniform1f(colorProgram->lightAttenuationUnif, mLightAttenuation);
-  glUniform1f(colorProgram->shininessFactorUnif, mShininessFactor);
+  glUniform1f(colorProgram->shininessFactorUnif, *currentFactor);
   glUseProgram(0);
 
   {
