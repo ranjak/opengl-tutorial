@@ -217,7 +217,7 @@ void FragmentPointLighting::renderInternal()
       glUniformMatrix4fv(whiteProgram->modelToCameraMatrixUnif, 1, GL_FALSE,
         glm::value_ptr(modelMatrix.Top()));
 
-      glm::mat4 camToModel = glm::inverse(modelMatrix.Top());
+      const glm::mat4& camToModel = modelMatrix.TopInverse();
       glm::vec4 modelLightPos = camToModel * lightPosCameraSpace;
       glm::vec4 modelCamPos = camToModel * camPosCameraSpace;
       glUniform3fv(whiteProgram->modelSpaceLightPosUnif, 1, glm::value_ptr(modelLightPos));
@@ -236,7 +236,7 @@ void FragmentPointLighting::renderInternal()
         modelMatrix.Scale(1.0f, 1.0f, 0.2f);
       }
 
-      glm::mat4 camToModel = glm::inverse(modelMatrix.Top());
+      const glm::mat4& camToModel = modelMatrix.TopInverse();
       glm::vec4 modelLightPos = camToModel * lightPosCameraSpace;
       glm::vec4 modelCamPos = camToModel * camPosCameraSpace;
 

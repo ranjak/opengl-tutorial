@@ -48,12 +48,14 @@ namespace glutil
 	public:
 		///Initializes the matrix stack with the identity matrix.
 		MatrixStack()
-			: m_currMatrix(1)
+      : m_currMatrix(1),
+        m_currInverseMatrix(1)
 		{}
 
 		///Initializes the matrix stack with the given matrix.
 		explicit MatrixStack(const glm::mat4 &initialMatrix)
-			: m_currMatrix(initialMatrix)
+      : m_currMatrix(initialMatrix),
+        m_currInverseMatrix(glm::inverse(initialMatrix))
 		{}
 
 		/**
@@ -67,6 +69,7 @@ namespace glutil
 		void Push()
 		{
 			m_stack.push(m_currMatrix);
+      m_inverseStack.push(m_currInverseMatrix);
 		}
 
 		///Restores the most recently preserved matrix.
@@ -74,6 +77,8 @@ namespace glutil
 		{
 			m_currMatrix = m_stack.top();
 			m_stack.pop();
+      m_currInverseMatrix = m_inverseStack.top();
+      m_inverseStack.pop();
 		}
 
 		/**
@@ -81,13 +86,22 @@ namespace glutil
 		
 		This function does not affect the depth of the matrix stack.
 		**/
-		void Reset() { m_currMatrix = m_stack.top(); }
+    void Reset()
+    {
+      m_currMatrix = m_stack.top();
+      m_currInverseMatrix = m_inverseStack.top();
+    }
 
 		///Retrieve the current matrix.
 		const glm::mat4 &Top() const
 		{
 			return m_currMatrix;
 		}
+
+    const glm::mat4 &TopInverse() const
+    {
+      return m_currInverseMatrix;
+    }
 		///@}
 
 		/**
@@ -246,8 +260,10 @@ namespace glutil
 
 	private:
 		std::stack<glm::mat4, std::vector<glm::mat4> > m_stack;
-		glm::mat4 m_currMatrix;
-	};
+    std::stack<glm::mat4, std::vector<glm::mat4> > m_inverseStack;
+    glm::mat4 m_currMatrix;
+    glm::mat4 m_currInverseMatrix;
+  };
 
 	/**
 	\brief RAII-style object for pushing/popping MatrixStack objects.

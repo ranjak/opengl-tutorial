@@ -7,35 +7,47 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <math.h>
 
+namespace
+{
+  glm::mat4 makeRotationMat( const glm::vec3 axisOfRotation, float angRadCCW )
+  {
+    float fCos = cosf(angRadCCW);
+    float fInvCos = 1.0f - fCos;
+    float fSin = sinf(angRadCCW);
+    float fInvSin = 1.0f - fSin;
+
+    glm::vec3 axis = glm::normalize(axisOfRotation);
+
+    glm::mat4 theMat(1.0f);
+    theMat[0].x = (axis.x * axis.x) + ((1 - axis.x * axis.x) * fCos);
+    theMat[1].x = axis.x * axis.y * (fInvCos) - (axis.z * fSin);
+    theMat[2].x = axis.x * axis.z * (fInvCos) + (axis.y * fSin);
+
+    theMat[0].y = axis.x * axis.y * (fInvCos) + (axis.z * fSin);
+    theMat[1].y = (axis.y * axis.y) + ((1 - axis.y * axis.y) * fCos);
+    theMat[2].y = axis.y * axis.z * (fInvCos) - (axis.x * fSin);
+
+    theMat[0].z = axis.x * axis.z * (fInvCos) - (axis.y * fSin);
+    theMat[1].z = axis.y * axis.z * (fInvCos) + (axis.x * fSin);
+    theMat[2].z = (axis.z * axis.z) + ((1 - axis.z * axis.z) * fCos);
+
+    return theMat;
+  }
+}
+
 namespace glutil
 {
 	void MatrixStack::Rotate( const glm::vec3 axis, float angDegCCW )
 	{
-    m_currMatrix = glm::rotate(m_currMatrix, (3.14159f * 2.0f / 360.0f) * angDegCCW, axis);
-	}
+    float rads = (3.14159f * 2.0f / 360.0f) * angDegCCW;
+    m_currMatrix = glm::rotate(m_currMatrix, rads, axis);
+    m_currInverseMatrix = glm::rotate(glm::mat4(1.0f), -rads, axis) * m_currInverseMatrix;
+  }
 
 	void MatrixStack::RotateRadians( const glm::vec3 axisOfRotation, float angRadCCW )
 	{
-		float fCos = cosf(angRadCCW);
-		float fInvCos = 1.0f - fCos;
-		float fSin = sinf(angRadCCW);
-		float fInvSin = 1.0f - fSin;
-
-		glm::vec3 axis = glm::normalize(axisOfRotation);
-
-		glm::mat4 theMat(1.0f);
-		theMat[0].x = (axis.x * axis.x) + ((1 - axis.x * axis.x) * fCos);
-		theMat[1].x = axis.x * axis.y * (fInvCos) - (axis.z * fSin);
-		theMat[2].x = axis.x * axis.z * (fInvCos) + (axis.y * fSin);
-
-		theMat[0].y = axis.x * axis.y * (fInvCos) + (axis.z * fSin);
-		theMat[1].y = (axis.y * axis.y) + ((1 - axis.y * axis.y) * fCos);
-		theMat[2].y = axis.y * axis.z * (fInvCos) - (axis.x * fSin);
-
-		theMat[0].z = axis.x * axis.z * (fInvCos) - (axis.y * fSin);
-		theMat[1].z = axis.y * axis.z * (fInvCos) + (axis.x * fSin);
-		theMat[2].z = (axis.z * axis.z) + ((1 - axis.z * axis.z) * fCos);
-		m_currMatrix *= theMat;
+    m_currMatrix *= makeRotationMat(axisOfRotation, angRadCCW);
+    m_currInverseMatrix = makeRotationMat(axisOfRotation, -angRadCCW) * m_currInverseMatrix;
 	}
 
 	void MatrixStack::RotateX( float angDegCCW )
@@ -56,12 +68,14 @@ namespace glutil
 	void MatrixStack::Scale( const glm::vec3 &scaleVec )
 	{
 		m_currMatrix = glm::scale(m_currMatrix, scaleVec);
+    m_currInverseMatrix = glm::scale(glm::mat4(1.0f), scaleVec) * m_currInverseMatrix;
 	}
 
 	void MatrixStack::Translate( const glm::vec3 &offsetVec )
 	{
 		m_currMatrix = glm::translate(m_currMatrix, offsetVec);
-	}
+    m_currInverseMatrix = glm::translate(glm::mat4(1.0f), offsetVec) * m_currInverseMatrix;
+  }
 
 	void MatrixStack::Perspective( float degFOV, float aspectRatio, float zNear, float zFar )
 	{
@@ -96,16 +110,19 @@ namespace glutil
 	void MatrixStack::ApplyMatrix( const glm::mat4 &theMatrix )
 	{
 		m_currMatrix *= theMatrix;
+    m_currInverseMatrix = theMatrix * m_currInverseMatrix;
 	}
 
 	void MatrixStack::SetMatrix( const glm::mat4 &theMatrix )
 	{
 		m_currMatrix = theMatrix;
+    m_currInverseMatrix = glm::inverse(theMatrix);
 	}
 
 	void MatrixStack::SetIdentity()
 	{
 		m_currMatrix = glm::mat4(1.0f);
+    m_currInverseMatrix = m_currMatrix;
 	}
 }
 
