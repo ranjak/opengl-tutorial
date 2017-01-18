@@ -224,8 +224,8 @@ void PhongLighting::onKeyboard(int key, Window::Action act, int mods)
     break;
   }
 
-  if(mLightRadius < 0.2f)
-    mLightRadius = 0.2f;
+  mLightRadius = glm::max(0.2f, mLightRadius);
+  mShininessFactor = glm::max(0.0001f, mShininessFactor);
 }
 
 void PhongLighting::renderInternal()
