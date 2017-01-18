@@ -110,7 +110,7 @@ namespace glutil
 	void MatrixStack::ApplyMatrix( const glm::mat4 &theMatrix )
 	{
 		m_currMatrix *= theMatrix;
-    m_currInverseMatrix = theMatrix * m_currInverseMatrix;
+    m_currInverseMatrix = glm::inverse(theMatrix) * m_currInverseMatrix;
 	}
 
 	void MatrixStack::SetMatrix( const glm::mat4 &theMatrix )
