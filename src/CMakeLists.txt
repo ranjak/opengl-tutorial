@@ -123,6 +123,7 @@ set(SRC_TUTORIAL_ILLUMINATION
   tutorial/illumination/fragmentpointlighting.cpp
   tutorial/illumination/fragmentattenuation.cpp
   tutorial/illumination/phonglighting.cpp
+  tutorial/illumination/blinnphonglighting.cpp
   )
 
 set(INCLUDE_TUTORIAL_ILLUMINATION
@@ -134,6 +135,7 @@ set(INCLUDE_TUTORIAL_ILLUMINATION
   tutorial/illumination/fragmentpointlighting.hpp
   tutorial/illumination/fragmentattenuation.hpp
   tutorial/illumination/phonglighting.hpp
+  tutorial/illumination/blinnphonglighting.hpp
   )
 
 set(SHADERS
@@ -195,6 +197,8 @@ set(SHADERS_ILLUMINATION
   ../shaders/illumination/specular/PhongLighting.frag
   ../shaders/illumination/specular/PhongOnly.frag
   ../shaders/illumination/specular/NoPhong.frag
+  ../shaders/illumination/specular/BlinnLighting.frag
+  ../shaders/illumination/specular/BlinnOnly.frag
   )
 
 source_group(system FILES ${SRC_SYSTEM} ${INCLUDE_SYSTEM})
