@@ -289,7 +289,7 @@ void PhongLighting::renderInternal()
       glUniformMatrix4fv(whiteProgram->modelToCameraMatrixUnif, 1, GL_FALSE,
         glm::value_ptr(modelMatrix.Top()));
 
-      glm::mat3 normMatrixInverse = modelMatrix.TopInverse();
+      glm::mat3 normMatrixInverse(modelMatrix.TopInverse());
       normMatrixInverse = glm::transpose(normMatrixInverse);
       glUniformMatrix3fv(whiteProgram->normalModelToCameraMatrixUnif, 1, GL_FALSE,
                          glm::value_ptr(normMatrixInverse));
@@ -312,7 +312,7 @@ void PhongLighting::renderInternal()
       glUniformMatrix4fv(program.modelToCameraMatrixUnif, 1, GL_FALSE,
                          glm::value_ptr(modelMatrix.Top()));
 
-      glm::mat3 normMatrixInverse = modelMatrix.TopInverse();
+      glm::mat3 normMatrixInverse(modelMatrix.TopInverse());
       normMatrixInverse = glm::transpose(normMatrixInverse);
       glUniformMatrix3fv(program.normalModelToCameraMatrixUnif, 1, GL_FALSE,
                          glm::value_ptr(normMatrixInverse));
