@@ -203,8 +203,17 @@ set(SHADERS_ILLUMINATION
 
 source_group(system FILES ${SRC_SYSTEM} ${INCLUDE_SYSTEM})
 source_group(renderer FILES ${SRC_RENDERER} ${INCLUDE_RENDERER})
+
 source_group(tutorial FILES ${SRC_TUTORIAL} ${INCLUDE_TUTORIAL})
+source_group(tutorial\\positioning FILES ${SRC_TUTORIAL_POSITIONING} ${INCLUDE_TUTORIAL_POSITIONING})
+source_group(tutorial\\world FILES ${SRC_TUTORIAL_WORLD} ${INCLUDE_TUTORIAL_WORLD})
+source_group(tutorial\\orientation FILES ${SRC_TUTORIAL_ORIENTATION} ${INCLUDE_TUTORIAL_ORIENTATION})
+source_group(tutorial\\ilumination FILES ${SRC_TUTORIAL_ILLUMINATION} ${INCLUDE_TUTORIAL_ILLUMINATION})
+
 source_group(shaders FILES ${SHADERS})
+source_group(shaders\\world FILES ${SHADERS_WORLD})
+source_group(shaders\\orientation FILES ${SHADERS_ORIENTATION})
+source_group(shaders\\illumination FILES ${SHADERS_ILLUMINATION})
 
 # Configuration
 
