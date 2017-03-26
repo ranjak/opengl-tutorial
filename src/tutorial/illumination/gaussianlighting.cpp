@@ -246,6 +246,7 @@ void GaussianLighting::onKeyboard(int key, Window::Action act, int mods)
     }
     else {
       mShaderType = static_cast<decltype(mShaderType)>((mShaderType + 1) % (GAUSS+1));
+      rlzLog(Log::INFO, "Shader Type: " << mShaderType);
     }
     break;
   case 'G':
@@ -254,7 +255,8 @@ void GaussianLighting::onKeyboard(int key, Window::Action act, int mods)
   }
 
   mLightRadius = glm::max(0.2f, mLightRadius);
-  currentFactor = glm::max((mShaderType == GAUSS) ? 1.5f : 10.0f, currentFactor);
+  currentFactor = glm::max(0.0001f, currentFactor);
+  rlzLog(Log::INFO, "Shininess Factor: " << currentFactor);
 }
 
 void GaussianLighting::renderInternal()
