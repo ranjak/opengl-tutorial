@@ -124,6 +124,7 @@ set(SRC_TUTORIAL_ILLUMINATION
   tutorial/illumination/fragmentattenuation.cpp
   tutorial/illumination/phonglighting.cpp
   tutorial/illumination/blinnphonglighting.cpp
+  tutorial/illumination/gaussianlighting.cpp
   )
 
 set(INCLUDE_TUTORIAL_ILLUMINATION
@@ -136,6 +137,7 @@ set(INCLUDE_TUTORIAL_ILLUMINATION
   tutorial/illumination/fragmentattenuation.hpp
   tutorial/illumination/phonglighting.hpp
   tutorial/illumination/blinnphonglighting.hpp
+  tutorial/illumination/gaussianlighting.hpp
   )
 
 set(SHADERS
@@ -198,7 +200,9 @@ set(SHADERS_ILLUMINATION
   ../shaders/illumination/specular/PhongOnly.frag
   ../shaders/illumination/specular/NoPhong.frag
   ../shaders/illumination/specular/BlinnLighting.frag
-  ../shaders/illumination/specular/BlinnOnly.frag
+  ../shaders/illumination/specular/BlinnOnly.frag  
+  ../shaders/illumination/specular/GaussianLighting.frag
+  ../shaders/illumination/specular/GaussianOnly.frag
   )
 
 source_group(system FILES ${SRC_SYSTEM} ${INCLUDE_SYSTEM})
